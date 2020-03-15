@@ -3,8 +3,8 @@
 /// @brief Contains command line interface options definitions
 /// @copyright Copyright (c) 2020, MIT License
 ///
-#ifndef SPLEETER_CLI_OPTIONS_H_
-#define SPLEETER_CLI_OPTIONS_H_
+#ifndef SPLEETER_ARGUMENT_PARSER_CLI_OPTIONS_H_
+#define SPLEETER_ARGUMENT_PARSER_CLI_OPTIONS_H_
 
 #include <cstdint>
 #include <string>
@@ -61,4 +61,4 @@ struct CLIOptions
 };
 
 }  // namespace spleeter
-#endif  /// SPLEETER_CLI_OPTIONS_H_
+#endif  /// SPLEETER_ARGUMENT_PARSER_CLI_OPTIONS_H_

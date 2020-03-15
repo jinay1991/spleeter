@@ -2,10 +2,10 @@
 /// @file
 /// @copyright Copyright (c) 2020, MIT License
 ///
-#include <iostream>
+#include "spleeter/argument_parser/argument_parser.h"
+#include "spleeter/logging/logging.h"
 
-#include "spleeter/argument_parser.h"
-#include "spleeter/logging.h"
+#include <iostream>
 
 namespace spleeter
 {

@@ -3,10 +3,10 @@
 /// @brief Contains Argument Parser Interface class
 /// @copyright Copyright (c) 2020, MIT License
 ///
-#ifndef SPLEETER_I_ARGUMENT_PARSER_H_
-#define SPLEETER_I_ARGUMENT_PARSER_H_
+#ifndef SPLEETER_ARGUMENT_PARSER_I_ARGUMENT_PARSER_H_
+#define SPLEETER_ARGUMENT_PARSER_I_ARGUMENT_PARSER_H_
 
-#include "spleeter/cli_options.h"
+#include "spleeter/argument_parser/cli_options.h"
 
 namespace spleeter
 {
@@ -26,4 +26,4 @@ class IArgumentParser
 };
 }  // namespace spleeter
 
-#endif  /// SPLEETER_I_ARGUMENT_PARSER_H_
+#endif  /// SPLEETER_ARGUMENT_PARSER_I_ARGUMENT_PARSER_H_
