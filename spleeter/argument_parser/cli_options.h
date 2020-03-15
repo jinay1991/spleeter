@@ -44,8 +44,8 @@ struct CLIOptions
     /// @brief Input Layer Type ["uint8_t", "float32"]
     std::string input_layer_type = "uint8_t";
 
-    /// @brief Input Image Path
-    std::string input_name = "data/grace_hopper.jpg";
+    /// @brief Input audio filepath
+    std::string input_name = "data/audio_example.mp3";
 
     /// @brief Labels for the model
     std::string labels_name = "data/labels.txt";

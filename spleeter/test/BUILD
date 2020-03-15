@@ -7,6 +7,8 @@ cc_test(
     srcs = glob(["*.cpp"]),
     deps = [
         "//spleeter",
+        "//spleeter/argument_parser",
+        "//spleeter/logging",
         "@googletest//:gtest_main",
     ],
 )

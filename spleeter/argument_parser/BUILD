@@ -6,6 +6,7 @@ cc_library(
     name = "argument_parser",
     srcs = glob(["*.cpp"]),
     hdrs = glob(["*.h"]),
+    copts = ["-Wno-error=writable-strings"],
     deps = [
         "//spleeter/logging",
     ],

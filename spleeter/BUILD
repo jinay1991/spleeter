@@ -7,6 +7,7 @@ cc_library(
     srcs = glob(["*.cpp"]),
     hdrs = glob(["*.h"]),
     deps = [
+        "//spleeter/argument_parser",
         "//spleeter/logging",
     ],
 )
