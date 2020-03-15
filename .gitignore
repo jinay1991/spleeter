@@ -1,5 +1,6 @@
 # Extras
 .DS_Store
+.devcontainer/*
 
 # bazel build files
 bazel-*

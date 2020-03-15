@@ -36,11 +36,7 @@ TEST(ArgumentParserTest, WhenHelpArgument)
 {
     char* argv[] = {"app", "-h"};
     int argc = sizeof(argv) / sizeof(char*);
-    // ::testing::internal::CaptureStderr();
-    // ::testing::internal::CaptureStdout();
     EXPECT_EXIT(ArgumentParser(argc, argv), ::testing::ExitedWithCode(1), "");
-    // EXPECT_FALSE(::testing::internal::GetCapturedStdout().empty());
-    // EXPECT_TRUE(::testing::internal::GetCapturedStderr().empty());
 }
 
 TEST(ArgumentParserTest, ParameterizedConstructor)
