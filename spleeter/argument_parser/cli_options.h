@@ -6,7 +6,6 @@
 #ifndef SPLEETER_ARGUMENT_PARSER_CLI_OPTIONS_H_
 #define SPLEETER_ARGUMENT_PARSER_CLI_OPTIONS_H_
 
-#include <cstdint>
 #include <string>
 
 namespace spleeter
@@ -14,50 +13,49 @@ namespace spleeter
 /// @brief Contains Command Line Interface (CLI) Options
 struct CLIOptions
 {
-    /// @brief Is Model require FP32/FP16 input?
-    bool input_floating = false;
+    /// @brief List of input audio filenames
+    std::string inputs{};
 
-    /// @brief Enable/Disable Profiling
-    bool profiling = false;
+    /// @brief Path of the output directory to write audio files in
+    std::string output_path{"separated_audio"};
 
-    /// @brief Enable/Disable Verbose Logging (Prints more information)
-    bool verbose = false;
+    /// @brief Template string that will be formatted to generated
+    /// output filename. Such template should be Python formattable
+    /// string, and could use {filename}, {instrument}, and {codec}
+    /// variables
+    std::string filename_format{"{filename}/{instrument}.{codec}"};
 
-    /// @brief Input Mean for Model
-    float input_mean = 127.5f;
+    /// @brief JSON filename that contains params
+    std::string configuration{"spleeter:2stems"};
 
-    /// @brief Input StdDev for Model
-    float input_std = 127.5f;
+    /// @brief Set the starting offset to separate audio from
+    double offset{0.0};
 
-    /// @brief Number of iterations to loop interpreter->Invoke() for certain times
-    std::int32_t loop_count = 1;
+    /// @brief Set a maximum duration for the processing audio
+    /// (only separate offset + duration first seconds of the input file)
+    double duration{600.0};
 
-    /// @brief Maximum Profiling Buffer Entries [Required when profiling is enabled.]
-    std::int32_t max_profiling_buffer_entries = 1024;
+    /// @brief Audio codec to be used for separate output
+    /// choices: { wav, mp3, ogg, m4a, wma, flac }
+    std::string codec{"wav"};
 
-    /// @brief Number of results to show
-    std::int32_t number_of_results = 5;
+    /// @brief Audio bitrate to be used for separate output
+    std::string bitrate{"128k"};
 
-    /// @brief Number of threads to be used for Inference
-    std::int32_t number_of_threads = 4;
+    /// @brief Whether to use multichannel Wiener filtering for separation
+    bool mwf{false};
 
-    /// @brief Input Layer Type ["uint8_t", "float32"]
-    std::string input_layer_type = "uint8_t";
+    /// @brief Path to folder with musDB
+    std::string mus_dir{};
 
-    /// @brief Input audio filepath
-    std::string input_name = "data/audio_example.mp3";
+    /// @brief Path of the folder containing audio data for training
+    std::string audio_path{};
 
-    /// @brief Labels for the model
-    std::string labels_name = "data/labels.txt";
+    /// @brief Name of the audio adapater to use for audio I/O
+    std::string audio_adapter{};
 
-    /// @brief Model Path
-    std::string model_name = "external/mobilenet_v2_1.0_224_quant/mobilenet_v2_1.0_224_quant.tflite";
-
-    /// @brief Result Directory
-    std::string result_directory = "results";
-
-    /// @brief Enable/Disable for saving results
-    bool save_results = false;
+    /// @brief Shows verbose logs
+    bool verbose{false};
 };
 
 }  // namespace spleeter
