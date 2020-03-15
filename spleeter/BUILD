@@ -12,8 +12,15 @@ cc_library(
         "-Werror",
         "-Wno-error=write-strings",
     ],
+    linkopts = [
+        "-lm",
+    ],
     deps = [
         "//spleeter/argument_parser",
         "//spleeter/logging",
+        "@ffmpeg//:avcodec",
+        "@ffmpeg//:avformat",
+        "@ffmpeg//:avutil",
+        "@ffmpeg//:swresample",
     ],
 )

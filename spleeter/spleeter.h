@@ -7,6 +7,7 @@
 #define SPLEETER_SPLEETER_H_
 
 #include "spleeter/argument_parser/i_argument_parser.h"
+#include "spleeter/i_separator.h"
 
 #include <memory>
 
@@ -34,6 +35,9 @@ class Spleeter
   private:
     /// @brief Argument Parser
     std::unique_ptr<IArgumentParser> argument_parser_;
+
+    /// @brief Audio Separator
+    std::unique_ptr<ISeparator> separator_;
 };
 }  // namespace spleeter
 
