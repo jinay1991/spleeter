@@ -72,10 +72,8 @@ bazel-build-and-test:
     when: on_success
   only:
     changes:
-      - lib/**/*
-      - src/**/*
-    refs:
-      - master
+      - spleeter/**/*.cpp
+      - spleeter/**/*.h
 
 code-coverage:
   stage: build
@@ -93,8 +91,8 @@ code-coverage:
     expire_in: 1 day
   only:
     changes:
-      - lib/**/*
-      - src/**/*
+      - spleeter/**/*.cpp
+      - spleeter/**/*.h
     refs:
       - master
 
