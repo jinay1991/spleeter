@@ -30,10 +30,11 @@ class LoggingWrapper
     /// @brief Log Severity Levels
     enum class LogSeverity : std::int32_t
     {
-        INFO = 0,
-        WARN = 1,
-        ERROR = 2,
-        FATAL = 3
+        DEBUG = 0,
+        INFO = 1,
+        WARN = 2,
+        ERROR = 3,
+        FATAL = 4
     };
 
     /// @brief Constructor
@@ -65,7 +66,7 @@ class LoggingWrapper
 }  // namespace spleeter
 
 /// @brief Log Stream with provided severity level
-/// @param [in] severity - Severity Level (INFO, WARN, ERROR, FATAL)
+/// @param [in] severity - Severity Level (DEBUG, INFO, WARN, ERROR, FATAL)
 #define LOG(severity) \
     spleeter::logging::LoggingWrapper(spleeter::logging::LoggingWrapper::LogSeverity::severity).Stream()
 

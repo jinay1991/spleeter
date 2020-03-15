@@ -33,6 +33,9 @@ LoggingWrapper::~LoggingWrapper()
     {
         switch (severity_)
         {
+#ifndef NDEBUG
+            case LogSeverity::DEBUG:
+#endif
             case LogSeverity::INFO:
             case LogSeverity::WARN:
                 std::cout << stream_.str() << std::endl;

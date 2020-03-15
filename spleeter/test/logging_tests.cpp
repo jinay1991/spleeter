@@ -30,6 +30,7 @@ TEST(LoggingWrapperTest, NoLogging)
 {
     ::testing::internal::CaptureStderr();
     ::testing::internal::CaptureStdout();
+    LoggingWrapper(LoggingWrapper::LogSeverity::DEBUG, false).Stream() << "test";
     LoggingWrapper(LoggingWrapper::LogSeverity::INFO, false).Stream() << "test";
     LoggingWrapper(LoggingWrapper::LogSeverity::ERROR, false).Stream() << "test";
     LoggingWrapper(LoggingWrapper::LogSeverity::WARN, false).Stream() << "test";
@@ -40,6 +41,7 @@ TEST(LoggingWrapperTest, OnStandardOutput)
 {
     ::testing::internal::CaptureStderr();
     ::testing::internal::CaptureStdout();
+    LoggingWrapper(LoggingWrapper::LogSeverity::DEBUG, true).Stream() << "test";
     LoggingWrapper(LoggingWrapper::LogSeverity::INFO, true).Stream() << "test";
     LoggingWrapper(LoggingWrapper::LogSeverity::WARN, true).Stream() << "test";
     EXPECT_FALSE(::testing::internal::GetCapturedStdout().empty());
