@@ -1,0 +1,172 @@
+image: registry.gitlab.com/jinay1991/tflite_models
+
+stages:
+  - check
+  - build 
+  - test 
+  - deploy
+
+# ------------
+# Stage: check
+# ------------
+clang-format:
+  stage: check
+  script:
+    - find . -regex '.*\.\(ino\|cpp\|hpp\|cc\|cxx\|h\)' -exec cat {} \; | diff -u <(find . -regex '.*\.\(ino\|cpp\|hpp\|cc\|cxx\|h\)' -exec clang-format-6.0 -style=file {} -verbose \;) -
+  only:
+    refs:
+      - merge_requests
+
+buildifier:
+  stage: check
+  script:
+    - buildifier -v -d -r .
+  only:
+    refs:
+      - merge_requests
+
+cppcheck:
+  stage: check
+  script:
+    - cppcheck --template=gcc --enable=all --inconclusive --std=c++14 -I lib/include/ -I include/ lib/src/**/*.cpp src/**/*.cpp  > static_code_analysis.log
+    - cppcheck --template=gcc --enable=all --inconclusive --std=c++14 -I lib/include/ -I include/ lib/src/**/*.cpp src/**/*.cpp --xml 2> static_code_analysis.xml
+    - cppcheck-htmlreport --file=static_code_analysis.xml --report-dir=static_code_analysis_report --source-dir=.
+  artifacts:
+    name: static_code_analysis
+    paths:
+      - static_code_analysis_report/
+      - static_code_analysis.xml
+      - static_code_analysis.log
+    expire_in: 7 days
+  only:
+    refs:
+      - merge_requests
+      - master
+  
+code_quality:
+  image: docker:stable
+  stage: check
+  variables:
+    DOCKER_DRIVER: overlay2
+  allow_failure: true
+  services:
+    - docker:stable-dind
+  script:
+    - export SP_VERSION=$(echo "$CI_SERVER_VERSION" | sed 's/^\([0-9]*\)\.\([0-9]*\).*/\1-\2-stable/')
+    - docker run
+      --env SOURCE_CODE="$PWD"
+      --volume "$PWD":/code
+      --volume /var/run/docker.sock:/var/run/docker.sock
+      "registry.gitlab.com/gitlab-org/security-products/codequality:$SP_VERSION" /code
+  artifacts:
+    reports:
+      codequality: gl-code-quality-report.json
+  only:
+    refs:
+      - merge_requests
+    
+# ------------
+# Stage: Build
+# ------------
+bazel-build-and-test:
+  stage: build
+  script:
+    - bazel build //...
+    - bazel test //...  --test_output=all --cache_test_results=false --test_arg="--gtest_output=xml:/tmp/test_results.xml"
+  after_script:
+    - cp /tmp/test_results.xml test_results.xml
+  artifacts:
+    reports:
+      junit: test_results.xml
+    name: TestResults
+    when: on_success
+  only:
+    changes:
+      - lib/**/*
+      - src/**/*
+    refs:
+      - master
+
+code-coverage:
+  stage: build
+  script:
+    - bazel coverage -s --combined_report=lcov --coverage_report_generator=@bazel_tools//tools/test/CoverageOutputGenerator/java/com/google/devtools/coverageoutputgenerator:Main //...
+    - export OUTPUT_DIR=$(bazel info execution_root)
+    - export COVERAGE_INFO=$(find $OUTPUT_DIR -name coverage.dat)
+    - genhtml -s --num-spaces 4 --legend --highlight --sort -t "Code Coverage" --demangle-cpp --function-coverage --branch-coverage -o coverage $COVERAGE_INFO
+  coverage: /functions.*:\s(\d+.\d+%)/
+  artifacts:
+    paths:
+      - coverage/
+    name: code-coverage
+    when: on_success
+    expire_in: 1 day
+  only:
+    changes:
+      - lib/**/*
+      - src/**/*
+    refs:
+      - master
+
+doxygen:
+  stage: build
+  script:
+    - echo "Generating Doxygen Documentation"
+    - doxygen Doxyfile
+  artifacts:
+    paths:
+      - doc
+    expire_in: 1 day
+  only:
+    changes:
+      - lib/**/*
+      - src/**/*
+    refs:
+      - master
+      
+# -----------
+# Stage: Test
+# -----------
+smoke-test:
+  stage: test
+  dependencies:
+    - bazel-build-and-test
+  script: 
+    - bazel run //:label_image -- -d intermediate_layers -f 1
+    - cp -R bazel-bin/label_image.runfiles/perception/intermediate_layers .
+  artifacts:
+    paths:
+      - intermediate_layers
+    expire_in: 7 days
+  only:
+    changes:
+      - lib/**/*
+      - src/**/*
+    refs:
+      - master
+# -------------
+# Stage: Deploy
+# -------------
+pages:
+  stage: deploy
+  dependencies:
+    - code-coverage
+    - cppcheck
+    - doxygen
+  allow_failure: true
+  script:
+    - mkdir -p reports
+    - echo "<!DOCTYPE html> <html> <head> <meta charset="utf-8"> <title>Perception</title> </head> <body> <ul> <li><a href="coverage/">Code Coverage Report</a></li> <li><a href="static_code_analysis_report/">Static Code Analysis Report</a></li> <li><a href="doc/html">Doxygen Documentation</a></li> </ul> </body> </html>" > reports/index.html
+    - mv coverage reports/coverage
+    - mv static_code_analysis_report/ reports/static_code_analysis_report
+    - mv doc/ reports/doc
+    - mv reports/ public
+  artifacts:
+    paths:
+      - public
+  only:
+    changes:
+      - lib/**/*
+      - src/**/*
+    refs:
+      - master
