@@ -7,12 +7,10 @@ bazel-*
 # vscode files
 .vscode
 
-# Models 
+# Models
 model/
 *.tflite
 *.pb
-intermediate_layers_py/
-intermediate_layers/
 
 # Prerequisites
 *.d

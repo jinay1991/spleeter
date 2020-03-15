@@ -1,17 +1,10 @@
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 def models():
-    if "mobilenet_v2_1.0_224_quant" not in native.existing_rules():
+    if "spleeter_unet" not in native.existing_rules():
         http_archive(
-            name = "mobilenet_v2_1.0_224_quant",
+            name = "spleeter_unet",
             build_file = "//third_party/models:models.BUILD",
-            sha256 = "d6a04d780f76f656c902413be432eb349ec4a458240e3739119eb44977f77a79",
-            url = "https://storage.googleapis.com/download.tensorflow.org/models/tflite_11_05_08/mobilenet_v2_1.0_224_quant.tgz",
-        )
-    if "" not in native.existing_rules():
-        http_archive(
-            name = "mobilenet_v2_1.0_224_quant",
-            build_file = "//third_party/models:models.BUILD",
-            sha256 = "d6a04d780f76f656c902413be432eb349ec4a458240e3739119eb44977f77a79",
-            url = "https://storage.googleapis.com/download.tensorflow.org/models/tflite_11_05_08/mobilenet_v2_1.0_224_quant.tgz",
+            sha256 = "25a1e87eb5f75cc72a4d2d5467a0a50ac75f05611f877c278793742513cc7218",
+            url = "https://github.com/deezer/spleeter/releases/download/v1.4.0/5stems.tar.gz",
         )

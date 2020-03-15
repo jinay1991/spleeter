@@ -1,9 +1,9 @@
-image: registry.gitlab.com/jinay1991/tflite_models
+image: registry.gitlab.com/jinay1991/spleeter
 
 stages:
   - check
-  - build 
-  - test 
+  - build
+  - test
   - deploy
 
 # ------------
@@ -13,17 +13,11 @@ clang-format:
   stage: check
   script:
     - find . -regex '.*\.\(ino\|cpp\|hpp\|cc\|cxx\|h\)' -exec cat {} \; | diff -u <(find . -regex '.*\.\(ino\|cpp\|hpp\|cc\|cxx\|h\)' -exec clang-format-6.0 -style=file {} -verbose \;) -
-  only:
-    refs:
-      - merge_requests
 
 buildifier:
   stage: check
   script:
     - buildifier -v -d -r .
-  only:
-    refs:
-      - merge_requests
 
 cppcheck:
   stage: check
@@ -38,11 +32,7 @@ cppcheck:
       - static_code_analysis.xml
       - static_code_analysis.log
     expire_in: 7 days
-  only:
-    refs:
-      - merge_requests
-      - master
-  
+
 code_quality:
   image: docker:stable
   stage: check
@@ -64,7 +54,7 @@ code_quality:
   only:
     refs:
       - merge_requests
-    
+
 # ------------
 # Stage: Build
 # ------------
@@ -123,27 +113,7 @@ doxygen:
       - src/**/*
     refs:
       - master
-      
-# -----------
-# Stage: Test
-# -----------
-smoke-test:
-  stage: test
-  dependencies:
-    - bazel-build-and-test
-  script: 
-    - bazel run //:label_image -- -d intermediate_layers -f 1
-    - cp -R bazel-bin/label_image.runfiles/perception/intermediate_layers .
-  artifacts:
-    paths:
-      - intermediate_layers
-    expire_in: 7 days
-  only:
-    changes:
-      - lib/**/*
-      - src/**/*
-    refs:
-      - master
+
 # -------------
 # Stage: Deploy
 # -------------

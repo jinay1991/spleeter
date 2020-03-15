@@ -28,12 +28,12 @@ If you plan to use Spleeter on copyrighted material, make sure you get proper au
 
 ## Note
 
-This repository include a demo audio file `audio_example.mp3` which is an excerpt from 
- 
+This repository include a demo audio file `audio_example.mp3` which is an excerpt from
+
 ```
-Slow Motion Dream by Steven M Bryant 
+Slow Motion Dream by Steven M Bryant
 Copyright (c) 2011 Licensed under a Creative Commons Attribution (3.0) license.
- 
-http://dig.ccmixter.org/files/stevieb357/34740 
+
+http://dig.ccmixter.org/files/stevieb357/34740
 Ft: CSoul Alex Beroza & Robert Siek"
 ```

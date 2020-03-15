@@ -13,3 +13,9 @@ filegroup(
         "**/*_info.txt",
     ]),
 )
+
+filegroup(
+    name = "tfckpt",
+    srcs = glob([
+    ]),
+)
