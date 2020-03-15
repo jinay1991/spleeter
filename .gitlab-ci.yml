@@ -22,15 +22,12 @@ buildifier:
 cppcheck:
   stage: check
   script:
-    - cppcheck --template=gcc --enable=all --inconclusive --std=c++14 -I spleeter/ spleeter/**/*.cpp > static_code_analysis.log
-    - cppcheck --template=gcc --enable=all --inconclusive --std=c++14 -I spleeter/ spleeter/**/*.cpp --xml 2> static_code_analysis.xml
+    - cppcheck --template=gcc --enable=all --inconclusive --std=c++14 -I spleeter/ spleeter/*.cpp --xml 2> static_code_analysis.xml
     - cppcheck-htmlreport --file=static_code_analysis.xml --report-dir=static_code_analysis_report --source-dir=.
   artifacts:
     name: static_code_analysis
     paths:
       - static_code_analysis_report/
-      - static_code_analysis.xml
-      - static_code_analysis.log
     expire_in: 7 days
 
 code_quality:
