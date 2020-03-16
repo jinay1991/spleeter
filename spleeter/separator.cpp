@@ -8,15 +8,18 @@
 namespace spleeter
 {
 Separator::Separator(const std::string& configuration, const bool mwf)
-    : mwf_{mwf}, audio_adapter_{std::make_unique<FfmpegAudioAdapter>()}
+    : mwf_{mwf}, audio_adapter_{std::make_unique<FfmpegAudioAdapter>()}, sample_rate_{44100}
 {
 }
-void Separator::Separate(const std::string& waveform) { audio_adapter_->Load("", 0.0, 600.0, "4"); }
+
+std::vector<Waveform> Separator::Separate(const std::string& waveform) { return std::vector<Waveform>{}; }
+
 void Separator::SeparateToFile(const std::string& audio_descriptor, const std::string& destination,
                                const std::string& audio_adapter, const double offset, const double duration,
                                const std::string& codec, const std::string bitrate, const std::string& filename_format,
                                const bool& synchronous)
 {
+    auto waveform = audio_adapter_->Load(audio_descriptor, offset, duration, sample_rate_);
 }
 void Separator::Join(const double& timeout) {}
 void Separator::GetPredictor() const {};

@@ -9,8 +9,8 @@ cc_library(
     copts = [
         "-std=c++14",
         "-Wall",
-        "-Werror",
-        "-Wno-error=write-strings",
+        #"-Werror",
+        #"-Wno-error=write-strings",
     ],
     linkopts = [
         "-lm",
@@ -22,5 +22,6 @@ cc_library(
         "@ffmpeg//:avformat",
         "@ffmpeg//:avutil",
         "@ffmpeg//:swresample",
+        "@nlohmann//:json",
     ],
 )

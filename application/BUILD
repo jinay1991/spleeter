@@ -8,6 +8,7 @@ cc_binary(
         "-Wall",
         "-Werror",
     ],
+    data = ["//:testdata"],
     deps = [
         "//spleeter",
     ],

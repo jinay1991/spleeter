@@ -5,10 +5,16 @@
 #ifndef SPLEETER_I_AUDIO_ADAPTER_H_
 #define SPLEETER_I_AUDIO_ADAPTER_H_
 
+#include <cstdint>
 #include <string>
+#include <tuple>
 
 namespace spleeter
 {
+/// @todo Use appropriate datastructure for waveform.
+using Waveform = std::string;
+
+/// @brief Audio Adapter to read/write audio files
 class IAudioAdapter
 {
   public:
@@ -16,11 +22,24 @@ class IAudioAdapter
     virtual ~IAudioAdapter() = default;
 
     /// @brief Loads the audio file denoted by the given path and returns it data as a waveform.
-    virtual void Load(const std::string& audio_description, const double offset, const double duration,
-                      const std::string& sample_rate) = 0;
+    ///
+    /// @param path[in]         - Path of the audio file to load data from.
+    /// @param offset[in]       - Start offset to load from in seconds.
+    /// @param duration[in]     - Duration to load in seconds.
+    /// @param sample_rate[in]  - Sample rate to load audio with.
+    ///
+    /// @returns Loaded data a (waveform, sample_rate) tuple.
+    virtual std::tuple<Waveform, std::int32_t> Load(const std::string& path, const double offset, const double duration,
+                                                    const std::int32_t& sample_rate) = 0;
 
     /// @brief Write waveform data to the file denoted by the given path using FFMPEG process.
-    virtual void Save(const std::string& path, const std::string& data, const std::string& sample_rate,
+    ///
+    /// @param path[in]        - Path of the audio file to save data in.
+    /// @param data[in]        - Waveform data to write.
+    /// @param sample_rate[in] - Sample rate to write file in.
+    /// @param codec[in]       - Writing codec to use.
+    /// @param bitrate[in]     - Bitrate of the written audio file.
+    virtual void Save(const std::string& path, const std::string& data, const std::int32_t& sample_rate,
                       const std::string& codec) = 0;
 };
 }  // namespace spleeter
