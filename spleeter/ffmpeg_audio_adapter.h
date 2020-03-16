@@ -66,6 +66,8 @@ class FfmpegAudioAdapter : public IAudioAdapter
                       const std::string& codec) override;
 
   private:
+    AVFrame* frame_;
+    AVCodecContext* codec_ctx_;
     AVFormatContext* format_;
 };
 }  // namespace spleeter

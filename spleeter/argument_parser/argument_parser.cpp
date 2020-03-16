@@ -61,6 +61,10 @@ CLIOptions ArgumentParser::GetParsedArgs() const { return cli_options_; }
 
 CLIOptions ArgumentParser::ParseArgs(int argc, char* argv[])
 {
+    if (argc > 1)
+    {
+        LOG(DEBUG) << "Parsed arguments: ";
+    }
     while (true)
     {
         std::int32_t c = 0;
@@ -72,60 +76,59 @@ CLIOptions ArgumentParser::ParseArgs(int argc, char* argv[])
         {
             break;
         }
-
         switch (c)
         {
             case 'i':
                 cli_options_.inputs = optarg;
-                LOG(DEBUG) << "inputs: " << cli_options_.inputs;
+                LOG(DEBUG) << " (+) inputs: " << cli_options_.inputs;
                 break;
             case 'o':
                 cli_options_.output_path = optarg;
-                LOG(DEBUG) << "output_path: " << cli_options_.output_path;
+                LOG(DEBUG) << " (+) output_path: " << cli_options_.output_path;
                 break;
             case 'f':
                 cli_options_.filename_format = optarg;
-                LOG(DEBUG) << "filename_format: " << cli_options_.filename_format;
+                LOG(DEBUG) << " (+) filename_format: " << cli_options_.filename_format;
                 break;
             case 'd':
                 cli_options_.duration = strtod(optarg, nullptr);
-                LOG(DEBUG) << "duration: " << cli_options_.duration;
+                LOG(DEBUG) << " (+) duration: " << cli_options_.duration;
                 break;
             case 's':
                 cli_options_.offset = strtod(optarg, nullptr);
-                LOG(DEBUG) << "offset: " << cli_options_.offset;
+                LOG(DEBUG) << " (+) offset: " << cli_options_.offset;
                 break;
             case 'c':
                 cli_options_.codec = optarg;
-                LOG(DEBUG) << "codec: " << cli_options_.codec;
+                LOG(DEBUG) << " (+) codec: " << cli_options_.codec;
                 break;
             case 'b':
                 cli_options_.bitrate = optarg;
-                LOG(DEBUG) << "bitrate: " << cli_options_.bitrate;
+                LOG(DEBUG) << " (+) bitrate: " << cli_options_.bitrate;
                 break;
             case 'm':
                 cli_options_.mwf = strtol(optarg, nullptr, 10);
-                LOG(DEBUG) << "mwf: " << cli_options_.mwf;
+                LOG(DEBUG) << " (+) mwf: " << std::boolalpha << cli_options_.mwf;
                 break;
             case 'u':
                 cli_options_.mus_dir = optarg;
-                LOG(DEBUG) << "mus_dir: " << cli_options_.mus_dir;
+                LOG(DEBUG) << " (+) mus_dir: " << cli_options_.mus_dir;
                 break;
             case 'a':
                 cli_options_.audio_adapter = optarg;
-                LOG(DEBUG) << "audio_adapter: " << cli_options_.audio_adapter;
+                LOG(DEBUG) << " (+) audio_adapter: " << cli_options_.audio_adapter;
                 break;
             case 'p':
                 cli_options_.configuration = optarg;
-                LOG(DEBUG) << "configuration: " << cli_options_.configuration;
+                LOG(DEBUG) << " (+) configuration: " << cli_options_.configuration;
                 break;
             case 'v':
                 cli_options_.verbose = strtol(optarg, nullptr, 10);
-                LOG(DEBUG) << "verbose: " << cli_options_.verbose;
+                LOG(DEBUG) << " (+) verbose: " << std::boolalpha << cli_options_.verbose;
                 break;
             case 't':
                 cli_options_.audio_path = optarg;
-                LOG(DEBUG) << "audio_path: " << cli_options_.audio_path;
+                LOG(DEBUG) << " (+) audio_path: " << cli_options_.audio_path;
                 break;
             case 'h':
             case '?':
