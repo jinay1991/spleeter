@@ -9,8 +9,6 @@
 #include "spleeter/i_audio_adapter.h"
 #include "spleeter/i_separator.h"
 
-#include "nlohmann/json.hpp"
-
 #include <cstdint>
 #include <memory>
 #include <string>
@@ -22,8 +20,6 @@ namespace spleeter
 class Separator : public ISeparator
 {
   public:
-    using json = nlohmann::json;
-
     /// @brief Constructor
     ///
     /// @param params_descriptor[in] - Descriptor for TF params to be used.

@@ -8,11 +8,12 @@
 #include <cstdint>
 #include <string>
 #include <tuple>
+#include <vector>
 
 namespace spleeter
 {
 /// @todo Use appropriate datastructure for waveform.
-using Waveform = std::string;
+using Waveform = std::vector<std::uint8_t>;
 
 /// @brief Audio Adapter to read/write audio files
 class IAudioAdapter

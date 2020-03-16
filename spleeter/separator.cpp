@@ -12,7 +12,7 @@ Separator::Separator(const std::string& configuration, const bool mwf)
 {
 }
 
-std::vector<Waveform> Separator::Separate(const std::string& waveform) { return std::vector<Waveform>{}; }
+std::vector<Waveform> Separator::Separate(const Waveform& waveform) { return std::vector<Waveform>{}; }
 
 void Separator::SeparateToFile(const std::string& audio_descriptor, const std::string& destination,
                                const std::string& audio_adapter, const double offset, const double duration,

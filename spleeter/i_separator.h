@@ -12,7 +12,7 @@
 namespace spleeter
 {
 /// @todo Define Waveform datastructure
-using Waveform = std::string;
+using Waveform = std::vector<std::uint8_t>;
 
 /// @brief Interface for Separator APIs
 class ISeparator
@@ -31,7 +31,7 @@ class ISeparator
     ///
     /// @param waveform[in] Waveform to apply separation on.
     /// @returns Separated waveforms
-    virtual std::vector<Waveform> Separate(const std::string& waveform) = 0;
+    virtual std::vector<Waveform> Separate(const Waveform& waveform) = 0;
 
     /// @brief Performs source separation and export result to file using given audio adapter.
     ///
