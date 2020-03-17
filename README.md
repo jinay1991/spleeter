@@ -1,5 +1,45 @@
 # Spleeter
 
+## Dev Environment
+
+To setup developer environment, the project requires following packages.
+
+```
+apt-get update && apt-get upgrade -y && apt-get autoremove -y
+
+# Installation of general dependencies
+apt-get install -y build-essential gcc g++ lcov make gdb
+apt-get install -y openjdk-11-jdk openjdk-11-jre
+apt-get install -y libtool clang-format-6.0
+apt-get install -y git curl
+apt-get install -y wget
+
+# Installation of FFMPEG
+apt-get install -y libavcodec-dev libavformat-dev libavfilter-dev libavdevice-dev libswresample-dev libswscale-dev ffmpeg
+```
+
+### Build System
+
+This project uses `bazel` build system. To install, run following command or find documentation for installation on office site [here](https://docs.bazel.build/versions/master/install-ubuntu.html#installing-bazel).
+
+For Linux/macOS systems,
+
+```
+echo "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" | tee /etc/apt/sources.list.d/bazel.list
+curl https://bazel.build/bazel-release.pub.gpg | apt-key add -
+apt-get update && apt-get install -y bazel
+```
+
+### Docker
+
+One can use docker container to use as dev environment,
+
+Install `docker` tool from official site (here)[https://www.docker.com/products/docker-desktop]
+
+```
+docker pull registry.gitlab.com/jinay1991/spleeter
+```
+
 ## Reference
 
 - Deezer Research - Source Separation Engine Story - deezer.io blog post:
