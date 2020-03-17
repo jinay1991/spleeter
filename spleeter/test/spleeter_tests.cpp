@@ -16,11 +16,7 @@ namespace spleeter
 {
 namespace
 {
-TEST(SpleeterSpec, Constructor)
-{
-    std::unique_ptr<IArgumentParser> argument_parser{std::make_unique<ArgumentParser>()};
-    Spleeter unit(std::move(argument_parser));
-}
+TEST(SpleeterSpec, Constructor) {}
 
 }  // namespace
 }  // namespace spleeter

@@ -22,6 +22,6 @@ class FfmpegAudioAdapterTest : public ::testing::Test
   protected:
     std::unique_ptr<IAudioAdapter> unit_;
 };
-TEST_F(FfmpegAudioAdapterTest, Load) { unit_->Load("", 0.0, 600.0, 44128); }
+
 }  // namespace
 }  // namespace spleeter
