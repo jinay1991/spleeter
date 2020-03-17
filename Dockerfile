@@ -19,6 +19,9 @@ RUN wget https://github.com/bazelbuild/buildtools/releases/download/0.29.0/build
 RUN chmod +x buildifier
 RUN mv buildifier /usr/bin
 
+# Installation of FFMPEG
+RUN apt-get install -y libavcodec-dev libavformat-dev libavfilter-dev libavdevice-dev libswresample-dev libswscale-dev ffmpeg
+
 # Installation of dependencies to Doxygen
 RUN apt-get install -y doxygen graphviz plantuml
 
