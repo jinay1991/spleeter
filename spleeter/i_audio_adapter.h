@@ -39,8 +39,8 @@ class IAudioAdapter
     /// @param sample_rate[in] - Sample rate to write file in.
     /// @param codec[in]       - Writing codec to use.
     /// @param bitrate[in]     - Bitrate of the written audio file.
-    virtual void Save(const std::string& path, const std::string& data, const std::int32_t& sample_rate,
-                      const std::string& codec) = 0;
+    virtual void Save(const std::string& path, const Waveform& data, const std::int32_t& sample_rate,
+                      const std::string& codec, const std::string& bitrate) = 0;
 };
 }  // namespace spleeter
 

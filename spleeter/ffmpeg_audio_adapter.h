@@ -62,8 +62,8 @@ class FfmpegAudioAdapter : public IAudioAdapter
     /// @param sample_rate[in] - Sample rate to write file in.
     /// @param codec[in]       - (Optional) Writing codec to use.
     /// @param bitrate[in]     - (Optional) Bitrate of the written audio file.
-    virtual void Save(const std::string& path, const std::string& data, const std::int32_t& sample_rate,
-                      const std::string& codec) override;
+    virtual void Save(const std::string& path, const Waveform& data, const std::int32_t& sample_rate,
+                      const std::string& codec, const std::string& bitrate) override;
 
   private:
     AVFrame* frame_;

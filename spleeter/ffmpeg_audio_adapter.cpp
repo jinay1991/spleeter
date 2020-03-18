@@ -112,8 +112,8 @@ std::pair<Waveform, std::int32_t> FfmpegAudioAdapter::Load(const std::string& pa
 }
 
 /// @brief Write waveform data to the file denoted by the given path using FFMPEG process.
-void FfmpegAudioAdapter::Save(const std::string& path, const std::string& data, const std::int32_t& sample_rate,
-                              const std::string& codec)
+void FfmpegAudioAdapter::Save(const std::string& path, const Waveform& data, const std::int32_t& sample_rate,
+                              const std::string& codec, const std::string& bitrate)
 {
 }
 }  // namespace spleeter
