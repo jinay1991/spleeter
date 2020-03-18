@@ -11,7 +11,6 @@
 
 namespace spleeter
 {
-/// @todo Define Waveform datastructure
 using Waveform = std::vector<std::uint8_t>;
 
 /// @brief Interface for Separator APIs

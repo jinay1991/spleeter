@@ -7,12 +7,11 @@
 
 #include <cstdint>
 #include <string>
-#include <tuple>
+#include <utility>
 #include <vector>
 
 namespace spleeter
 {
-/// @todo Use appropriate datastructure for waveform.
 using Waveform = std::vector<std::uint8_t>;
 
 /// @brief Audio Adapter to read/write audio files
@@ -29,9 +28,9 @@ class IAudioAdapter
     /// @param duration[in]     - Duration to load in seconds.
     /// @param sample_rate[in]  - Sample rate to load audio with.
     ///
-    /// @returns Loaded data a (waveform, sample_rate) tuple.
-    virtual std::tuple<Waveform, std::int32_t> Load(const std::string& path, const double offset, const double duration,
-                                                    const std::int32_t& sample_rate) = 0;
+    /// @returns Loaded data a (waveform, sample_rate) pair.
+    virtual std::pair<Waveform, std::int32_t> Load(const std::string& path, const double offset, const double duration,
+                                                   const std::int32_t& sample_rate) = 0;
 
     /// @brief Write waveform data to the file denoted by the given path using FFMPEG process.
     ///

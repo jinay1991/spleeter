@@ -38,8 +38,8 @@ FfmpegAudioAdapter::~FfmpegAudioAdapter()
     avformat_close_input(&format_);
 }
 
-std::tuple<Waveform, std::int32_t> FfmpegAudioAdapter::Load(const std::string& path, const double offset,
-                                                            const double duration, const std::int32_t& sample_rate)
+std::pair<Waveform, std::int32_t> FfmpegAudioAdapter::Load(const std::string& path, const double offset,
+                                                           const double duration, const std::int32_t& sample_rate)
 {
     std::int32_t ret{0};
     Waveform data{};
@@ -108,7 +108,7 @@ std::tuple<Waveform, std::int32_t> FfmpegAudioAdapter::Load(const std::string& p
     LOG(DEBUG) << "Decoded Waveform: \n"
                << " (+) size: " << data.size() << "\n"
                << " (+) sample_rate: " << codec_ctx_->sample_rate << "\n";
-    return std::make_tuple(data, codec_ctx_->sample_rate);
+    return std::make_pair(data, codec_ctx_->sample_rate);
 }
 
 /// @brief Write waveform data to the file denoted by the given path using FFMPEG process.
