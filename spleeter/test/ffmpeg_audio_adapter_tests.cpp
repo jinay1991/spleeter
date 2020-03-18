@@ -8,6 +8,8 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+#include <memory>
+
 namespace spleeter
 {
 namespace
@@ -51,7 +53,8 @@ TEST_F(FfmpegAudioAdapterTest, DISABLED_Load)
 
 TEST_F(FfmpegAudioAdapterTest, DISABLED_LoadError)
 {
-    // EXPECT_THROW(unit_->Load("Paris City Jazz", test_offset_, test_duration_, test_sample_rate_), std::runtime_error);
+    // EXPECT_THROW(unit_->Load("Paris City Jazz", test_offset_, test_duration_, test_sample_rate_),
+    // std::runtime_error);
 }
 
 TEST_F(FfmpegAudioAdapterTest, DISABLED_Save)
