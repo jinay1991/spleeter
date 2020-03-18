@@ -1,5 +1,6 @@
 ///
 /// @file
+/// @brief Contains definitions for Separator class methods
 /// @copyright Copyright (c) 2020, MIT License
 ///
 #include "spleeter/separator.h"

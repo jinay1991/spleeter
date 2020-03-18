@@ -1,5 +1,6 @@
 ///
 /// @file
+/// @brief Contains implementation of FFMPEG based Audio Adapter
 /// @copyright Copyright (c) 2020, MIT License
 ///
 #ifndef SPLEETER_FFMPEG_AUDIO_ADAPTER_H_
@@ -63,12 +64,7 @@ class FfmpegAudioAdapter : public IAudioAdapter
     /// @param codec[in]       - (Optional) Writing codec to use.
     /// @param bitrate[in]     - (Optional) Bitrate of the written audio file.
     virtual void Save(const std::string& path, const Waveform& data, const std::int32_t& sample_rate,
-                      const std::string& codec, const std::string& bitrate) override;
-
-  private:
-    AVFrame* frame_;
-    AVCodecContext* codec_ctx_;
-    AVFormatContext* format_;
+                      const std::string& codec, const std::int32_t& bitrate) override;
 };
 }  // namespace spleeter
 

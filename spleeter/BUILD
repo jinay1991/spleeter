@@ -14,6 +14,7 @@ cc_library(
     ],
     deps = [
         "//spleeter/argument_parser",
+        "//spleeter/data_types",
         "//spleeter/logging",
         "@ffmpeg//:avcodec",
         "@ffmpeg//:avformat",

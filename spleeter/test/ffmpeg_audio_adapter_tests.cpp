@@ -14,33 +14,37 @@ namespace spleeter
 {
 namespace
 {
-class FfmpegAudioAdapterTest : public ::testing::Test
+class AudioAdapterTest : public ::testing::Test
 {
   public:
-    FfmpegAudioAdapterTest()
-        : unit_{std::make_unique<FfmpegAudioAdapter>()},
+    AudioAdapterTest()
+        : audio_adapter_{std::make_unique<FfmpegAudioAdapter>()},
           test_audio_description_{"audio_example.mp3"},
           test_offset_{0.0},
           test_duration_{600.0},
-          test_sample_rate_{44100}
+          test_sample_rate_{44100},
+          test_codec_{"mp3"},
+          test_bitrate_{"128k"}
     {
     }
 
-    ~FfmpegAudioAdapterTest() = default;
+    ~AudioAdapterTest() = default;
 
   protected:
-    std::unique_ptr<IAudioAdapter> unit_;
+    std::unique_ptr<IAudioAdapter> audio_adapter_;
 
     const std::string test_audio_description_;
     const double test_offset_;
     const double test_duration_;
     const std::int32_t test_sample_rate_;
+    const std::string test_codec_;
+    const std::string test_bitrate_;
 };
 
-TEST_F(FfmpegAudioAdapterTest, DISABLED_Load)
+TEST_F(AudioAdapterTest, DISABLED_Load)
 {
     // auto waveform_sample_rate_pair =
-    //     unit_->Load(test_audio_description_, test_offset_, test_duration_, test_sample_rate_);
+    //     audio_adapter_->Load(test_audio_description_, test_offset_, test_duration_, test_sample_rate_);
     // auto waveform = waveform_sample_rate_pair.first;
     // auto sample_rate = waveform_sample_rate_pair.second;
 
@@ -51,23 +55,21 @@ TEST_F(FfmpegAudioAdapterTest, DISABLED_Load)
     // ASSERT_EQ(waveform[1].size(), 2);
 }
 
-TEST_F(FfmpegAudioAdapterTest, DISABLED_LoadError)
+TEST_F(AudioAdapterTest, DISABLED_LoadError)
 {
-    // EXPECT_THROW(unit_->Load("Paris City Jazz", test_offset_, test_duration_, test_sample_rate_),
+    // EXPECT_THROW(audio_adapter_->Load("Paris City Jazz", test_offset_, test_duration_, test_sample_rate_),
     // std::runtime_error);
 }
 
-TEST_F(FfmpegAudioAdapterTest, DISABLED_Save)
+TEST_F(AudioAdapterTest, DISABLED_Save)
 {
-    // auto audio_data = Waveform{};
-    // auto path = "/tmp/ffmpeg-save.mp3";
-    // unit_->Save(path, audio_data, test_sample_rate_, "mp3", "128k");
-    // probe = ffmpeg.probe(TEST_AUDIO_DESCRIPTOR)
-    // assert len(probe['streams']) == 1
-    // stream = probe['streams'][0]
-    // assert stream['codec_type'] == 'audio'
-    // assert stream['channels'] == 2
-    // assert stream['duration'] == '10.919184'
+    auto audio_data = Waveform{};
+    auto path = "/tmp/ffmpeg-save.wav";
+    auto codec = "wav";
+    auto bitrate = 128000;
+    auto sample_rate = 44100;
+
+    audio_adapter_->Save(path, audio_data, sample_rate, codec, bitrate);
 }
 
 }  // namespace

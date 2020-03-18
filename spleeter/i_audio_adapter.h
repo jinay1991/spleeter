@@ -1,9 +1,12 @@
 ///
 /// @file
+/// @brief Contains interface for Audio Adapter
 /// @copyright Copyright (c) 2020, MIT License
 ///
 #ifndef SPLEETER_I_AUDIO_ADAPTER_H_
 #define SPLEETER_I_AUDIO_ADAPTER_H_
+
+#include "spleeter/data_types/waveform.h"
 
 #include <cstdint>
 #include <string>
@@ -12,8 +15,6 @@
 
 namespace spleeter
 {
-using Waveform = std::vector<std::uint8_t>;
-
 /// @brief Audio Adapter to read/write audio files
 class IAudioAdapter
 {
@@ -40,7 +41,7 @@ class IAudioAdapter
     /// @param codec[in]       - Writing codec to use.
     /// @param bitrate[in]     - Bitrate of the written audio file.
     virtual void Save(const std::string& path, const Waveform& data, const std::int32_t& sample_rate,
-                      const std::string& codec, const std::string& bitrate) = 0;
+                      const std::string& codec, const std::int32_t& bitrate) = 0;
 };
 }  // namespace spleeter
 

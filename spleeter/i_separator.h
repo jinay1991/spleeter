@@ -6,13 +6,13 @@
 #ifndef SPLEETER_I_SEPARATOR_H_
 #define SPLEETER_I_SEPARATOR_H_
 
+#include "spleeter/data_types/waveform.h"
+
 #include <string>
 #include <vector>
 
 namespace spleeter
 {
-using Waveform = std::vector<std::uint8_t>;
-
 /// @brief Interface for Separator APIs
 class ISeparator
 {
