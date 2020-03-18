@@ -106,6 +106,16 @@ doxygen:
 # -------------
 # Stage: Deploy
 # -------------
+package:
+  stage: deploy
+  dependencies:
+    - bazel-build-and-test
+  script:
+    - bazel build //:spleeter
+  artifacts:
+    paths:
+      - bazel-bin/spleeter.tar.gz
+
 pages:
   stage: deploy
   dependencies:

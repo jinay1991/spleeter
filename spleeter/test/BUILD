@@ -3,7 +3,7 @@ load("@rules_cc//cc:defs.bzl", "cc_test")
 package(default_visibility = ["//visibility:public"])
 
 cc_test(
-    name = "spleeter_tests",
+    name = "unit_tests",
     srcs = glob(["*.cpp"]),
     copts = [
         "-std=c++14",
@@ -11,6 +11,7 @@ cc_test(
         "-Werror",
         "-Wno-error=write-strings",
     ],
+    linkstatic = True,
     deps = [
         "//spleeter",
         "//spleeter/argument_parser",

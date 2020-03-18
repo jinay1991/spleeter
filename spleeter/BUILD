@@ -12,9 +12,6 @@ cc_library(
         #"-Werror",
         #"-Wno-error=write-strings",
     ],
-    linkopts = [
-        "-lm",
-    ],
     deps = [
         "//spleeter/argument_parser",
         "//spleeter/logging",
@@ -23,5 +20,21 @@ cc_library(
         "@ffmpeg//:avutil",
         "@ffmpeg//:swresample",
         "@nlohmann//:json",
+    ],
+)
+
+# Export Headers
+exports_files(glob([
+    "**/*.h",
+]))
+
+filegroup(
+    name = "spleeter-dev",
+    testonly = True,
+    srcs = glob([
+        "**/*.h",
+    ]) + [
+        "//spleeter",
+        "//spleeter/test:unit_tests",
     ],
 )
