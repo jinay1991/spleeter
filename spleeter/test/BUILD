@@ -11,6 +11,9 @@ cc_test(
         "-Werror",
         "-Wno-error=write-strings",
     ],
+    data = [
+        "//:testdata",
+    ],
     linkstatic = True,
     deps = [
         "//spleeter",

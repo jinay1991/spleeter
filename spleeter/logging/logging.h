@@ -38,10 +38,12 @@ class LoggingWrapper
     };
 
     /// @brief Constructor
+    ///
     /// @param [in] severity - Logging Severity
     explicit LoggingWrapper(const LogSeverity& severity);
 
     /// @brief Constructor
+    ///
     /// @param [in] severity - Logging Severity
     /// @param [in] should_log - Enable/Disable Logging
     explicit LoggingWrapper(const LogSeverity& severity, const bool should_log);
@@ -66,20 +68,36 @@ class LoggingWrapper
 }  // namespace spleeter
 
 /// @brief Log Stream with provided severity level
+///
 /// @param [in] severity - Severity Level (DEBUG, INFO, WARN, ERROR, FATAL)
 #define LOG(severity) \
     spleeter::logging::LoggingWrapper(spleeter::logging::LoggingWrapper::LogSeverity::severity).Stream()
 
 /// @brief Checks for Assertion. If condition is false, Log FATAL Error and exit program.
+///
 /// @param [in] condition - condition to be evaluated
 #define ASSERT_CHECK(condition)                                                              \
     spleeter::logging::LoggingWrapper(spleeter::logging::LoggingWrapper::LogSeverity::FATAL, \
                                       (condition) ? false : true)                            \
         .Stream()
 
-/// @brief Checks for Assertion for Comparision. If a and b are not same, Log FATAL Error and exit program.
+/// @brief Checks for Assertion for Equals Comparision. If a and b are not same, Log FATAL Error and exit program.
+///
 /// @param [in] a - attribute a
 /// @param [in] b - attribute b
 #define ASSERT_CHECK_EQ(a, b) ASSERT_CHECK(a == b)
+
+/// @brief Checks for Assertion for Lesser Comparision. If a is not less than b, Log FATAL Error and exit program.
+///
+/// @param [in] a - attribute a
+/// @param [in] b - attribute b
+#define ASSERT_CHECK_LT(a, b) ASSERT_CHECK(a < b)
+
+/// @brief Checks for Assertion for Lesser & Equals Comparision. If a is not less than equals b, Log FATAL Error and
+/// exit program.
+///
+/// @param [in] a - attribute a
+/// @param [in] b - attribute b
+#define ASSERT_CHECK_LE(a, b) ASSERT_CHECK(a <= b)
 
 #endif  /// SPLEETER_LOGGING_LOGGING_H_
