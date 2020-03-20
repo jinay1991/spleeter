@@ -7,11 +7,13 @@
 #define SPLEETER_DATA_TYPES_WAVEFORM_H_
 
 #include <cstdint>
+#include <string>
 #include <vector>
 
 namespace spleeter
 {
-using Waveform = std::vector<std::vector<std::uint8_t>>;
+// using Waveform = std::vector<std::vector<std::uint8_t>>;
+using Waveform = std::string;
 
 }  // namespace spleeter
 #endif  /// SPLEETER_DATA_TYPES_WAVEFORM_H_

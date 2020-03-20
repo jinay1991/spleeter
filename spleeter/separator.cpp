@@ -33,7 +33,7 @@ void Separator::SeparateToFile(const std::string& audio_descriptor, const std::s
 {
     auto waveforms_sample_rate_tuple = audio_adapter_->Load(audio_descriptor, offset, duration, sample_rate_);
 
-    auto waveforms = Separate(waveforms_sample_rate_tuple.first);
+    // auto waveforms = Separate(waveforms_sample_rate_tuple.first);
 }
 void Separator::Join(const double& timeout) {}
 void Separator::GetPredictor() const {};

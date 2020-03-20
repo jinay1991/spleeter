@@ -43,7 +43,7 @@ class FfmpegAudioAdapter : public IAudioAdapter
     FfmpegAudioAdapter();
 
     /// @brief Destructor.
-    virtual ~FfmpegAudioAdapter() override;
+    ~FfmpegAudioAdapter() = default;
 
     /// @brief Loads the audio file denoted by the given path and returns it data as a waveform.
     ///
@@ -53,8 +53,8 @@ class FfmpegAudioAdapter : public IAudioAdapter
     /// @param sample_rate[in]  - (Optional) Sample rate to load audio with.
     ///
     /// @returns Loaded data a (waveform, sample_rate) pair.
-    virtual std::pair<Waveform, std::int32_t> Load(const std::string& path, const double offset, const double duration,
-                                                   const std::int32_t& sample_rate) override;
+    std::pair<Waveform, std::int32_t> Load(const std::string& path, const double offset, const double duration,
+                                           const std::int32_t& sample_rate) override;
 
     /// @brief Write waveform data to the file denoted by the given path using FFMPEG process.
     ///
@@ -63,8 +63,8 @@ class FfmpegAudioAdapter : public IAudioAdapter
     /// @param sample_rate[in] - Sample rate to write file in.
     /// @param codec[in]       - (Optional) Writing codec to use.
     /// @param bitrate[in]     - (Optional) Bitrate of the written audio file.
-    virtual void Save(const std::string& path, const Waveform& data, const std::int32_t& sample_rate,
-                      const std::string& codec, const std::int32_t& bitrate) override;
+    void Save(const std::string& path, const Waveform& data, const std::int32_t& sample_rate, const std::string& codec,
+              const std::int32_t& bitrate) override;
 };
 }  // namespace spleeter
 

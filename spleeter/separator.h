@@ -39,7 +39,7 @@ class Separator : public ISeparator
     ///
     /// @param waveform[in] Waveform to apply separation on.
     /// @returns Separated waveforms
-    virtual std::vector<Waveform> Separate(const Waveform& waveform) override;
+    std::vector<Waveform> Separate(const Waveform& waveform) override;
 
     /// @brief Performs source separation and export result to file using given audio adapter.
     ///
@@ -56,12 +56,11 @@ class Separator : public ISeparator
     /// @param bitrate[in]          - (Optional) Export bitrate.
     /// @param filename_format[in]  - (Optional) Filename format.
     /// @param synchronous[in]      - (Optional) True is should by synchronous.
-    virtual void SeparateToFile(const std::string& audio_descriptor, const std::string& destination,
-                                const std::string& audio_adapter, const double offset = 0.0,
-                                const double duration = 600.0, const std::string& codec = "wav",
-                                const std::string bitrate = "128k",
-                                const std::string& filename_format = "{filename}/{instrument}.{codec}",
-                                const bool& synchronous = true) override;
+    void SeparateToFile(const std::string& audio_descriptor, const std::string& destination,
+                        const std::string& audio_adapter, const double offset = 0.0, const double duration = 600.0,
+                        const std::string& codec = "wav", const std::string bitrate = "128k",
+                        const std::string& filename_format = "{filename}/{instrument}.{codec}",
+                        const bool& synchronous = true) override;
 
     /// @brief Wait for all pending tasks to be finished.
     virtual void Join(const double& timeout);

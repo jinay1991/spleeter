@@ -4,10 +4,12 @@
 ///
 #include "spleeter/ffmpeg_audio_adapter.h"
 #include "spleeter/i_audio_adapter.h"
+#include "spleeter/logging/logging.h"
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+#include <fstream>
 #include <memory>
 
 namespace spleeter
@@ -55,20 +57,21 @@ TEST_F(AudioAdapterTest, Load)
     // ASSERT_EQ(waveform[1].size(), 2);
 }
 
-TEST_F(AudioAdapterTest, DISABLED_LoadError)
+TEST_F(AudioAdapterTest, LoadError)
 {
-    // EXPECT_THROW(audio_adapter_->Load("Paris City Jazz", test_offset_, test_duration_, test_sample_rate_),
-    // std::runtime_error);
+    EXPECT_EXIT(audio_adapter_->Load("Paris City Jazz", test_offset_, test_duration_, test_sample_rate_),
+                ::testing::KilledBySignal(SIGABRT), "");
 }
 
 TEST_F(AudioAdapterTest, Save)
 {
-    auto audio_data = Waveform{};
-    auto path = "/tmp/ffmpeg-save.wav";
-    auto codec = "wav";
+    std::string path = "/tmp/decoded_audio.mp3";
+    auto codec = "mp3";
     auto bitrate = 128000;
     auto sample_rate = 44100;
-
+    std::ifstream audio_file("/tmp/decoded_audio.raw");
+    std::string audio_data{std::istream_iterator<std::uint8_t>(audio_file), std::istream_iterator<std::uint8_t>()};
+    LOG(INFO) << "Read {" << (audio_data.size() / 1000) << "} Kbytes.";
     audio_adapter_->Save(path, audio_data, sample_rate, codec, bitrate);
 }
 
