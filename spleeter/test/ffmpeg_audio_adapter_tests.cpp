@@ -47,6 +47,7 @@ TEST_F(AudioAdapterTest, Load)
 {
     auto waveform_sample_rate_pair =
         audio_adapter_->Load(test_audio_description_, test_offset_, test_duration_, test_sample_rate_);
+
     // auto waveform = waveform_sample_rate_pair.first;
     // auto sample_rate = waveform_sample_rate_pair.second;
 

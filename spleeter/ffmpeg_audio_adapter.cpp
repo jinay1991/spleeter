@@ -11,99 +11,30 @@
 
 namespace spleeter
 {
-namespace internal
-{
-static std::int32_t SelectChannelLayout(const AVCodec* codec)
-{
-    std::uint64_t best_ch_layout = 0;
-    std::int32_t best_nb_channels = 0;
-    if (!codec->channel_layouts)
-    {
-        return AV_CH_LAYOUT_STEREO;
-    }
-    const std::uint64_t* p = codec->channel_layouts;
-    while (*p)
-    {
-        std::int32_t nb_channels = av_get_channel_layout_nb_channels(*p);
-        if (nb_channels > best_nb_channels)
-        {
-            best_ch_layout = *p;
-            best_nb_channels = nb_channels;
-        }
-        p++;
-    }
-    return best_ch_layout;
-}
-
-static void Encode(AVCodecContext* audio_codec_context, AVPacket* packet, AVFrame* frame, FILE* fptr)
-{
-    std::int32_t ret{0};
-
-    /* send the packet with the compressed data to the decoder */
-    ret = avcodec_send_packet(audio_codec_context, packet);
-    ASSERT_CHECK_EQ(0, ret) << "Error submitting the packet to the decoder " << ret << " AVERROR_EOF: " << AVERROR_EOF
-                            << " AVERROR(EINVAL): " << EINVAL << " AVERROR(ENOMEM): " << ENOMEM
-                            << " AVERROR(EAGAIN): " << EAGAIN;
-
-    /* read all the output frames (in general there may be any number of them */
-    while (ret >= 0)
-    {
-        ret = avcodec_receive_frame(audio_codec_context, frame);
-        ASSERT_CHECK_LE(0, ret) << "Error decoding audio frame";
-
-        fwrite(packet->data, 1, packet->size, fptr);
-        av_packet_unref(packet);
-    }
-}
-
-static void Decode(AVCodecContext* audio_codec_context, AVPacket* packet, AVFrame* frame, FILE* fptr)
-{
-    std::int32_t ret{0};
-
-    /* send the packet with the compressed data to the decoder */
-    ret = avcodec_send_packet(audio_codec_context, packet);
-    ASSERT_CHECK_EQ(0, ret) << "Error submitting the packet to the decoder";
-
-    /* read all the output frames (in general there may be any number of them */
-    while (ret >= 0)
-    {
-        ret = avcodec_receive_frame(audio_codec_context, frame);
-        ASSERT_CHECK_LE(0, ret) << "Error decoding audio frame";
-
-        auto data_size = av_get_bytes_per_sample(audio_codec_context->sample_fmt);
-        ASSERT_CHECK_EQ(0, data_size) << "Failed to calculate data size";
-
-        for (auto i = 0; i < frame->nb_samples; i++)
-        {
-            for (auto ch = 0; ch < audio_codec_context->channels; ch++)
-            {
-                fwrite(frame->data[ch] + data_size * i, 1, data_size, fptr);
-            }
-        }
-    }
-}
-}  // namespace internal
-
 FfmpegAudioAdapter::FfmpegAudioAdapter() { av_register_all(); }
 
 /// @ref https://ffmpeg.org/doxygen/trunk/decode_audio_8c-example.html
 std::pair<Waveform, std::int32_t> FfmpegAudioAdapter::Load(const std::string& path, const double offset,
                                                            const double duration, const std::int32_t& sample_rate)
 {
+    ///
+    /// Open Input Audio
+    ///
     AVFormatContext* format_context = avformat_alloc_context();
     ASSERT_CHECK(format_context) << "Could not allocate format context";
 
     auto ret = avformat_open_input(&format_context, path.c_str(), nullptr, nullptr);
-    ASSERT_CHECK_EQ(0, ret) << "Could not open file " << path;
+    ASSERT_CHECK_LE(0, ret) << "Could not open file " << path;
 
     ret = avformat_find_stream_info(format_context, nullptr);
-    ASSERT_CHECK_EQ(0, ret) << "Could not retrieve stream info from file " << path;
+    ASSERT_CHECK_LE(0, ret) << "Could not retrieve stream info from file " << path;
 
     ret = av_find_best_stream(format_context, AVMEDIA_TYPE_AUDIO, -1, -1, nullptr, 0);
-    ASSERT_CHECK_EQ(0, ret) << "Could not find any audio stream in the file " << path;
-
+    ASSERT_CHECK_LE(0, ret) << "Could not find any audio stream in the file " << path;
     auto stream_index = ret;
     AVStream* audio_stream = format_context->streams[stream_index];
+    LOG(DEBUG) << "Given audio file {" << path << "} has {"
+               << av_get_media_type_string(audio_stream->codecpar->codec_type) << "} media stream.";
 
     AVCodec* audio_codec = avcodec_find_decoder(audio_stream->codecpar->codec_id);
     ASSERT_CHECK(audio_codec) << "Failed to find {" << audio_stream->codecpar->codec_id << "} codec";
@@ -113,31 +44,36 @@ std::pair<Waveform, std::int32_t> FfmpegAudioAdapter::Load(const std::string& pa
                                       << "} codec context.";
 
     ret = avcodec_parameters_to_context(audio_codec_context, audio_stream->codecpar);
-    ASSERT_CHECK_EQ(0, ret) << "Failed to copy {" << audio_stream->codecpar->codec_id
+    ASSERT_CHECK_LE(0, ret) << "Failed to copy {" << audio_stream->codecpar->codec_id
                             << "} codec parameters to decoder context.";
 
     ret = avcodec_open2(audio_codec_context, audio_codec, nullptr);
-    ASSERT_CHECK_EQ(0, ret) << "Failed to open {" << audio_stream->codecpar->codec_id << "} codec";
+    ASSERT_CHECK_LE(0, ret) << "Failed to open {" << audio_stream->codecpar->codec_id << "} codec";
 
-    AVFrame* frame = av_frame_alloc();
-    ASSERT_CHECK(frame) << "Could not allocate frame";
+    av_dump_format(format_context, 0, path.c_str(), 0);
 
+    ///
+    /// Read Audio
+    ///
     AVPacket packet;
-
     av_init_packet(&packet);
 
-    FILE* fptr = fopen("/tmp/decoded_audio.raw", "wb");
+    FILE* fptr = fopen("/tmp/decoded_audio.wav", "wb");
     ASSERT_CHECK(fptr) << "Failed to open/create output file";
 
     while (av_read_frame(format_context, &packet) >= 0)
     {
+        AVFrame* frame = av_frame_alloc();
+        ASSERT_CHECK(frame) << "Could not allocate frame";
+
+        av_packet_rescale_ts(&packet, audio_stream->time_base, audio_codec_context->time_base);
+
         if (packet.stream_index == stream_index)
         {
             ret = avcodec_send_packet(audio_codec_context, &packet);
             ASSERT_CHECK_LE(0, ret) << "Error sending packet for decoding";
             while (ret >= 0)
             {
-                std::int32_t got_packet{0};
                 ret = avcodec_receive_frame(audio_codec_context, frame);
                 if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF)
                 {
@@ -146,70 +82,32 @@ std::pair<Waveform, std::int32_t> FfmpegAudioAdapter::Load(const std::string& pa
                 ASSERT_CHECK_LE(0, ret) << "Error during decoding";
                 auto unpadded_linesize = frame->nb_samples * av_get_bytes_per_sample(audio_codec_context->sample_fmt);
 
+                /// @todo Copy the buffer instead of saving to file
                 fwrite(frame->data[0], 1, unpadded_linesize, fptr);
             }
         }
+        av_frame_free(&frame);
         av_packet_unref(&packet);
     }
     fclose(fptr);
-
-    av_frame_free(&frame);
     avcodec_close(audio_codec_context);
     avformat_close_input(&format_context);
 
     LOG(DEBUG) << "Decoded Waveform: \n"
+               << " (+) bitrate: " << audio_codec_context->bit_rate << "\n"
+               << " (+) codec: " << avcodec_get_name(audio_codec_context->codec_id) << "\n"
                << " (+) sample_rate: " << audio_codec_context->sample_rate;
 
     return std::make_pair(Waveform{}, audio_codec_context->sample_rate);
 }
 
-namespace internal
-{
-struct OutputStream
-{
-    AVStream* st;
-    AVCodecContext* enc;
-    /* pts of the next frame that will be generated */
-    int64_t next_pts;
-    int samples_count;
-    AVFrame* frame;
-    AVFrame* tmp_frame;
-    float t, tincr, tincr2;
-    struct SwsContext* sws_ctx;
-    struct SwrContext* swr_ctx;
-};
-#define STREAM_DURATION 10.0
-
-/* Prepare a 16 bit dummy audio frame of 'frame_size' samples and
- * 'nb_channels' channels. */
-static AVFrame* get_audio_frame(OutputStream* ost)
-{
-    AVFrame* frame = ost->tmp_frame;
-    int j, i, v;
-    int16_t* q = (int16_t*)frame->data[0];
-    /* check if we want to generate more frames */
-    if (av_compare_ts(ost->next_pts, ost->enc->time_base, STREAM_DURATION, (AVRational){1, 1}) > 0)
-    {
-        return NULL;
-    }
-    for (j = 0; j < frame->nb_samples; j++)
-    {
-        v = (int)(sin(ost->t) * 10000);
-        for (i = 0; i < ost->enc->channels; i++) *q++ = v;
-        ost->t += ost->tincr;
-        ost->tincr += ost->tincr2;
-    }
-    frame->pts = ost->next_pts;
-    ost->next_pts += frame->nb_samples;
-    return frame;
-}
-}  // namespace internal
-
 /// @ref https://ffmpeg.org/doxygen/trunk/encode_audio_8c-example.html
 void FfmpegAudioAdapter::Save(const std::string& path, const Waveform& data, const std::int32_t& sample_rate,
                               const std::string& codec, const std::int32_t& bitrate)
 {
-    LOG(INFO) << "Received " << (data.size() / 1000) << " Kbytes for encoding...";
+    ///
+    /// Open Output Audio
+    ///
     AVFormatContext* format_context{nullptr};
     auto ret = avformat_alloc_output_context2(&format_context, nullptr, nullptr, path.c_str());
     ASSERT_CHECK_LE(0, ret) << "Cound not deduce output format from the file extension, (Returned: " << ret << ")";
