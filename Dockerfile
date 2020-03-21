@@ -6,7 +6,7 @@ RUN apt-get update && apt-get upgrade -y && apt-get autoremove -y
 RUN apt-get install -y build-essential gcc g++ lcov make gdb
 RUN apt-get install -y openjdk-11-jdk openjdk-11-jre
 RUN apt-get install -y libtool clang-format-6.0
-RUN apt-get install -y git curl
+RUN apt-get install -y git git-lfs curl
 RUN apt-get install -y wget
 
 # Installation of Bazel Package

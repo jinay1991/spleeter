@@ -137,7 +137,7 @@ std::pair<Waveform, std::int32_t> FfmpegAudioAdapter::Load(const std::string& pa
             ASSERT_CHECK_LE(0, ret) << "Error sending packet for decoding";
             while (ret >= 0)
             {
-                std::int32_t got_frame{0};
+                std::int32_t got_packet{0};
                 ret = avcodec_receive_frame(audio_codec_context, frame);
                 if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF)
                 {
@@ -162,6 +162,48 @@ std::pair<Waveform, std::int32_t> FfmpegAudioAdapter::Load(const std::string& pa
 
     return std::make_pair(Waveform{}, audio_codec_context->sample_rate);
 }
+
+namespace internal
+{
+struct OutputStream
+{
+    AVStream* st;
+    AVCodecContext* enc;
+    /* pts of the next frame that will be generated */
+    int64_t next_pts;
+    int samples_count;
+    AVFrame* frame;
+    AVFrame* tmp_frame;
+    float t, tincr, tincr2;
+    struct SwsContext* sws_ctx;
+    struct SwrContext* swr_ctx;
+};
+#define STREAM_DURATION 10.0
+
+/* Prepare a 16 bit dummy audio frame of 'frame_size' samples and
+ * 'nb_channels' channels. */
+static AVFrame* get_audio_frame(OutputStream* ost)
+{
+    AVFrame* frame = ost->tmp_frame;
+    int j, i, v;
+    int16_t* q = (int16_t*)frame->data[0];
+    /* check if we want to generate more frames */
+    if (av_compare_ts(ost->next_pts, ost->enc->time_base, STREAM_DURATION, (AVRational){1, 1}) > 0)
+    {
+        return NULL;
+    }
+    for (j = 0; j < frame->nb_samples; j++)
+    {
+        v = (int)(sin(ost->t) * 10000);
+        for (i = 0; i < ost->enc->channels; i++) *q++ = v;
+        ost->t += ost->tincr;
+        ost->tincr += ost->tincr2;
+    }
+    frame->pts = ost->next_pts;
+    ost->next_pts += frame->nb_samples;
+    return frame;
+}
+}  // namespace internal
 
 /// @ref https://ffmpeg.org/doxygen/trunk/encode_audio_8c-example.html
 void FfmpegAudioAdapter::Save(const std::string& path, const Waveform& data, const std::int32_t& sample_rate,
@@ -220,18 +262,19 @@ void FfmpegAudioAdapter::Save(const std::string& path, const Waveform& data, con
         audio_codec_context->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
     }
 
+    ///
+    /// Open Codec
+    ///
     ret = avcodec_open2(audio_codec_context, audio_codec, nullptr);
     ASSERT_CHECK_LE(0, ret) << "Could not open the context with the audio codec, (Returned: " << ret << ")";
-
-    AVPacket* packet = av_packet_alloc();
-    ASSERT_CHECK(packet) << "Could not allocate packet";
 
     AVFrame* frame = av_frame_alloc();
     ASSERT_CHECK(frame) << "Could not allocate frame";
 
-    frame->nb_samples = audio_codec_context->frame_size;
     frame->format = audio_codec_context->sample_fmt;
     frame->channel_layout = audio_codec_context->channel_layout;
+    frame->sample_rate = audio_codec_context->sample_rate;
+    frame->nb_samples = audio_codec_context->frame_size;
 
     ret = av_frame_get_buffer(frame, 0);
     ASSERT_CHECK_LE(0, ret) << "Could not allocate data buffers to frame, (Returned: " << ret << ")";
@@ -240,6 +283,20 @@ void FfmpegAudioAdapter::Save(const std::string& path, const Waveform& data, con
     ASSERT_CHECK_LE(0, ret) << "Failed to copy {" << audio_stream->codecpar->codec_id
                             << "} codec parameters to decoder context, (Returned: " << ret << ")";
 
+    auto swr_context = swr_alloc();
+    ASSERT_CHECK(swr_context) << "Could not allocate resampler context";
+
+    av_opt_set_int(swr_context, "in_channel_count", audio_codec_context->channels, 0);
+    av_opt_set_int(swr_context, "in_sample_rate", audio_codec_context->sample_rate, 0);
+    av_opt_set_sample_fmt(swr_context, "in_sample_fmt", AV_SAMPLE_FMT_S16, 0);
+    av_opt_set_int(swr_context, "out_channel_count", audio_codec_context->channels, 0);
+    av_opt_set_int(swr_context, "out_sample_rate", audio_codec_context->sample_rate, 0);
+    av_opt_set_sample_fmt(swr_context, "out_sample_fmt", audio_codec_context->sample_fmt, 0);
+
+    ret = swr_init(swr_context);
+    ASSERT_CHECK_LE(0, ret) << "Failed to initialize the resampling context";
+
+    /// Open Output file, if needed
     av_dump_format(format_context, 0, path.c_str(), 1);
 
     if (!(format_context->flags & AVFMT_NOFILE))
@@ -247,38 +304,63 @@ void FfmpegAudioAdapter::Save(const std::string& path, const Waveform& data, con
         ret = avio_open(&format_context->pb, path.c_str(), AVIO_FLAG_WRITE);
         ASSERT_CHECK_LE(0, ret) << "Could not open " << path << ", (Returned: " << ret << ")";
     }
-    ret = avformat_init_output(format_context, nullptr);
 
+    /// Write the stream header, if any
     ret = avformat_write_header(format_context, nullptr);
     ASSERT_CHECK_LE(0, ret) << "Error occurred when opening output file, (Returned: " << ret << ")";
 
-    av_init_packet(packet);
-
-    std::uint8_t* buffer = frame->data[0];
-    for (auto j = 0; j < frame->nb_samples; ++j)
+    std::uint32_t sample_count{0};
+    std::int32_t got_packet{1};
+    while (got_packet)
     {
-        auto value = data[j];
-        for (auto i = 0; i < audio_codec_context->channels; ++i)
+        AVPacket packet{};
+
+        av_init_packet(&packet);
+
+        /// Write buffer to frame
         {
-            *buffer++ = value;
+            std::uint16_t* buffer = (std::uint16_t*)frame->data[0];
+            for (auto j = 0; j < frame->nb_samples; ++j)
+            {
+                auto value = data[j];
+                for (auto i = 0; i < audio_codec_context->channels; ++i)
+                {
+                    *buffer++ = value;
+                }
+            }
+
+            // convert samples from native format to destination codec format, using the resampler compute destination
+            // number of samples
+            auto nb_samples =
+                av_rescale_rnd(swr_get_delay(swr_context, audio_codec_context->sample_rate) + frame->nb_samples,
+                               audio_codec_context->sample_rate, audio_codec_context->sample_rate, AV_ROUND_UP);
+            ASSERT_CHECK_EQ(nb_samples, frame->nb_samples);
+
+            ret = av_frame_make_writable(frame);
+            ASSERT_CHECK_LE(0, ret) << "Unable to make writable";
+
+            ret = swr_convert(swr_context, frame->data, nb_samples, (const std::uint8_t**)(frame->data),
+                              frame->nb_samples);
+            ASSERT_CHECK_LE(0, ret) << "Error while converting";
+
+            frame->pts = av_rescale_q(sample_count, AVRational{1, audio_codec_context->sample_rate},
+                                      audio_codec_context->time_base);
+            sample_count += nb_samples;
+        }
+
+        ret = avcodec_encode_audio2(audio_codec_context, &packet, frame, &got_packet);
+        ASSERT_CHECK_LE(0, ret) << "Error encoding audio frame";
+
+        if (got_packet)
+        {
+            av_packet_rescale_ts(&packet, audio_codec_context->time_base, audio_stream->time_base);
+            packet.stream_index = audio_stream->index;
+
+            ret = av_interleaved_write_frame(format_context, &packet);
+            ASSERT_CHECK_LE(0, ret) << "Error while writing audio";
         }
     }
 
-    ret = av_frame_make_writable(frame);
-    ASSERT_CHECK_EQ(0, ret) << "Unable to make writable";
-
-    std::int32_t got_frame{0};
-    ret = avcodec_encode_audio2(audio_codec_context, packet, frame, &got_frame);
-    ASSERT_CHECK_LE(0, ret) << "Error encoding audio frame";
-
-    if (got_frame)
-    {
-        av_packet_rescale_ts(packet, audio_codec_context->time_base, audio_stream->time_base);
-        packet->stream_index = audio_stream->index;
-
-        ret = av_interleaved_write_frame(format_context, packet);
-        ASSERT_CHECK_LE(0, ret) << "Error while writing audio";
-    }
     av_write_trailer(format_context);
 
     if (!(format_context->flags & AVFMT_NOFILE))
@@ -286,7 +368,6 @@ void FfmpegAudioAdapter::Save(const std::string& path, const Waveform& data, con
         avio_closep(&format_context->pb);
     }
     av_frame_free(&frame);
-    av_packet_free(&packet);
     avformat_free_context(format_context);
     avcodec_close(audio_codec_context);
     avcodec_free_context(&audio_codec_context);
