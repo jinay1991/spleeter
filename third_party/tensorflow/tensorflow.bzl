@@ -5,20 +5,25 @@ def tensorflow():
     if "bazel_skylib" not in native.existing_rules():
         http_archive(
             name = "bazel_skylib",
-            sha256 = "e72747100a8b6002992cc0bf678f6279e71a3fd4a88cab3371ace6c73432be30",
-            url = "https://github.com/bazelbuild/bazel-skylib/releases/download/1.0.0/bazel-skylib-1.0.0.tar.gz",
+            urls = [
+                "https://mirror.bazel.build/github.com/bazelbuild/bazel-skylib/releases/download/1.0.2/bazel-skylib-1.0.2.tar.gz",
+                "https://github.com/bazelbuild/bazel-skylib/releases/download/1.0.2/bazel-skylib-1.0.2.tar.gz",
+            ],
+            sha256 = "97e70364e9249702246c0e9444bccdc4b847bed1eb03c5a3ece4f83dfe6abc44",
         )
+
     if "io_bazel_rules_closure" not in native.existing_rules():
         http_archive(
             name = "io_bazel_rules_closure",
-            sha256 = "9d359cc1b508082d8ba309ba085da6ecec85e7a4d5bd08f8db9666ee39a85529",
-            strip_prefix = "rules_closure-0.9.0",
-            url = "https://github.com/bazelbuild/rules_closure/archive/0.9.0.zip",
+            sha256 = "9d4b3af0efb86b4f3b1658d12ad485e089587b537bfee0474f2a8549ad1d7f2c",
+            strip_prefix = "rules_closure-0.10.0",
+            url = "https://github.com/bazelbuild/rules_closure/archive/0.10.0.zip",
         )
+
     if "org_tensorflow" not in native.existing_rules():
         http_archive(
             name = "org_tensorflow",
-            sha256 = "4c13e99a2e5fdddc491e003304141f9d9060e11584499061b1b4224e500dc49a",
-            strip_prefix = "tensorflow-2.0.0",
-            url = "https://github.com/tensorflow/tensorflow/archive/v2.0.0.zip",
+            sha256 = "e82f3b94d863e223881678406faa5071b895e1ff928ba18578d2adbbc6b42a4c",
+            strip_prefix = "tensorflow-2.1.0",
+            url = "https://github.com/tensorflow/tensorflow/archive/v2.1.0.zip",
         )

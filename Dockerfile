@@ -28,10 +28,11 @@ RUN apt-get install -y doxygen graphviz plantuml
 # Installation of static code analysis
 RUN apt-get install -y cppcheck python python-pygments
 
-# Installation of tensorflow python package
+# Installation of tensorflow python dependencies
 RUN apt-get install -y python python-pip
 RUN python -m pip install -U pip
 RUN python -m pip install -U tensorflow
+RUN python -m pip install -U future
 
 # cleanup
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
