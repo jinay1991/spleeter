@@ -265,16 +265,12 @@ void FfmpegAudioAdapter::Save(const std::string& path, const Waveform& data, con
     FILE* fin = fopen("/tmp/decoded_audio.pcm", "rb");
     ASSERT_CHECK(fin) << "Unable to open input file";
 
-    for (auto i = 0; i < 100000; i++, buffer += frame_size)
+    for (auto i = 0; i < 10000 && i < (data.size() / frame_size); i++, buffer += frame_size)
     {
         // ret = fread(buffer, 1, frame_size, fin);
         // ASSERT_CHECK_LT(0, ret) << "Failed to read data";
-        if (i * frame_size >= data.size())
-        {
-            break;
-        }
+
         frame->data[0] = buffer;
-        // frame->data[1] = buffer;
         ret = Encode(frame, format_context, audio_codec_context, &data_present);
         ASSERT_CHECK_LE(0, ret) << "Unable to encode";
     }
