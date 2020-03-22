@@ -14,12 +14,10 @@ cc_library(
     ],
     deps = [
         "//spleeter/argument_parser",
+        "//spleeter/audio",
         "//spleeter/data_types",
+        "//spleeter/inference_engine",
         "//spleeter/logging",
-        "@ffmpeg//:avcodec",
-        "@ffmpeg//:avformat",
-        "@ffmpeg//:avutil",
-        "@ffmpeg//:swresample",
         "@nlohmann//:json",
     ],
 )

@@ -2,8 +2,8 @@
 /// @file
 /// @copyright Copyright (c) 2020, MIT License
 ///
-#include "spleeter/ffmpeg_audio_adapter.h"
-#include "spleeter/i_audio_adapter.h"
+#include "spleeter/audio/ffmpeg_audio_adapter.h"
+#include "spleeter/audio/i_audio_adapter.h"
 #include "spleeter/logging/logging.h"
 
 #include <gmock/gmock.h>
@@ -47,6 +47,7 @@ TEST_F(AudioAdapterTest, Load)
 {
     auto waveform_sample_rate_pair =
         audio_adapter_->Load(test_audio_description_, test_offset_, test_duration_, test_sample_rate_);
+
     // auto waveform = waveform_sample_rate_pair.first;
     // auto sample_rate = waveform_sample_rate_pair.second;
 
@@ -69,7 +70,8 @@ TEST_F(AudioAdapterTest, Save)
     auto codec = "mp3";
     auto bitrate = 128000;
     auto sample_rate = 44100;
-    std::ifstream audio_file("/tmp/decoded_audio.raw");
+    std::ifstream audio_file("/tmp/decoded_audio.pcm");
+    ASSERT_CHECK(audio_file.is_open()) << "Failed to open test file";
     std::string audio_data{std::istream_iterator<std::uint8_t>(audio_file), std::istream_iterator<std::uint8_t>()};
     LOG(INFO) << "Read {" << (audio_data.size() / 1000) << "} Kbytes.";
     audio_adapter_->Save(path, audio_data, sample_rate, codec, bitrate);

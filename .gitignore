@@ -3,6 +3,11 @@
 .devcontainer/*
 *.zip
 *.tar.xz
+5stems/*
+*.pb
+*.data*
+*.pcm
+*.raw
 
 # bazel build files
 bazel-*

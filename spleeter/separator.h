@@ -6,7 +6,7 @@
 #ifndef SPLEETER_SEPARATOR_H_
 #define SPLEETER_SEPARATOR_H_
 
-#include "spleeter/i_audio_adapter.h"
+#include "spleeter/audio/i_audio_adapter.h"
 #include "spleeter/i_separator.h"
 
 #include <cstdint>
@@ -22,8 +22,8 @@ class Separator : public ISeparator
   public:
     /// @brief Constructor
     ///
-    /// @param params_descriptor[in] - Descriptor for TF params to be used.
-    /// @param mwf[in]               - (Optional) True if MWF should be used, False otherwise.
+    /// @param params_descriptor [in] - Descriptor for TF params to be used.
+    /// @param mwf [in]               - (Optional) True if MWF should be used, False otherwise.
     explicit Separator(const std::string& configuration, const bool mwf = false);
 
     /// @brief Destructor.
@@ -37,7 +37,7 @@ class Separator : public ISeparator
     /// Given result is passed by to the given consumer, which will be waited for task finishing if
     /// synchronous flag is True.
     ///
-    /// @param waveform[in] Waveform to apply separation on.
+    /// @param waveform [in] Waveform to apply separation on.
     /// @returns Separated waveforms
     std::vector<Waveform> Separate(const Waveform& waveform) override;
 
@@ -46,16 +46,16 @@ class Separator : public ISeparator
     /// Filename format should be a Python formattable string that could use following parameters:
     /// {instrument}, {filename} and {codec}.
     ///
-    /// @param audio_descriptor[in] - Describe song to separate, used by audio adapter to retrieve and load audio data,
+    /// @param audio_descriptor [in] - Describe song to separate, used by audio adapter to retrieve and load audio data,
     ///                               in case of file based audio adapter, such descriptor would be a file path.
-    /// @param destination[in]      - Target directory to write output to.
-    /// @param audio_adapter[in]    - (Optional) Audio adapter to use for I/O.
-    /// @param offset[in]           - (Optional) Offset of loaded song.
-    /// @param duration[in]         - (Optional) Duration of loaded song.
-    /// @param codec[in]            - (Optional) Export codec.
-    /// @param bitrate[in]          - (Optional) Export bitrate.
-    /// @param filename_format[in]  - (Optional) Filename format.
-    /// @param synchronous[in]      - (Optional) True is should by synchronous.
+    /// @param destination [in]      - Target directory to write output to.
+    /// @param audio_adapter [in]    - (Optional) Audio adapter to use for I/O.
+    /// @param offset [in]           - (Optional) Offset of loaded song.
+    /// @param duration [in]         - (Optional) Duration of loaded song.
+    /// @param codec [in]            - (Optional) Export codec.
+    /// @param bitrate [in]          - (Optional) Export bitrate.
+    /// @param filename_format [in]  - (Optional) Filename format.
+    /// @param synchronous [in]      - (Optional) True is should by synchronous.
     void SeparateToFile(const std::string& audio_descriptor, const std::string& destination,
                         const std::string& audio_adapter, const double offset = 0.0, const double duration = 600.0,
                         const std::string& codec = "wav", const std::string bitrate = "128k",

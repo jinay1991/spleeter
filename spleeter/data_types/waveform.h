@@ -12,8 +12,8 @@
 
 namespace spleeter
 {
-// using Waveform = std::vector<std::vector<std::uint8_t>>;
 using Waveform = std::string;
+using Waveforms = std::vector<Waveform>;
 
 }  // namespace spleeter
 #endif  /// SPLEETER_DATA_TYPES_WAVEFORM_H_
