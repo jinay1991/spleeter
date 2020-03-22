@@ -3,10 +3,10 @@
 /// @brief Contains implementation of FFMPEG based Audio Adapter
 /// @copyright Copyright (c) 2020, MIT License
 ///
-#ifndef SPLEETER_FFMPEG_AUDIO_ADAPTER_H_
-#define SPLEETER_FFMPEG_AUDIO_ADAPTER_H_
+#ifndef SPLEETER_AUDIO_FFMPEG_AUDIO_ADAPTER_H_
+#define SPLEETER_AUDIO_FFMPEG_AUDIO_ADAPTER_H_
 
-#include "spleeter/i_audio_adapter.h"
+#include "spleeter/audio/i_audio_adapter.h"
 
 #ifndef __cplusplus__
 extern "C"
@@ -68,4 +68,4 @@ class FfmpegAudioAdapter : public IAudioAdapter
 };
 }  // namespace spleeter
 
-#endif  /// SPLEETER_FFMPEG_AUDIO_ADAPTER_H_
+#endif  /// SPLEETER_AUDIO_FFMPEG_AUDIO_ADAPTER_H_

@@ -3,7 +3,7 @@
 /// @brief Contains definitions for FFMPEG Audio Adapter class methods
 /// @copyright Copyright (c) 2020, MIT License
 ///
-#include "spleeter/ffmpeg_audio_adapter.h"
+#include "spleeter/audio/ffmpeg_audio_adapter.h"
 #include "spleeter/logging/logging.h"
 
 #include <algorithm>

@@ -3,8 +3,8 @@
 /// @brief Contains interface for Audio Adapter
 /// @copyright Copyright (c) 2020, MIT License
 ///
-#ifndef SPLEETER_I_AUDIO_ADAPTER_H_
-#define SPLEETER_I_AUDIO_ADAPTER_H_
+#ifndef SPLEETER_AUDIO_I_AUDIO_ADAPTER_H_
+#define SPLEETER_AUDIO_I_AUDIO_ADAPTER_H_
 
 #include "spleeter/data_types/waveform.h"
 
@@ -45,4 +45,4 @@ class IAudioAdapter
 };
 }  // namespace spleeter
 
-#endif  /// SPLEETER_I_AUDIO_ADAPTER_H_
+#endif  /// SPLEETER_AUDIO_I_AUDIO_ADAPTER_H_

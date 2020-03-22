@@ -4,7 +4,7 @@
 /// @copyright Copyright (c) 2020, MIT License
 ///
 #include "spleeter/separator.h"
-#include "spleeter/ffmpeg_audio_adapter.h"
+#include "spleeter/audio/ffmpeg_audio_adapter.h"
 
 namespace spleeter
 {

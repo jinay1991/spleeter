@@ -6,7 +6,7 @@
 #ifndef SPLEETER_SEPARATOR_H_
 #define SPLEETER_SEPARATOR_H_
 
-#include "spleeter/i_audio_adapter.h"
+#include "spleeter/audio/i_audio_adapter.h"
 #include "spleeter/i_separator.h"
 
 #include <cstdint>

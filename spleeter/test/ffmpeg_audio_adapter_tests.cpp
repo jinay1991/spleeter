@@ -2,8 +2,8 @@
 /// @file
 /// @copyright Copyright (c) 2020, MIT License
 ///
-#include "spleeter/ffmpeg_audio_adapter.h"
-#include "spleeter/i_audio_adapter.h"
+#include "spleeter/audio/ffmpeg_audio_adapter.h"
+#include "spleeter/audio/i_audio_adapter.h"
 #include "spleeter/logging/logging.h"
 
 #include <gmock/gmock.h>
