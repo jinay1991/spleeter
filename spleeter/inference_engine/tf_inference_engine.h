@@ -8,6 +8,9 @@
 #include "spleeter/argument_parser/cli_options.h"
 #include "spleeter/inference_engine/i_inference_engine.h"
 
+#include "tensorflow/cc/client/client_session.h"
+#include "tensorflow/cc/saved_model/loader.h"
+
 #include <cstdint>
 #include <memory>
 #include <string>
@@ -63,6 +66,18 @@ class TFInferenceEngine : public IInferenceEngine
 
     /// @brief Inference results (waveforms)
     Waveforms results_;
+
+    /// @brief Saved Model bundle
+    std::shared_ptr<tensorflow::SavedModelBundle> bundle_;
+
+    /// @brief Input Tensor
+    tensorflow::Tensor input_tensor_;
+
+    /// @brief Output Tensors
+    std::vector<tensorflow::Tensor> output_tensors_;
+
+    /// @brief Output Tensors names
+    std::vector<std::string> output_tensor_names_;
 };
 
 }  // namespace spleeter
