@@ -5,15 +5,8 @@
 #include "spleeter/inference_engine/tflite_inference_engine.h"
 #include "spleeter/logging/logging.h"
 
-#include "tensorflow/lite/builtin_op_data.h"
-#include "tensorflow/lite/core/api/profiler.h"
-#include "tensorflow/lite/delegates/nnapi/nnapi_delegate.h"
-#include "tensorflow/lite/interpreter.h"
 #include "tensorflow/lite/kernels/register.h"
 #include "tensorflow/lite/optional_debug_tools.h"
-#include "tensorflow/lite/profiling/profile_summarizer.h"
-#include "tensorflow/lite/string_util.h"
-#include "tensorflow/lite/tools/evaluation/utils.h"
 
 #include <sys/time.h>
 #include <algorithm>

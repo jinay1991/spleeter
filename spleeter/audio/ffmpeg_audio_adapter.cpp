@@ -178,7 +178,9 @@ void FfmpegAudioAdapter::Save(const std::string& path, const Waveform& data, con
     AVCodecContext* audio_codec_context = avcodec_alloc_context3(audio_codec);
     ASSERT_CHECK(audio_codec_context) << "Could not allocate encoding context";
 
-    /// Configuation copy
+    ///
+    /// Adjust Encoding Parameters
+    ///
     {
         audio_codec_context->bit_rate = bitrate;
         audio_codec_context->sample_rate = sample_rate;
@@ -215,6 +217,7 @@ void FfmpegAudioAdapter::Save(const std::string& path, const Waveform& data, con
             audio_codec_context->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
         }
     }
+
     ///
     /// Open Codec
     ///
@@ -238,7 +241,7 @@ void FfmpegAudioAdapter::Save(const std::string& path, const Waveform& data, con
     ASSERT_CHECK_LE(0, ret) << "Error occurred when opening output file, (Returned: " << ret << ")";
 
     ///
-    /// Process data
+    /// Write Audio
     ///
     AVFrame* frame = av_frame_alloc();
     ASSERT_CHECK(frame) << "Could not allocate frame";
@@ -265,11 +268,8 @@ void FfmpegAudioAdapter::Save(const std::string& path, const Waveform& data, con
     FILE* fin = fopen("/tmp/decoded_audio.pcm", "rb");
     ASSERT_CHECK(fin) << "Unable to open input file";
 
-    for (auto i = 0; i < 10000 && i < (data.size() / frame_size); i++, buffer += frame_size)
+    for (auto i = 0U; i < 10000U && i < (data.size() / frame_size); i++, buffer += frame_size)
     {
-        // ret = fread(buffer, 1, frame_size, fin);
-        // ASSERT_CHECK_LT(0, ret) << "Failed to read data";
-
         frame->data[0] = buffer;
         ret = Encode(frame, format_context, audio_codec_context, &data_present);
         ASSERT_CHECK_LE(0, ret) << "Unable to encode";

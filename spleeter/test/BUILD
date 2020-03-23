@@ -4,12 +4,14 @@ package(default_visibility = ["//visibility:public"])
 
 cc_test(
     name = "unit_tests",
-    srcs = glob(["*.cpp"]),
+    srcs = glob(
+        ["*.cpp"],
+        exclude = ["spleeter_tests.cpp"],
+    ),
     copts = [
         "-std=c++14",
         "-Wall",
         "-Werror",
-        "-Wno-error=write-strings",
     ],
     data = [
         "//:testdata",
@@ -17,8 +19,24 @@ cc_test(
     linkstatic = True,
     deps = [
         "//spleeter",
-        "//spleeter/argument_parser",
-        "//spleeter/logging",
+        "@googletest//:gtest_main",
+    ],
+)
+
+cc_test(
+    name = "component_tests",
+    srcs = ["spleeter_tests.cpp"],
+    copts = [
+        "-std=c++14",
+        "-Wall",
+        "-Werror",
+    ],
+    data = [
+        "//:testdata",
+    ],
+    linkstatic = True,
+    deps = [
+        "//spleeter",
         "@googletest//:gtest_main",
     ],
 )

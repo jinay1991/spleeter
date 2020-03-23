@@ -21,19 +21,3 @@ cc_library(
         "@nlohmann//:json",
     ],
 )
-
-# Export Headers
-exports_files(glob([
-    "**/*.h",
-]))
-
-filegroup(
-    name = "spleeter-dev",
-    testonly = True,
-    srcs = glob([
-        "**/*.h",
-    ]) + [
-        "//spleeter",
-        "//spleeter/test:unit_tests",
-    ],
-)

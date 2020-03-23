@@ -112,10 +112,10 @@ package:
     - bazel-build-and-test
   script:
     - bazel build //:spleeter
-    - mv bazel-bin/spleeter.tar.gz .
+    - mv bazel-bin/spleeter.tar.gz libspleeter-dev.tar.gz
   artifacts:
     paths:
-      - spleeter.tar.gz
+      - libspleeter-dev.tar.gz
 
 pages:
   stage: deploy

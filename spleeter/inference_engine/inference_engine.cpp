@@ -3,7 +3,7 @@
 /// @copyright Copyright (c) 2020, MIT License
 ///
 #include "spleeter/inference_engine/inference_engine.h"
-#include "spleeter/inference_engine/tf_inference_engine.h"
+// #include "spleeter/inference_engine/tf_inference_engine.h"
 #include "spleeter/inference_engine/tflite_inference_engine.h"
 
 #include <memory>
@@ -21,9 +21,9 @@ void InferenceEngine::SelectInferenceEngine(const InferenceEngineType& inference
         case InferenceEngineType::kTensorFlowLite:
             inference_engine_ = std::make_unique<TFLiteInferenceEngine>();
             break;
-        case InferenceEngineType::kTensorFlow:
-            inference_engine_ = std::make_unique<TFInferenceEngine>();
-            break;
+        // case InferenceEngineType::kTensorFlow:
+        //     inference_engine_ = std::make_unique<TFInferenceEngine>();
+        //     break;
     }
 }
 
