@@ -14,7 +14,7 @@ cc_test(
         "-Werror",
     ],
     data = [
-        "//:testdata",
+        "@audio_example//file",
     ],
     linkstatic = True,
     deps = [
@@ -32,7 +32,7 @@ cc_test(
         "-Werror",
     ],
     data = [
-        "//:testdata",
+        "@audio_example//file",
     ],
     linkstatic = True,
     deps = [

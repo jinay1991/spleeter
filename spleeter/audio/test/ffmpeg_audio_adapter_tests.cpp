@@ -21,7 +21,7 @@ class AudioAdapterTest : public ::testing::Test
   public:
     AudioAdapterTest()
         : audio_adapter_{std::make_unique<FfmpegAudioAdapter>()},
-          test_audio_description_{"data/audio_example.mp3"},
+          test_audio_description_{"external/audio_example/file/audio_example.mp3"},
           test_offset_{0.0},
           test_duration_{600.0},
           test_sample_rate_{44100},

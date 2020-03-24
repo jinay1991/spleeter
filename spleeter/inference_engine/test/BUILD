@@ -11,7 +11,7 @@ cc_test(
         "-Werror",
     ],
     data = [
-        "//:testdata",
+        "@audio_example//file",
     ],
     deps = [
         "//spleeter/inference_engine",

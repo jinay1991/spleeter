@@ -14,7 +14,7 @@ namespace spleeter
 struct CLIOptions
 {
     /// @brief List of input audio filenames
-    std::string inputs{"data/audio_example.mp3"};
+    std::string inputs{"external/audio_example/file/audio_example.mp3"};
 
     /// @brief Path of the output directory to write audio files in
     std::string output_path{"separated_audio"};

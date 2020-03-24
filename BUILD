@@ -2,17 +2,6 @@ load("@bazel_tools//tools/build_defs/pkg:pkg.bzl", "pkg_tar")
 
 package(default_visibility = ["//visibility:public"])
 
-exports_files(glob([
-    "data/*.mp3",
-]))
-
-filegroup(
-    name = "testdata",
-    srcs = [
-        "data/audio_example.mp3",
-    ],
-)
-
 # Export Headers
 exports_files(glob([
     "spleeter/**/*.h",
@@ -44,7 +33,7 @@ pkg_tar(
     srcs = glob([
         "**/*.h",
     ]) + [
-        "//:testdata",
+        "@audio_example//file",
         "//:spleeter-dev",
         "//application:spleeter",
     ],

@@ -19,7 +19,7 @@ TEST(ArgumentParserTest, DefaultConstructor)
     auto unit = ArgumentParser();
     auto actual = unit.GetParsedArgs();
 
-    EXPECT_EQ(actual.inputs, "data/audio_example.mp3");
+    EXPECT_EQ(actual.inputs, "external/audio_example/file/audio_example.mp3");
     EXPECT_EQ(actual.output_path, "separated_audio");
     EXPECT_EQ(actual.filename_format, "{filename}/{instrument}.{codec}");
     EXPECT_EQ(actual.configuration, "spleeter:2stems");
