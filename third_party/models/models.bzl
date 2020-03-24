@@ -1,6 +1,7 @@
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 def models():
+    """ Download Models """
     if "spleeter_2stems" not in native.existing_rules():
         http_archive(
             name = "spleeter_2stems",
@@ -25,10 +26,10 @@ def models():
             url = "https://github.com/deezer/spleeter/releases/download/v1.4.0/5stems.tar.gz",
         )
 
-    if "spleeter_saved_models" not in native.existing_rules():
+    if "models" not in native.existing_rules():
         http_archive(
-            name = "spleeter_saved_models",
-            build_file = "//third_party/models:saved_model.BUILD",
+            name = "models",
+            build_file = "//third_party/models:models.BUILD",
             strip_prefix = "exported",
             sha256 = "7d78053099cd8b6d6afabee6bb17aa85f34346e78155b6f6691f4b6568a43ce2",
             url = "https://github.com/gvne/spleeterpp/releases/download/tf_cc-1.14.0/spleeter-models.zip",

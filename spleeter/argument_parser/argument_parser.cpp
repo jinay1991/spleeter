@@ -11,7 +11,7 @@ namespace
 {
 void PrintUsage()
 {
-    LOG(INFO) << "spleeter\n"
+    SPLEETER_LOG(INFO) << "spleeter\n"
               << "--inputs, -i: List of input audio filenames\n"
               << "--output_path, -o: Path of the output directory to write audio files in\n"
               << "--filename_format, -f: Template string that will be formatted to generated\n"
@@ -63,7 +63,7 @@ CLIOptions ArgumentParser::ParseArgs(int argc, char* argv[])
 {
     if (argc > 1)
     {
-        LOG(DEBUG) << "Parsed arguments: ";
+        SPLEETER_LOG(DEBUG) << "Parsed arguments: ";
     }
     while (true)
     {
@@ -80,55 +80,55 @@ CLIOptions ArgumentParser::ParseArgs(int argc, char* argv[])
         {
             case 'i':
                 cli_options_.inputs = optarg;
-                LOG(DEBUG) << " (+) inputs: " << cli_options_.inputs;
+                SPLEETER_LOG(DEBUG) << " (+) inputs: " << cli_options_.inputs;
                 break;
             case 'o':
                 cli_options_.output_path = optarg;
-                LOG(DEBUG) << " (+) output_path: " << cli_options_.output_path;
+                SPLEETER_LOG(DEBUG) << " (+) output_path: " << cli_options_.output_path;
                 break;
             case 'f':
                 cli_options_.filename_format = optarg;
-                LOG(DEBUG) << " (+) filename_format: " << cli_options_.filename_format;
+                SPLEETER_LOG(DEBUG) << " (+) filename_format: " << cli_options_.filename_format;
                 break;
             case 'd':
                 cli_options_.duration = strtod(optarg, nullptr);
-                LOG(DEBUG) << " (+) duration: " << cli_options_.duration;
+                SPLEETER_LOG(DEBUG) << " (+) duration: " << cli_options_.duration;
                 break;
             case 's':
                 cli_options_.offset = strtod(optarg, nullptr);
-                LOG(DEBUG) << " (+) offset: " << cli_options_.offset;
+                SPLEETER_LOG(DEBUG) << " (+) offset: " << cli_options_.offset;
                 break;
             case 'c':
                 cli_options_.codec = optarg;
-                LOG(DEBUG) << " (+) codec: " << cli_options_.codec;
+                SPLEETER_LOG(DEBUG) << " (+) codec: " << cli_options_.codec;
                 break;
             case 'b':
                 cli_options_.bitrate = optarg;
-                LOG(DEBUG) << " (+) bitrate: " << cli_options_.bitrate;
+                SPLEETER_LOG(DEBUG) << " (+) bitrate: " << cli_options_.bitrate;
                 break;
             case 'm':
                 cli_options_.mwf = strtol(optarg, nullptr, 10);
-                LOG(DEBUG) << " (+) mwf: " << std::boolalpha << cli_options_.mwf;
+                SPLEETER_LOG(DEBUG) << " (+) mwf: " << std::boolalpha << cli_options_.mwf;
                 break;
             case 'u':
                 cli_options_.mus_dir = optarg;
-                LOG(DEBUG) << " (+) mus_dir: " << cli_options_.mus_dir;
+                SPLEETER_LOG(DEBUG) << " (+) mus_dir: " << cli_options_.mus_dir;
                 break;
             case 'a':
                 cli_options_.audio_adapter = optarg;
-                LOG(DEBUG) << " (+) audio_adapter: " << cli_options_.audio_adapter;
+                SPLEETER_LOG(DEBUG) << " (+) audio_adapter: " << cli_options_.audio_adapter;
                 break;
             case 'p':
                 cli_options_.configuration = optarg;
-                LOG(DEBUG) << " (+) configuration: " << cli_options_.configuration;
+                SPLEETER_LOG(DEBUG) << " (+) configuration: " << cli_options_.configuration;
                 break;
             case 'v':
                 cli_options_.verbose = strtol(optarg, nullptr, 10);
-                LOG(DEBUG) << " (+) verbose: " << std::boolalpha << cli_options_.verbose;
+                SPLEETER_LOG(DEBUG) << " (+) verbose: " << std::boolalpha << cli_options_.verbose;
                 break;
             case 't':
                 cli_options_.audio_path = optarg;
-                LOG(DEBUG) << " (+) audio_path: " << cli_options_.audio_path;
+                SPLEETER_LOG(DEBUG) << " (+) audio_path: " << cli_options_.audio_path;
                 break;
             case 'h':
             case '?':

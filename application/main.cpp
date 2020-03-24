@@ -24,7 +24,7 @@ int main(int argc, char** argv)
     }
     catch (std::exception& e)
     {
-        LOG(ERROR) << "Caught Exception!! " << e.what() << std::endl;
+        SPLEETER_LOG(ERROR) << "Caught Exception!! " << e.what() << std::endl;
         return 1;
     }
 

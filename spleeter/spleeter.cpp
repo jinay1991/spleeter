@@ -22,7 +22,7 @@ void Spleeter::Execute()
     separator_->SeparateToFile(cli_options_.inputs, cli_options_.output_path, cli_options_.audio_adapter,
                                cli_options_.offset, cli_options_.duration, cli_options_.codec, cli_options_.bitrate,
                                cli_options_.filename_format, false);
-    LOG(INFO) << "Successfully executed spleeter!!";
+    SPLEETER_LOG(INFO) << "Successfully executed spleeter!!";
 }
 void Spleeter::Shutdown() {}
 

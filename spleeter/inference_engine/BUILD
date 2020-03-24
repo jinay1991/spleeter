@@ -18,7 +18,7 @@ cc_library(
         "-Werror",
     ],
     data = [
-        "@spleeter_saved_models//:5stems",
+        "@models//:5stems",
     ],
     deps = [
         "//spleeter/argument_parser",

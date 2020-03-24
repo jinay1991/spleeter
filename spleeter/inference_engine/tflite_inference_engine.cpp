@@ -99,17 +99,17 @@ void TFLiteInferenceEngine::Init()
 
     if (IsVerbosityEnabled())
     {
-        LOG(INFO) << "tensors size: " << interpreter_->tensors_size();
-        LOG(INFO) << "nodes size: " << interpreter_->nodes_size();
-        LOG(INFO) << "inputs: " << interpreter_->inputs().size();
-        LOG(INFO) << "input(0) name: " << interpreter_->GetInputName(0);
+        SPLEETER_LOG(INFO) << "tensors size: " << interpreter_->tensors_size();
+        SPLEETER_LOG(INFO) << "nodes size: " << interpreter_->nodes_size();
+        SPLEETER_LOG(INFO) << "inputs: " << interpreter_->inputs().size();
+        SPLEETER_LOG(INFO) << "input(0) name: " << interpreter_->GetInputName(0);
 
         int tensor_size = interpreter_->tensors_size();
         for (int i = 0; i < tensor_size; i++)
         {
             if (interpreter_->tensor(i)->name)
             {
-                LOG(INFO) << i << ": " << interpreter_->tensor(i)->name << ", " << interpreter_->tensor(i)->bytes
+                SPLEETER_LOG(INFO) << i << ": " << interpreter_->tensor(i)->name << ", " << interpreter_->tensor(i)->bytes
                           << ", " << interpreter_->tensor(i)->type << ", " << interpreter_->tensor(i)->params.scale
                           << ", " << interpreter_->tensor(i)->params.zero_point;
             }
@@ -120,8 +120,8 @@ void TFLiteInferenceEngine::Init()
     {
         const auto inputs = interpreter_->inputs();
         const auto outputs = interpreter_->outputs();
-        LOG(INFO) << "number of inputs: " << inputs.size();
-        LOG(INFO) << "number of outputs: " << outputs.size();
+        SPLEETER_LOG(INFO) << "number of inputs: " << inputs.size();
+        SPLEETER_LOG(INFO) << "number of outputs: " << outputs.size();
     }
 
     ASSERT_CHECK_EQ(interpreter_->AllocateTensors(), TfLiteStatus::kTfLiteOk) << "Failed to allocate tensors!";

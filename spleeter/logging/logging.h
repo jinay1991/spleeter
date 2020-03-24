@@ -70,7 +70,7 @@ class LoggingWrapper
 /// @brief Log Stream with provided severity level
 ///
 /// @param [in] severity - Severity Level (DEBUG, INFO, WARN, ERROR, FATAL)
-#define LOG(severity) \
+#define SPLEETER_LOG(severity) \
     spleeter::logging::LoggingWrapper(spleeter::logging::LoggingWrapper::LogSeverity::severity).Stream()
 
 /// @brief Checks for Assertion. If condition is false, Log FATAL Error and exit program.

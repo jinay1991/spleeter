@@ -44,22 +44,22 @@ void TFInferenceEngine::Shutdown() {}
 
 Waveforms TFInferenceEngine::InvokeInference() const
 {
-    auto status =
-        bundle_->session->Run({{"Placeholder", input_tensor_}}, output_tensor_names_, {}, &output_tensors_, nullptr);
-    ASSERT_CHECK(status.ok()) << "Unable to run Session";
+    // auto status =
+    //     bundle_->session->Run({{"Placeholder", input_tensor_}}, output_tensor_names_, {}, &output_tensors_, nullptr);
+    // ASSERT_CHECK(status.ok()) << "Unable to run Session";
 
     /// Extract results
     auto waveforms = Waveforms{};
-    std::transform(output_tensors_.begin(), output_tensors_.end(), std::back_inserter(waveforms),
-                   [&](const auto& tensor) {
-                       auto output_data = std::string{};
-                       output_data.resize(input_tensor_.dim_size);
+    // std::transform(output_tensors_.begin(), output_tensors_.end(), std::back_inserter(waveforms),
+    //                [&](const auto& tensor) {
+    //                    auto output_data = std::string{};
+    //                    //    output_data.resize(input_tensor_.dim_size);
 
-                       auto tensor_data = tensor.matrix<std::uint8_t>().data();
-                       std::copy(tensor_data, tensor_data + output_data.length(), output_data);
+    //                    //    auto tensor_data = tensor.matrix<std::uint8_t>().data();
+    //                    //    std::copy(tensor_data, tensor_data + output_data.length(), output_data);
 
-                       return output_data;
-                   });
+    //                    return output_data;
+    //                });
 
     return waveforms;
 }

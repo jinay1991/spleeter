@@ -4,7 +4,7 @@ package(default_visibility = ["//visibility:public"])
 
 cc_library(
     name = "tensorflow_cc",
-    srcs = glob(["bin/**/*.so*"]),
+    srcs = glob(["lib/libtensorflow_cc.so*"]),
     hdrs = glob([
         "include/**/*.h",
         "include/**/*",
