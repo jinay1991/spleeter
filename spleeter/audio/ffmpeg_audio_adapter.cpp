@@ -34,7 +34,7 @@ std::pair<Waveform, std::int32_t> FfmpegAudioAdapter::Load(const std::string& pa
     auto stream_index = ret;
     AVStream* audio_stream = format_context->streams[stream_index];
     SPLEETER_LOG(DEBUG) << "Given audio file {" << path << "} has {"
-               << av_get_media_type_string(audio_stream->codecpar->codec_type) << "} media stream.";
+                        << av_get_media_type_string(audio_stream->codecpar->codec_type) << "} media stream.";
 
     AVCodec* audio_codec = avcodec_find_decoder(audio_stream->codecpar->codec_id);
     ASSERT_CHECK(audio_codec) << "Failed to find {" << audio_stream->codecpar->codec_id << "} codec";
@@ -112,9 +112,9 @@ std::pair<Waveform, std::int32_t> FfmpegAudioAdapter::Load(const std::string& pa
     avformat_close_input(&format_context);
 
     SPLEETER_LOG(DEBUG) << "Decoded Waveform: \n"
-               << " (+) bitrate: " << audio_codec_context->bit_rate << "\n"
-               << " (+) codec: " << avcodec_get_name(audio_codec_context->codec_id) << "\n"
-               << " (+) sample_rate: " << audio_codec_context->sample_rate;
+                        << " (+) bitrate: " << audio_codec_context->bit_rate << "\n"
+                        << " (+) codec: " << avcodec_get_name(audio_codec_context->codec_id) << "\n"
+                        << " (+) sample_rate: " << audio_codec_context->sample_rate;
 
     return std::make_pair(Waveform{}, audio_codec_context->sample_rate);
 }
@@ -295,8 +295,8 @@ void FfmpegAudioAdapter::Save(const std::string& path, const Waveform& data, con
     avcodec_free_context(&audio_codec_context);
 
     SPLEETER_LOG(DEBUG) << "Encoded Waveform: \n"
-               //    << " (+) size: " << data[0].size() << "x" << data[1].size() << "\n"
-               //    << " (+) sample_rate: " << audio_codec_context->sample_rate << "\n"
-               << " (+) path: " << path;
+                        //    << " (+) size: " << data[0].size() << "x" << data[1].size() << "\n"
+                        //    << " (+) sample_rate: " << audio_codec_context->sample_rate << "\n"
+                        << " (+) path: " << path;
 }
 }  // namespace spleeter

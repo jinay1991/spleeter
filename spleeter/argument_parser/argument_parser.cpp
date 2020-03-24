@@ -11,25 +11,26 @@ namespace
 {
 void PrintUsage()
 {
-    SPLEETER_LOG(INFO) << "spleeter\n"
-              << "--inputs, -i: List of input audio filenames\n"
-              << "--output_path, -o: Path of the output directory to write audio files in\n"
-              << "--filename_format, -f: Template string that will be formatted to generated\n"
-                 "                       output filename. Such template should be Python formattable\n"
-                 "                       string, and could use {filename}, {instrument}, and {codec} variables\n"
-              << "--duration, -d: Set a maximum duration for the processing audio\n"
-                 "                (only separate offset + duration first seconds of the input file)\n"
-              << "--offset, -s: Set the starting offset to separate audio from\n"
-              << "--codec, -c: Audio codec to be used for separate output\n"
-                 "             choices: { wav, mp3, ogg, m4a, wma, flac }\n"
-              << "--bitrate, -b: Audio bitrate to be used for separate output\n"
-              << "--mwf, -m: [0|1] Whether to use multichannel Wiener filtering for separation\n"
-              << "--mus_dir, -u: Path to folder with musDB\n"
-              << "--adapter, -a: Name of the audio adapater to use for audio I/O\n"
-              << "--params_filename, -p: JSON filename that contains params\n"
-              << "--verbose, -v: [0|1] Shows verbose logs\n"
-              << "--data, -t: Path of the folder containing audio data for training\n"
-              << "--help, -h: print help\n";
+    SPLEETER_LOG(INFO)
+        << "spleeter\n"
+        << "--inputs, -i: List of input audio filenames\n"
+        << "--output_path, -o: Path of the output directory to write audio files in\n"
+        << "--filename_format, -f: Template string that will be formatted to generated\n"
+           "                       output filename. Such template should be Python formattable\n"
+           "                       string, and could use {filename}, {instrument}, and {codec} variables\n"
+        << "--duration, -d: Set a maximum duration for the processing audio\n"
+           "                (only separate offset + duration first seconds of the input file)\n"
+        << "--offset, -s: Set the starting offset to separate audio from\n"
+        << "--codec, -c: Audio codec to be used for separate output\n"
+           "             choices: { wav, mp3, ogg, m4a, wma, flac }\n"
+        << "--bitrate, -b: Audio bitrate to be used for separate output\n"
+        << "--mwf, -m: [0|1] Whether to use multichannel Wiener filtering for separation\n"
+        << "--mus_dir, -u: Path to folder with musDB\n"
+        << "--adapter, -a: Name of the audio adapater to use for audio I/O\n"
+        << "--params_filename, -p: JSON filename that contains params\n"
+        << "--verbose, -v: [0|1] Shows verbose logs\n"
+        << "--data, -t: Path of the folder containing audio data for training\n"
+        << "--help, -h: print help\n";
 }
 }  // namespace
 ArgumentParser::ArgumentParser() : cli_options_{} {}

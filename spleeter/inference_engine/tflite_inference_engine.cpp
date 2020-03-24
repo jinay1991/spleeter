@@ -109,9 +109,10 @@ void TFLiteInferenceEngine::Init()
         {
             if (interpreter_->tensor(i)->name)
             {
-                SPLEETER_LOG(INFO) << i << ": " << interpreter_->tensor(i)->name << ", " << interpreter_->tensor(i)->bytes
-                          << ", " << interpreter_->tensor(i)->type << ", " << interpreter_->tensor(i)->params.scale
-                          << ", " << interpreter_->tensor(i)->params.zero_point;
+                SPLEETER_LOG(INFO) << i << ": " << interpreter_->tensor(i)->name << ", "
+                                   << interpreter_->tensor(i)->bytes << ", " << interpreter_->tensor(i)->type << ", "
+                                   << interpreter_->tensor(i)->params.scale << ", "
+                                   << interpreter_->tensor(i)->params.zero_point;
             }
         }
     }

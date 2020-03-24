@@ -2,7 +2,7 @@
 /// @file
 /// @copyright Copyright (c) 2020, MIT License
 ///
-// #include "spleeter/inference_engine/tflite_inference_engine.h"
+#include "spleeter/inference_engine/tflite_inference_engine.h"
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
