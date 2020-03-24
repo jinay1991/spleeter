@@ -24,7 +24,7 @@ cc_library(
         "//spleeter/argument_parser",
         "//spleeter/data_types",
         "//spleeter/logging",
-        "@tensorflow_cc",
+        "@tensorflow",
         # "@org_tensorflow//tensorflow/cc:client_session",
         # "@org_tensorflow//tensorflow/cc/saved_model:loader",
         # "@org_tensorflow//tensorflow/lite:framework",

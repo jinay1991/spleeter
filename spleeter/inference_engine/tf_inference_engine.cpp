@@ -44,22 +44,25 @@ void TFInferenceEngine::Shutdown() {}
 
 Waveforms TFInferenceEngine::InvokeInference() const
 {
-    // auto status =
-    //     bundle_->session->Run({{"Placeholder", input_tensor_}}, output_tensor_names_, {}, &output_tensors_, nullptr);
-    // ASSERT_CHECK(status.ok()) << "Unable to run Session";
+    auto inputs = std::vector<std::pair<std::string, tensorflow::Tensor>>{{"Placeholder", input_tensor_}};
+    auto target_node_names = std::vector<std::string>{};
+    auto outputs = std::vector<tensorflow::Tensor>{};
+    auto status = bundle_->GetSession()->Run(inputs, output_tensor_names_, target_node_names, &outputs);
+    ASSERT_CHECK(status.ok()) << "Unable to run Session";
+
+    SPLEETER_LOG(INFO) << "Successfully received split " << outputs.size() << " waves.";
 
     /// Extract results
     auto waveforms = Waveforms{};
-    // std::transform(output_tensors_.begin(), output_tensors_.end(), std::back_inserter(waveforms),
-    //                [&](const auto& tensor) {
-    //                    auto output_data = std::string{};
-    //                    //    output_data.resize(input_tensor_.dim_size);
+    std::transform(outputs.begin(), outputs.end(), std::back_inserter(waveforms), [&](const auto& tensor) {
+        auto output_data = std::string{};
+        //    output_data.resize(input_tensor_.dim_size);
 
-    //                    //    auto tensor_data = tensor.matrix<std::uint8_t>().data();
-    //                    //    std::copy(tensor_data, tensor_data + output_data.length(), output_data);
+        //    auto tensor_data = tensor.matrix<std::uint8_t>().data();
+        //    std::copy(tensor_data, tensor_data + output_data.length(), output_data);
 
-    //                    return output_data;
-    //                });
+        return output_data;
+    });
 
     return waveforms;
 }
@@ -73,7 +76,7 @@ void TFInferenceEngine::SetInputWaveform(const Waveform& waveform)
 
 Waveforms TFInferenceEngine::GetResults() const { return results_; }
 
-std::string TFInferenceEngine::GetModelPath() const { return "data/model.t"; }
+std::string TFInferenceEngine::GetModelPath() const { return "external/models/5stems"; }
 
 bool TFInferenceEngine::IsVerbosityEnabled() const { return cli_options_.verbose; }
 

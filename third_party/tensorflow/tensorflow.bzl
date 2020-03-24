@@ -31,18 +31,15 @@ def tensorflow():
     if "com_google_protobuf" not in native.existing_rules():
         http_archive(
             name = "com_google_protobuf",
-            # url = "https://github.com/protocolbuffers/protobuf/releases/download/v3.9.2/protobuf-cpp-3.9.2.zip",
             url = "https://github.com/protocolbuffers/protobuf/archive/310ba5ee72661c081129eb878c1bbcec936b20f0.tar.gz",
-            # sha256 = "a79f9c5ac940f4477d18b2ecddb31271643eb8ac6728d0c6b10d95b435909c41",
             sha256 = "b9e92f9af8819bbbc514e2902aec860415b70209f31dfc8c4fa72515a5df9d59",
-            # strip_prefix = "protobuf-3.9.2",
             strip_prefix = "protobuf-310ba5ee72661c081129eb878c1bbcec936b20f0",
         )
 
-    if "tensorflow_cc" not in native.existing_rules():
+    if "tensorflow" not in native.existing_rules():
         http_archive(
-            name = "tensorflow_cc",
-            build_file = "//third_party/tensorflow:tensorflow_cc.BUILD",
+            name = "tensorflow",
+            build_file = "//third_party/tensorflow:tensorflow.BUILD",
             sha256 = "68404e0bc997373e0c63f43ee04479cbe68dcaf3ae0a7a3022a81591ff3a3364",
             url = "https://github.com/jinay1991/spleeter/releases/download/v0.1/libtensorflow_cc-linux.tar.gz",
         )
