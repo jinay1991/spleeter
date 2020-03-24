@@ -11,12 +11,30 @@ namespace spleeter
 {
 namespace
 {
-TEST(TFInferenceEngineTest, Construction)
+TEST(TFInferenceEngineTest, DefaultConstructor)
 {
-    TFInferenceEngine unit_;
-    unit_.Init();
+    auto unit = TFInferenceEngine{};
+    unit.Init();
+    unit.SetInputWaveform(Waveform{});
 
-    unit_.Execute();
+    unit.Execute();
+
+    auto actual = unit.GetResults();
+    EXPECT_THAT(5U, actual.size());
 }
+
+TEST(TFInferenceEngineTest, GivenDefaultConfiguration_ExpectTwoResultantWaveforms)
+{
+    auto cli_options = CLIOptions{};
+    cli_options.configuration = "spleeter:4stems";
+    auto unit = TFInferenceEngine{cli_options};
+    unit.Init();
+    unit.SetInputWaveform(Waveform{});
+
+    unit.Execute();
+    auto actual = unit.GetResults();
+    EXPECT_THAT(4U, actual.size());
+}
+
 }  // namespace
 }  // namespace spleeter

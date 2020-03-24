@@ -78,6 +78,9 @@ class TFInferenceEngine : public IInferenceEngine
 
     /// @brief Output Tensors names
     std::vector<std::string> output_tensor_names_;
+
+    /// @brief Model root directory
+    const std::string model_dir_;
 };
 
 }  // namespace spleeter

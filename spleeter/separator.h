@@ -8,6 +8,7 @@
 
 #include "spleeter/audio/i_audio_adapter.h"
 #include "spleeter/i_separator.h"
+#include "spleeter/inference_engine/inference_engine.h"
 
 #include <cstdint>
 #include <memory>
@@ -70,6 +71,7 @@ class Separator : public ISeparator
 
     bool mwf_;
     std::unique_ptr<IAudioAdapter> audio_adapter_;
+    InferenceEngine inference_engine_;
     std::int32_t sample_rate_;
 };
 }  // namespace spleeter

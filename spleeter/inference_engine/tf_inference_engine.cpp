@@ -8,9 +8,34 @@
 #include <memory>
 #include <string>
 #include <unordered_set>
+#include <vector>
 
 namespace spleeter
 {
+namespace internal
+{
+std::vector<std::string> GetOutputTensorNames(const std::string& configuration)
+{
+    auto output_tensor_names = std::vector<std::string>{};
+    if (configuration == "spleeter:2stems")
+    {
+        output_tensor_names = std::vector<std::string>{"strided_slice_13", "strided_slice_23"};
+    }
+
+    else if (configuration == "spleeter:4stems")
+    {
+        output_tensor_names =
+            std::vector<std::string>{"strided_slice_13", "strided_slice_23", "strided_slice_33", "strided_slice_43"};
+    }
+    else  // default to "spleeter:5stems"
+    {
+        output_tensor_names = std::vector<std::string>{"strided_slice_18", "strided_slice_38", "strided_slice_48",
+                                                       "strided_slice_28", "strided_slice_58"};
+    }
+    return output_tensor_names;
+}
+}  // namespace internal
+
 TFInferenceEngine::TFInferenceEngine() : TFInferenceEngine{CLIOptions{}} {}
 
 TFInferenceEngine::TFInferenceEngine(const CLIOptions& cli_options)
@@ -18,8 +43,8 @@ TFInferenceEngine::TFInferenceEngine(const CLIOptions& cli_options)
       bundle_{std::make_shared<tensorflow::SavedModelBundle>()},
       input_tensor_{},
       output_tensors_{},
-      output_tensor_names_{"strided_slice_18", "strided_slice_38", "strided_slice_48", "strided_slice_28",
-                           "strided_slice_58"}
+      output_tensor_names_{internal::GetOutputTensorNames(cli_options_.configuration)},
+      model_dir_{"external/models/"}
 {
 }
 
@@ -33,12 +58,7 @@ void TFInferenceEngine::Init()
     ASSERT_CHECK(ret.ok()) << "Failed to load saved model";
 }
 
-void TFInferenceEngine::Execute()
-{
-    SetInputWaveform(Waveform{});
-
-    results_ = InvokeInference();
-}
+void TFInferenceEngine::Execute() { results_ = InvokeInference(); }
 
 void TFInferenceEngine::Shutdown() {}
 
@@ -76,7 +96,11 @@ void TFInferenceEngine::SetInputWaveform(const Waveform& waveform)
 
 Waveforms TFInferenceEngine::GetResults() const { return results_; }
 
-std::string TFInferenceEngine::GetModelPath() const { return "external/models/5stems"; }
+std::string TFInferenceEngine::GetModelPath() const
+{
+    auto config = cli_options_.configuration.substr(cli_options_.configuration.find_first_of(':') + 1);
+    return model_dir_ + config;
+}
 
 bool TFInferenceEngine::IsVerbosityEnabled() const { return cli_options_.verbose; }
 

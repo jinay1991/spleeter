@@ -10,12 +10,12 @@ def models():
             url = "https://github.com/deezer/spleeter/releases/download/v1.4.0/2stems.tar.gz",
         )
 
-    if "spleeter_3stems" not in native.existing_rules():
+    if "spleeter_4stems" not in native.existing_rules():
         http_archive(
-            name = "spleeter_3stems",
+            name = "spleeter_4stems",
             build_file = "//third_party/models:models.BUILD",
             sha256 = "3adb4a50ad4eb18c7c4d65fcf4cf2367a07d48408a5eb7d03cd20067429dfaa8",
-            url = "https://github.com/deezer/spleeter/releases/download/v1.4.0/3stems.tar.gz",
+            url = "https://github.com/deezer/spleeter/releases/download/v1.4.0/4stems.tar.gz",
         )
 
     if "spleeter_5stems" not in native.existing_rules():

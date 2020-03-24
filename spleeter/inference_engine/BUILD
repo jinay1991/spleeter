@@ -16,6 +16,8 @@ cc_library(
         "-Werror",
     ],
     data = [
+        "@models//:2stems",
+        "@models//:4stems",
         "@models//:5stems",
     ],
     deps = [

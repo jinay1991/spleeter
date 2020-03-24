@@ -10,11 +10,11 @@ filegroup(
 )
 
 filegroup(
-    name = "3stems",
+    name = "4stems",
     srcs = glob([
-        "3stems/*.pb",
-        "3stems/variables/*.data-*",
-        "3stems/variables/*.index",
+        "4stems/*.pb",
+        "4stems/variables/*.data-*",
+        "4stems/variables/*.index",
     ]),
 )
 

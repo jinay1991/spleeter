@@ -26,7 +26,7 @@ struct CLIOptions
     std::string filename_format{"{filename}/{instrument}.{codec}"};
 
     /// @brief JSON filename that contains params
-    std::string configuration{"spleeter:2stems"};
+    std::string configuration{"spleeter:5stems"};
 
     /// @brief Set the starting offset to separate audio from
     double offset{0.0};
