@@ -31,9 +31,9 @@ def tensorflow():
     if "com_google_protobuf" not in native.existing_rules():
         http_archive(
             name = "com_google_protobuf",
-            strip_prefix = "protobuf-3.11.4",
-            url = "https://github.com/protocolbuffers/protobuf/releases/download/v3.11.4/protobuf-cpp-3.11.4.tar.gz",
-            sha256 = "ba4bbc3e6b58d2ccfe406e616576ef48710a2aae205f463618025fc691549cfe",
+            url = "https://github.com/protocolbuffers/protobuf/releases/download/v3.7.1/protobuf-cpp-3.7.1.zip",
+            sha256 = "8e8ba5be1abbdc115d4657ae8880884a3725516fc64256448dc1b1a03db01127",
+            strip_prefix = "protobuf-3.7.1",
         )
 
     if "tensorflow_cc" not in native.existing_rules():
