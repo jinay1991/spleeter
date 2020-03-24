@@ -48,9 +48,6 @@ code_quality:
   artifacts:
     reports:
       codequality: gl-code-quality-report.json
-  only:
-    refs:
-      - merge_requests
 
 # ------------
 # Stage: Build
@@ -67,10 +64,7 @@ bazel-build-and-test:
       junit: test_results.xml
     name: TestResults
     when: on_success
-  only:
-    changes:
-      - spleeter/**/*.cpp
-      - spleeter/**/*.h
+
 
 code-coverage:
   stage: build
@@ -86,12 +80,6 @@ code-coverage:
     name: code-coverage
     when: on_success
     expire_in: 1 day
-  only:
-    changes:
-      - spleeter/**/*.cpp
-      - spleeter/**/*.h
-    refs:
-      - master
 
 doxygen:
   stage: build
