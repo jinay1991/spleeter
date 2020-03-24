@@ -22,7 +22,7 @@ TEST(ArgumentParserTest, DefaultConstructor)
     EXPECT_EQ(actual.inputs, "external/audio_example/file/audio_example.mp3");
     EXPECT_EQ(actual.output_path, "separated_audio");
     EXPECT_EQ(actual.filename_format, "{filename}/{instrument}.{codec}");
-    EXPECT_EQ(actual.configuration, "spleeter:2stems");
+    EXPECT_EQ(actual.configuration, "spleeter:5stems");
     EXPECT_DOUBLE_EQ(actual.offset, 0.0);
     EXPECT_DOUBLE_EQ(actual.duration, 600.0);
     EXPECT_EQ(actual.codec, "wav");
