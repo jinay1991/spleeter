@@ -1,21 +1,6 @@
-package(default_visibility = ["//visibility:public"])
-
-filegroup(
-    name = "tflite",
-    srcs = glob(["**/*.tflite"]),
-)
+package(default_visiblity = ["//visibility:public"])
 
 filegroup(
     name = "tfmodel",
-    srcs = glob([
-        "**/*.pb",
-        "**/*.pbtxt",
-        "**/*_info.txt",
-    ]),
-)
-
-filegroup(
-    name = "tfckpt",
-    srcs = glob([
-    ]),
+    srcs = glob(["**/*"]),
 )
