@@ -19,14 +19,14 @@ TEST(ArgumentParserTest, DefaultConstructor)
     auto unit = ArgumentParser();
     auto actual = unit.GetParsedArgs();
 
-    EXPECT_EQ(actual.inputs, "external/audio_example/file/audio_example.mp3");
+    EXPECT_EQ(actual.inputs, "external/audio_example/file/audio_example.wav");
     EXPECT_EQ(actual.output_path, "separated_audio");
     EXPECT_EQ(actual.filename_format, "{filename}/{instrument}.{codec}");
     EXPECT_EQ(actual.configuration, "spleeter:5stems");
     EXPECT_DOUBLE_EQ(actual.offset, 0.0);
     EXPECT_DOUBLE_EQ(actual.duration, 600.0);
     EXPECT_EQ(actual.codec, "wav");
-    EXPECT_EQ(actual.bitrate, "128k");
+    EXPECT_EQ(actual.bitrate, 128000);
     EXPECT_FALSE(actual.mwf);
     EXPECT_TRUE(actual.mus_dir.empty());
     EXPECT_TRUE(actual.audio_path.empty());
@@ -69,7 +69,7 @@ TEST(ArgumentParserTest, ParameterizedConstructor)
     EXPECT_DOUBLE_EQ(actual.offset, 1.0);
     EXPECT_DOUBLE_EQ(actual.duration, 20.0);
     EXPECT_EQ(actual.codec, "mp3");
-    EXPECT_EQ(actual.bitrate, "320k");
+    EXPECT_EQ(actual.bitrate, 320000);
     EXPECT_TRUE(actual.mwf);
     EXPECT_EQ(actual.mus_dir, "my_mus_dir");
     EXPECT_EQ(actual.audio_path, "data.file");

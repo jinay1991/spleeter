@@ -40,8 +40,9 @@ class Separator : public ISeparator
     /// synchronous flag is True.
     ///
     /// @param waveform [in] Waveform to apply separation on.
+    ///
     /// @returns Separated waveforms
-    std::vector<Waveform> Separate(const Waveform& waveform) override;
+    Waveforms Separate(const Waveform& waveform, const AudioProperties& properties) override;
 
     /// @brief Performs source separation and export result to file using given audio adapter.
     ///
@@ -60,20 +61,22 @@ class Separator : public ISeparator
     /// @param synchronous [in]      - (Optional) True is should by synchronous.
     void SeparateToFile(const std::string& audio_descriptor, const std::string& destination,
                         const std::string& audio_adapter, const double offset = 0.0, const double duration = 600.0,
-                        const std::string& codec = "wav", const std::string bitrate = "128k",
+                        const std::string& codec = "wav", const std::int32_t bitrate = 128000,
                         const std::string& filename_format = "{filename}/{instrument}.{codec}",
                         const bool& synchronous = true) override;
 
-    /// @brief Wait for all pending tasks to be finished.
-    virtual void Join(const double& timeout);
-
   private:
-    virtual void GetPredictor() const;
-
+    /// @brief Is mwf enabled?
     bool mwf_;
+
+    /// @brief Audio R/W Adapter
     std::unique_ptr<IAudioAdapter> audio_adapter_;
+
+    /// @brief Inference Engine
     InferenceEngine inference_engine_;
-    std::int32_t sample_rate_;
+
+    /// @brief List of waveform names (used to save files)
+    std::vector<std::string> waveform_name_;
 };
 }  // namespace spleeter
 

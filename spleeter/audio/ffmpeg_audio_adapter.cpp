@@ -14,8 +14,8 @@ namespace spleeter
 FfmpegAudioAdapter::FfmpegAudioAdapter() { av_register_all(); }
 
 /// @ref https://ffmpeg.org/doxygen/trunk/decode_audio_8c-example.html
-std::pair<Waveform, std::int32_t> FfmpegAudioAdapter::Load(const std::string& path, const double offset,
-                                                           const double duration, const std::int32_t& sample_rate)
+Waveform FfmpegAudioAdapter::Load(const std::string& path, const double offset, const double duration,
+                                  const std::int32_t sample_rate)
 {
     ///
     /// Open Input Audio
@@ -116,7 +116,7 @@ std::pair<Waveform, std::int32_t> FfmpegAudioAdapter::Load(const std::string& pa
                         << " (+) codec: " << avcodec_get_name(audio_codec_context->codec_id) << "\n"
                         << " (+) sample_rate: " << audio_codec_context->sample_rate;
 
-    return std::make_pair(Waveform{}, audio_codec_context->sample_rate);
+    return Waveform{};
 }
 
 static std::int32_t Encode(AVFrame* frame, AVFormatContext* format_context, AVCodecContext* audio_codec_context,
@@ -156,8 +156,8 @@ static std::int32_t Encode(AVFrame* frame, AVFormatContext* format_context, AVCo
 }
 
 /// @ref https://ffmpeg.org/doxygen/trunk/encode_audio_8c-example.html
-void FfmpegAudioAdapter::Save(const std::string& path, const Waveform& data, const std::int32_t& sample_rate,
-                              const std::string& codec, const std::int32_t& bitrate)
+void FfmpegAudioAdapter::Save(const std::string& path, const Waveform& data, const std::int32_t sample_rate,
+                              const std::string& codec, const std::int32_t bitrate)
 {
     ///
     /// Open Output Audio
@@ -299,4 +299,6 @@ void FfmpegAudioAdapter::Save(const std::string& path, const Waveform& data, con
                         //    << " (+) sample_rate: " << audio_codec_context->sample_rate << "\n"
                         << " (+) path: " << path;
 }
+
+AudioProperties FfmpegAudioAdapter::GetProperties() const { return AudioProperties{1, 1, 441000}; }
 }  // namespace spleeter

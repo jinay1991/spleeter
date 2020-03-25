@@ -10,10 +10,10 @@
 
 namespace spleeter
 {
-InferenceEngine::InferenceEngine() : InferenceEngine{CLIOptions{}} {}
-InferenceEngine::InferenceEngine(const CLIOptions& cli_options) : cli_options_{cli_options} {}
+InferenceEngine::InferenceEngine() {}
 
-void InferenceEngine::SelectInferenceEngine(const InferenceEngineType& inference_engine)
+void InferenceEngine::SelectInferenceEngine(const InferenceEngineType& inference_engine,
+                                            const std::string& configuration)
 {
     switch (inference_engine)
     {
@@ -22,7 +22,7 @@ void InferenceEngine::SelectInferenceEngine(const InferenceEngineType& inference
             inference_engine_ = std::make_unique<TFLiteInferenceEngine>();
             break;
         case InferenceEngineType::kTensorFlow:
-            inference_engine_ = std::make_unique<TFInferenceEngine>();
+            inference_engine_ = std::make_unique<TFInferenceEngine>(configuration);
             break;
     }
 }
