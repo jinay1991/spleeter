@@ -11,6 +11,7 @@ cc_library(
         "-Wall",
         "-Wno-error=write-strings",
     ],
+    linkstatic = True,
     deps = [
         "//spleeter/logging",
     ],

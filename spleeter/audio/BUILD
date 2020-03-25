@@ -10,6 +10,7 @@ cc_library(
         "-std=c++14",
         "-Wall",
     ],
+    linkstatic = True,
     deps = [
         "//spleeter/data_types",
         "//spleeter/logging",

@@ -13,6 +13,7 @@ cc_test(
     data = [
         "@audio_example//file",
     ],
+    linkstatic = True,
     deps = [
         "//spleeter/argument_parser",
         "//spleeter/audio",

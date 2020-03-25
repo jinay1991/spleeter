@@ -11,6 +11,7 @@ cc_test(
         "-Werror",
         "-Wno-error=write-strings",
     ],
+    linkstatic = True,
     deps = [
         "//spleeter/argument_parser",
         "//spleeter/logging",

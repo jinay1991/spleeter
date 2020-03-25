@@ -10,6 +10,7 @@ cc_test(
         "-Wall",
         "-Werror",
     ],
+    linkstatic = True,
     deps = [
         "//spleeter/logging",
         "@googletest//:gtest_main",

@@ -15,6 +15,7 @@ cc_library(
     linkopts = [
         "-lstdc++fs",
     ],
+    linkstatic = True,
     deps = [
         "//spleeter/argument_parser",
         "//spleeter/audio",
