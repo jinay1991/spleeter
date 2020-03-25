@@ -14,6 +14,8 @@ cc_test(
         "@audio_example//file",
     ],
     deps = [
+        "//spleeter/argument_parser",
+        "//spleeter/audio",
         "//spleeter/inference_engine",
         "//spleeter/logging",
         "@audionamix//:wave",

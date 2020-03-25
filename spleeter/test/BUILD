@@ -16,9 +16,13 @@ cc_test(
     data = [
         "@audio_example//file",
     ],
+    linkopts = [
+        "-lstdc++fs",
+    ],
     linkstatic = True,
     deps = [
         "//spleeter",
+        "//spleeter/audio",
         "@googletest//:gtest_main",
     ],
 )

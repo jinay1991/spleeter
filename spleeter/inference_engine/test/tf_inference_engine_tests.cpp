@@ -3,6 +3,7 @@
 /// @copyright Copyright (c) 2020, MIT License
 ///
 #include "spleeter/argument_parser/cli_options.h"
+#include "spleeter/audio/audionamix_audio_adapter.h"
 #include "spleeter/inference_engine/tf_inference_engine.h"
 #include "spleeter/logging/logging.h"
 
@@ -11,6 +12,8 @@
 #include <wave/file.h>
 
 #include <algorithm>
+#include <cstdint>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -18,75 +21,38 @@ namespace spleeter
 {
 namespace
 {
-TEST(Loader, DISABLED_Sandbox)
+class TFInferenceEngineTest : public ::testing::TestWithParam<std::int32_t>
 {
-    auto cli_options = CLIOptions{};
-    TFInferenceEngine unit{cli_options};
+  protected:
+    void SetUp() override
+    {
+        std::string test_input = "external/audio_example/file/audio_example.wav";
+        std::string configuration = "spleeter:" + std::to_string(GetParam()) + "stems";
 
-    unit.Init();
+        auto audio_adapter = AudionamixAudioAdapter{};
+        const auto test_waveform = audio_adapter.Load(test_input, 0, -1, 44100);
+        const auto test_waveform_properties = audio_adapter.GetProperties();
 
-    // Read wav file
-    wave::File file;
-    file.Open(std::string(cli_options.inputs), wave::OpenMode::kIn);
-    std::error_code err;
-    auto data = file.Read(err);
-    ASSERT_CHECK(!err) << "Couldn't read input file...";
+        unit_ = std::make_unique<TFInferenceEngine>(configuration);
+        unit_->Init();
 
-    const auto nb_frames = static_cast<std::int32_t>(file.frame_number());
-    const auto nb_channels = static_cast<std::int32_t>(file.channel_number());
-    unit.SetInputWaveform(data, nb_frames, nb_channels);
+        unit_->SetInputWaveform(test_waveform, test_waveform_properties.nb_frames,
+                                test_waveform_properties.nb_channels);
+    }
 
-    unit.Execute();
+    void TearDown() override { unit_->Shutdown(); }
 
-    // std::vector<tensorflow::Tensor> output;
-    // if (!bundle.session->Run({{"Placeholder", input}}, {"strided_slice_13", "strided_slice_23"}, {}, &output).ok())
-    // {
-    //     std::cerr << "Run Failed" << std::endl;
-    //     return;
-    // }
+    std::unique_ptr<TFInferenceEngine> unit_;
+};
 
-    // // write data in a std::vector<float>
-    // std::vector<float> result_data(data.size());  // same size as input
-    // auto vocals = output[0].matrix<float>().data();
-    // //  auto acompaniments = output[1].matrix<float>().data();
-    // std::copy(vocals, vocals + data.size(), result_data.data());
-
-    // auto waveforms = unit.GetResults();
-    // std::vector<float> vocals{};
-    // std::transform(waveforms.begin(), waveforms.end(), std::back_inserter(vocals),
-    //                [&](const auto& value) { return static_cast<float>(value); });
-
-    // wave::File result;
-    // result.Open(cli_options.output_path + "/vocals.wav", wave::OpenMode::kOut);
-    // result.set_sample_rate(44100);
-    // result.set_channel_number(2);
-    // result.Write(vocals);
-    // ASSERT_CHECK(!err) << "Couldn't write the output file";
-}
-TEST(TFInferenceEngineTest, DISABLED_DefaultConstructor)
+TEST_P(TFInferenceEngineTest, GivenConfigurations_ExpectSeparatedWaveforms)
 {
-    auto unit = TFInferenceEngine{};
-    unit.Init();
-    unit.SetInputWaveform(Waveform{}, 0, 0);
+    unit_->Execute();
 
-    unit.Execute();
-
-    auto actual = unit.GetResults();
-    EXPECT_THAT(5U, actual.size());
+    auto actual = unit_->GetResults();
+    EXPECT_EQ(GetParam(), actual.size());
 }
-
-TEST(TFInferenceEngineTest, DISABLED_GivenDefaultConfiguration_ExpectTwoResultantWaveforms)
-{
-    auto cli_options = CLIOptions{};
-    cli_options.configuration = "spleeter:4stems";
-    auto unit = TFInferenceEngine{cli_options};
-    unit.Init();
-    unit.SetInputWaveform(Waveform{}, 0, 0);
-
-    unit.Execute();
-    auto actual = unit.GetResults();
-    EXPECT_THAT(4U, actual.size());
-}
+INSTANTIATE_TEST_CASE_P(Configuration, TFInferenceEngineTest, ::testing::Values(2, 4, 5));
 
 }  // namespace
 }  // namespace spleeter

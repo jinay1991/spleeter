@@ -27,8 +27,9 @@ class TFInferenceEngine : public IInferenceEngine
     TFInferenceEngine();
 
     /// @brief Constructor
-    /// @param cli_options [in] - Command Line Interface Options
-    explicit TFInferenceEngine(const CLIOptions& cli_options);
+    ///
+    /// @param configuration [in] - configurations
+    explicit TFInferenceEngine(const std::string& configuration);
 
     /// @brief Destructor
     ~TFInferenceEngine() = default;
@@ -43,6 +44,7 @@ class TFInferenceEngine : public IInferenceEngine
     void Shutdown() override;
 
     /// @brief Set input data (waveform)
+    ///
     /// @param waveform [in] - Waveform to be split
     /// @param nb_frames [in] - Number of frames within given Waveform
     /// @param nb_channels [in] - Number of channels within given Waveform
@@ -61,11 +63,8 @@ class TFInferenceEngine : public IInferenceEngine
     /// @brief Extracts model path from the provided command line arguments
     virtual std::string GetModelPath() const;
 
-    /// @brief Provide more detail logging
-    virtual bool IsVerbosityEnabled() const;
-
-    /// @brief Command Line Options
-    CLIOptions cli_options_;
+    /// @brief Model Configurations
+    std::string configuration_;
 
     /// @brief Inference results (waveforms)
     Waveforms results_;

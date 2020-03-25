@@ -22,10 +22,6 @@ class InferenceEngine
     /// @brief Default Constructor
     InferenceEngine();
 
-    /// @brief Constructor
-    /// @param cli_options [in] - Command Line Interface Options
-    explicit InferenceEngine(const CLIOptions& cli_options);
-
     /// @brief Destructor
     ~InferenceEngine() = default;
 
@@ -40,7 +36,7 @@ class InferenceEngine
 
     /// @brief Select Inference Engine
     /// @param inference_engine [in] - Inference Engine type (TF, TFLite)
-    void SelectInferenceEngine(const InferenceEngineType& inference_engine);
+    void SelectInferenceEngine(const InferenceEngineType& inference_engine, const std::string& configuration);
 
     /// @brief Set input data (waveform)
     /// @param waveform [in] - Waveform to be split

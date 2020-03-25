@@ -12,6 +12,9 @@ cc_library(
         #"-Werror",
         #"-Wno-error=write-strings",
     ],
+    linkopts = [
+        "-lstdc++fs",
+    ],
     deps = [
         "//spleeter/argument_parser",
         "//spleeter/audio",

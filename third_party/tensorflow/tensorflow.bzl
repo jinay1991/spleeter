@@ -41,5 +41,5 @@ def tensorflow():
             name = "tensorflow",
             build_file = "//third_party/tensorflow:tensorflow.BUILD",
             sha256 = "68404e0bc997373e0c63f43ee04479cbe68dcaf3ae0a7a3022a81591ff3a3364",
-            url = "https://github.com/jinay1991/spleeter/releases/download/v0.1/libtensorflow_cc-linux.tar.gz",
+            url = "https://github.com/jinay1991/spleeter/releases/download/v0.1/libtensorflow_cc-2.1.0-linux.tar.gz",
         )

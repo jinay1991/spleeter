@@ -6,13 +6,12 @@
 #ifndef SPLEETER_DATA_TYPES_WAVEFORM_H_
 #define SPLEETER_DATA_TYPES_WAVEFORM_H_
 
-#include <cstdint>
-#include <string>
 #include <vector>
 
 namespace spleeter
 {
 using Waveform = std::vector<float>;
+
 using Waveforms = std::vector<Waveform>;
 
 }  // namespace spleeter

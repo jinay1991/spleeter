@@ -7,6 +7,7 @@
 #define SPLEETER_AUDIO_FFMPEG_AUDIO_ADAPTER_H_
 
 #include "spleeter/audio/i_audio_adapter.h"
+#include "spleeter/data_types/audio_properties.h"
 
 #ifndef __cplusplus__
 extern "C"
@@ -48,23 +49,28 @@ class FfmpegAudioAdapter : public IAudioAdapter
     /// @brief Loads the audio file denoted by the given path and returns it data as a waveform.
     ///
     /// @param path [in]         - Path of the audio file to load data from.
-    /// @param offset [in]       - (Optional) Start offset to load from in seconds.
-    /// @param duration [in]     - (Optional) Duration to load in seconds.
-    /// @param sample_rate [in]  - (Optional) Sample rate to load audio with.
+    /// @param offset [in]       - Start offset to load from in seconds.
+    /// @param duration [in]     - Duration to load in seconds.
+    /// @param sample_rate [in]  - Sample rate to load audio with.
     ///
-    /// @returns Loaded data a (waveform, sample_rate) pair.
-    std::pair<Waveform, std::int32_t> Load(const std::string& path, const double offset, const double duration,
-                                           const std::int32_t& sample_rate) override;
+    /// @returns Loaded data as waveform
+    Waveform Load(const std::string& path, const double offset, const double duration,
+                  const std::int32_t sample_rate) override;
 
     /// @brief Write waveform data to the file denoted by the given path using FFMPEG process.
     ///
     /// @param path [in]        - Path of the audio file to save data in.
     /// @param data [in]        - Waveform data to write.
     /// @param sample_rate [in] - Sample rate to write file in.
-    /// @param codec [in]       - (Optional) Writing codec to use.
-    /// @param bitrate [in]     - (Optional) Bitrate of the written audio file.
-    void Save(const std::string& path, const Waveform& data, const std::int32_t& sample_rate, const std::string& codec,
-              const std::int32_t& bitrate) override;
+    /// @param codec [in]       - Writing codec to use.
+    /// @param bitrate [in]     - Bitrate of the written audio file.
+    void Save(const std::string& path, const Waveform& data, const std::int32_t sample_rate, const std::string& codec,
+              const std::int32_t bitrate) override;
+
+    /// @brief Provide properties of the Waveform (nb_frames, nb_channels, sample_rate)
+    ///
+    /// @return audio properties
+    AudioProperties GetProperties() const override;
 };
 }  // namespace spleeter
 

@@ -13,6 +13,7 @@ cc_library(
     deps = [
         "//spleeter/data_types",
         "//spleeter/logging",
+        "@audionamix//:wave",
         "@ffmpeg//:avcodec",
         "@ffmpeg//:avformat",
         "@ffmpeg//:avutil",

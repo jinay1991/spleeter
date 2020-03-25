@@ -14,7 +14,7 @@ namespace spleeter
 struct CLIOptions
 {
     /// @brief List of input audio filenames
-    std::string inputs{"external/audio_example/file/audio_example.mp3"};
+    std::string inputs{"external/audio_example/file/audio_example.wav"};
 
     /// @brief Path of the output directory to write audio files in
     std::string output_path{"separated_audio"};
@@ -40,7 +40,7 @@ struct CLIOptions
     std::string codec{"wav"};
 
     /// @brief Audio bitrate to be used for separate output
-    std::string bitrate{"128k"};
+    std::int32_t bitrate{128000};
 
     /// @brief Whether to use multichannel Wiener filtering for separation
     bool mwf{false};

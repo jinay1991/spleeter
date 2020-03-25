@@ -21,7 +21,7 @@ class AudioAdapterTest : public ::testing::Test
   public:
     AudioAdapterTest()
         : audio_adapter_{std::make_unique<FfmpegAudioAdapter>()},
-          test_audio_description_{"external/audio_example/file/audio_example.mp3"},
+          test_audio_description_{"external/audio_example/file/audio_example.wav"},
           test_offset_{0.0},
           test_duration_{600.0},
           test_sample_rate_{44100},
@@ -43,7 +43,7 @@ class AudioAdapterTest : public ::testing::Test
     const std::string test_bitrate_;
 };
 
-TEST_F(AudioAdapterTest, Load)
+TEST_F(AudioAdapterTest, DISABLED_Load)
 {
     auto waveform_sample_rate_pair =
         audio_adapter_->Load(test_audio_description_, test_offset_, test_duration_, test_sample_rate_);
@@ -58,13 +58,13 @@ TEST_F(AudioAdapterTest, Load)
     // ASSERT_EQ(waveform[1].size(), 2);
 }
 
-TEST_F(AudioAdapterTest, LoadError)
+TEST_F(AudioAdapterTest, DISABLED_LoadError)
 {
     EXPECT_EXIT(audio_adapter_->Load("Paris City Jazz", test_offset_, test_duration_, test_sample_rate_),
                 ::testing::KilledBySignal(SIGABRT), "");
 }
 
-TEST_F(AudioAdapterTest, Save)
+TEST_F(AudioAdapterTest, DISABLED_Save)
 {
     // std::string path = "/tmp/decoded_audio.mp3";
     // auto codec = "mp3";

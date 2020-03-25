@@ -37,14 +37,14 @@ std::vector<std::string> GetOutputTensorNames(const std::string& configuration)
 }
 }  // namespace internal
 
-TFInferenceEngine::TFInferenceEngine() : TFInferenceEngine{CLIOptions{}} {}
+TFInferenceEngine::TFInferenceEngine() : TFInferenceEngine{"spleeter:5stems"} {}
 
-TFInferenceEngine::TFInferenceEngine(const CLIOptions& cli_options)
-    : cli_options_{cli_options},
+TFInferenceEngine::TFInferenceEngine(const std::string& configuration)
+    : configuration_{configuration},
       bundle_{std::make_shared<tensorflow::SavedModelBundle>()},
       input_tensor_{},
       output_tensors_{},
-      output_tensor_names_{internal::GetOutputTensorNames(cli_options_.configuration)},
+      output_tensor_names_{internal::GetOutputTensorNames(configuration_)},
       model_dir_{"external/models/"}
 {
 }
@@ -75,15 +75,15 @@ Waveforms TFInferenceEngine::InvokeInference() const
 
     /// Extract results
     auto waveforms = Waveforms{};
-    std::transform(outputs.begin(), outputs.end(), std::back_inserter(waveforms), [&](const auto& tensor) {
-        auto output_data = std::vector<float>{};
-        output_data.resize(input_tensor_.dims());
+    std::transform(outputs.begin(), outputs.end(), std::back_inserter(waveforms),
+                   [&](const tensorflow::Tensor& tensor) {
+                       auto waveform = Waveform{};
+                       waveform.resize(input_tensor_.dim_size(0) * input_tensor_.dim_size(1));
 
-        // auto tensor_data = tensor.matrix<std::uint8_t>().data();
-        // std::copy(tensor_data, tensor_data + output_data.length(), output_data);
-
-        return output_data;
-    });
+                       auto tensor_dataptr = tensor.matrix<float>().data();
+                       std::copy(tensor_dataptr, tensor_dataptr + waveform.size(), waveform.begin());
+                       return waveform;
+                   });
 
     return waveforms;
 }
@@ -99,10 +99,8 @@ Waveforms TFInferenceEngine::GetResults() const { return results_; }
 
 std::string TFInferenceEngine::GetModelPath() const
 {
-    auto config = cli_options_.configuration.substr(cli_options_.configuration.find_first_of(':') + 1);
+    auto config = configuration_.substr(configuration_.find_first_of(':') + 1);
     return model_dir_ + config;
 }
-
-bool TFInferenceEngine::IsVerbosityEnabled() const { return cli_options_.verbose; }
 
 }  // namespace spleeter

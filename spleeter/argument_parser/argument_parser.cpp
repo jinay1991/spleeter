@@ -104,7 +104,7 @@ CLIOptions ArgumentParser::ParseArgs(int argc, char* argv[])
                 SPLEETER_LOG(DEBUG) << " (+) codec: " << cli_options_.codec;
                 break;
             case 'b':
-                cli_options_.bitrate = optarg;
+                cli_options_.bitrate = std::stoi(optarg) * 1000;
                 SPLEETER_LOG(DEBUG) << " (+) bitrate: " << cli_options_.bitrate;
                 break;
             case 'm':
