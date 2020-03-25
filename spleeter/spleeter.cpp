@@ -9,9 +9,8 @@
 
 namespace spleeter
 {
-Spleeter::Spleeter(std::unique_ptr<IArgumentParser> argument_parser)
-    : cli_options_{argument_parser->GetParsedArgs()},
-      separator_{std::make_unique<Separator>(cli_options_.configuration, cli_options_.mwf)}
+Spleeter::Spleeter(const CLIOptions& cli_options)
+    : cli_options_{cli_options}, separator_{std::make_unique<Separator>(cli_options_.configuration, cli_options_.mwf)}
 {
 }
 

@@ -259,7 +259,7 @@ void FfmpegAudioAdapter::Save(const std::string& path, const Waveform& data, con
 
     auto frame_size = av_samples_get_buffer_size(nullptr, audio_codec_context->channels,
                                                  audio_codec_context->frame_size, audio_codec_context->sample_fmt, 1);
-    std::uint8_t* buffer = (std::uint8_t*)data.c_str();  //(std::uint8_t*)av_malloc(frame_size);
+    std::uint8_t* buffer = (std::uint8_t*)data.data();  //(std::uint8_t*)av_malloc(frame_size);
     avcodec_fill_audio_frame(frame, audio_codec_context->channels, audio_codec_context->sample_fmt,
                              (const std::uint8_t*)buffer, frame_size, 1);
 

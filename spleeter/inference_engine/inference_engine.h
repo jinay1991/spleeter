@@ -44,7 +44,7 @@ class InferenceEngine
 
     /// @brief Set input data (waveform)
     /// @param waveform [in] - Waveform to be split
-    void SetInputWaveform(const Waveform& waveform);
+    void SetInputWaveform(const Waveform& waveform, const std::int32_t nb_frames, const std::int32_t nb_channels);
 
     /// @brief Obtain Results for provided input
     /// @return vector of pair of (confidence, label idx)

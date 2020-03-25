@@ -8,8 +8,8 @@
 #include "spleeter/argument_parser/cli_options.h"
 #include "spleeter/inference_engine/i_inference_engine.h"
 
-#include "tensorflow/cc/client/client_session.h"
-#include "tensorflow/cc/saved_model/loader.h"
+#include <tensorflow/cc/client/client_session.h>
+#include <tensorflow/cc/saved_model/loader.h>
 
 #include <cstdint>
 #include <memory>
@@ -44,7 +44,10 @@ class TFInferenceEngine : public IInferenceEngine
 
     /// @brief Set input data (waveform)
     /// @param waveform [in] - Waveform to be split
-    void SetInputWaveform(const Waveform& waveform) override;
+    /// @param nb_frames [in] - Number of frames within given Waveform
+    /// @param nb_channels [in] - Number of channels within given Waveform
+    void SetInputWaveform(const Waveform& waveform, const std::int32_t nb_frames,
+                          const std::int32_t nb_channels) override;
 
     /// @brief Obtain Results for provided input waveform
     /// @return List of waveforms (split waveforms)

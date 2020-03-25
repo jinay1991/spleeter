@@ -15,7 +15,7 @@ int main(int argc, char** argv)
     {
         std::unique_ptr<spleeter::IArgumentParser> argument_parser =
             std::make_unique<spleeter::ArgumentParser>(argc, argv);
-        auto spleeter = std::make_unique<spleeter::Spleeter>(std::move(argument_parser));
+        auto spleeter = std::make_unique<spleeter::Spleeter>(argument_parser->GetParsedArgs());
         spleeter->Init();
 
         spleeter->Execute();

@@ -31,7 +31,7 @@ std::vector<Waveform> Separator::Separate(const Waveform& waveform)
     /// 2. Extract Input/Output Node
     /// 3. Preprocess waveform
     /// 4. Postprocess resultant waveform
-    inference_engine_.SetInputWaveform(waveform);
+    inference_engine_.SetInputWaveform(waveform, static_cast<std::int32_t>(waveform.size()), 2);
 
     inference_engine_.Execute();
 

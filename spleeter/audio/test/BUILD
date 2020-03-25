@@ -3,7 +3,7 @@ load("@rules_cc//cc:defs.bzl", "cc_test")
 package(default_visibility = ["//visibility:public"])
 
 cc_test(
-    name = "unit_tests",
+    name = "unit_test",
     srcs = glob(["*.cpp"]),
     copts = [
         "-std=c++14",

@@ -33,7 +33,11 @@ void InferenceEngine::Execute() { inference_engine_->Execute(); }
 
 void InferenceEngine::Shutdown() { inference_engine_->Shutdown(); }
 
-void InferenceEngine::SetInputWaveform(const Waveform& waveform) { inference_engine_->SetInputWaveform(waveform); }
+void InferenceEngine::SetInputWaveform(const Waveform& waveform, const std::int32_t nb_frames,
+                                       const std::int32_t nb_channels)
+{
+    inference_engine_->SetInputWaveform(waveform, nb_frames, nb_channels);
+}
 
 Waveforms InferenceEngine::GetResults() const { return inference_engine_->GetResults(); }
 

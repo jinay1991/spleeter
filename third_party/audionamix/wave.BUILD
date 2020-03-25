@@ -1,19 +1,22 @@
 load("@rules_cc//cc:defs.bzl", "cc_library")
 
-package(default_visiblity = ["//visibility:public"])
+package(default_visibility = ["//visibility:public"])
 
 cc_library(
     name = "wave",
-    srcs = glob([
-        "wave/*.cc",
-        "wave/header/*.cc",
-    ], exclude = glob(["wave/*_test.cc"])),
+    srcs = glob(
+        [
+            "src/wave/*.cc",
+            "src/wave/header/*.cc",
+        ],
+        exclude = glob(["src/wave/*_test.cc"]),
+    ),
     hdrs = glob([
-        "wave/*.h",
-        "wave/header/*.h",
+        "src/wave/*.h",
+        "src/wave/header/*.h",
     ]),
     includes = [
-        "wave",
-        "wave/header",
+        "src",
+        "src/wave/header",
     ],
 )

@@ -135,7 +135,7 @@ void TFLiteInferenceEngine::Init()
 
 void TFLiteInferenceEngine::Execute()
 {
-    SetInputWaveform(Waveform{});
+    SetInputWaveform(Waveform{}, 0, 0);
     results_ = InvokeInference();
 }
 
@@ -149,7 +149,10 @@ Waveforms TFLiteInferenceEngine::InvokeInference() const
     return Waveforms{};
 }
 
-void TFLiteInferenceEngine::SetInputWaveform(const Waveform& waveform) {}
+void TFLiteInferenceEngine::SetInputWaveform(const Waveform& waveform, const std::int32_t nb_frames,
+                                             const std::int32_t nb_channels)
+{
+}
 
 Waveforms TFLiteInferenceEngine::GetResults() const { return results_; }
 

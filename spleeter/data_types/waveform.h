@@ -12,7 +12,7 @@
 
 namespace spleeter
 {
-using Waveform = std::string;
+using Waveform = std::vector<float>;
 using Waveforms = std::vector<Waveform>;
 
 }  // namespace spleeter
