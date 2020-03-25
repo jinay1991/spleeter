@@ -24,7 +24,7 @@ cc_test(
 )
 
 cc_test(
-    name = "component_tests",
+    name = "component_test",
     srcs = ["spleeter_tests.cpp"],
     copts = [
         "-std=c++14",
