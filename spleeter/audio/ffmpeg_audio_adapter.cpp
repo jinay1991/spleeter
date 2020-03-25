@@ -33,8 +33,8 @@ std::pair<Waveform, std::int32_t> FfmpegAudioAdapter::Load(const std::string& pa
     ASSERT_CHECK_LE(0, ret) << "Could not find any audio stream in the file " << path;
     auto stream_index = ret;
     AVStream* audio_stream = format_context->streams[stream_index];
-    LOG(DEBUG) << "Given audio file {" << path << "} has {"
-               << av_get_media_type_string(audio_stream->codecpar->codec_type) << "} media stream.";
+    SPLEETER_LOG(DEBUG) << "Given audio file {" << path << "} has {"
+                        << av_get_media_type_string(audio_stream->codecpar->codec_type) << "} media stream.";
 
     AVCodec* audio_codec = avcodec_find_decoder(audio_stream->codecpar->codec_id);
     ASSERT_CHECK(audio_codec) << "Failed to find {" << audio_stream->codecpar->codec_id << "} codec";
@@ -111,10 +111,10 @@ std::pair<Waveform, std::int32_t> FfmpegAudioAdapter::Load(const std::string& pa
     avcodec_close(audio_codec_context);
     avformat_close_input(&format_context);
 
-    LOG(DEBUG) << "Decoded Waveform: \n"
-               << " (+) bitrate: " << audio_codec_context->bit_rate << "\n"
-               << " (+) codec: " << avcodec_get_name(audio_codec_context->codec_id) << "\n"
-               << " (+) sample_rate: " << audio_codec_context->sample_rate;
+    SPLEETER_LOG(DEBUG) << "Decoded Waveform: \n"
+                        << " (+) bitrate: " << audio_codec_context->bit_rate << "\n"
+                        << " (+) codec: " << avcodec_get_name(audio_codec_context->codec_id) << "\n"
+                        << " (+) sample_rate: " << audio_codec_context->sample_rate;
 
     return std::make_pair(Waveform{}, audio_codec_context->sample_rate);
 }
@@ -259,7 +259,7 @@ void FfmpegAudioAdapter::Save(const std::string& path, const Waveform& data, con
 
     auto frame_size = av_samples_get_buffer_size(nullptr, audio_codec_context->channels,
                                                  audio_codec_context->frame_size, audio_codec_context->sample_fmt, 1);
-    std::uint8_t* buffer = (std::uint8_t*)data.c_str();  //(std::uint8_t*)av_malloc(frame_size);
+    std::uint8_t* buffer = (std::uint8_t*)data.data();  //(std::uint8_t*)av_malloc(frame_size);
     avcodec_fill_audio_frame(frame, audio_codec_context->channels, audio_codec_context->sample_fmt,
                              (const std::uint8_t*)buffer, frame_size, 1);
 
@@ -294,9 +294,9 @@ void FfmpegAudioAdapter::Save(const std::string& path, const Waveform& data, con
     avcodec_close(audio_codec_context);
     avcodec_free_context(&audio_codec_context);
 
-    LOG(DEBUG) << "Encoded Waveform: \n"
-               //    << " (+) size: " << data[0].size() << "x" << data[1].size() << "\n"
-               //    << " (+) sample_rate: " << audio_codec_context->sample_rate << "\n"
-               << " (+) path: " << path;
+    SPLEETER_LOG(DEBUG) << "Encoded Waveform: \n"
+                        //    << " (+) size: " << data[0].size() << "x" << data[1].size() << "\n"
+                        //    << " (+) sample_rate: " << audio_codec_context->sample_rate << "\n"
+                        << " (+) path: " << path;
 }
 }  // namespace spleeter

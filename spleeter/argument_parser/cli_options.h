@@ -14,7 +14,7 @@ namespace spleeter
 struct CLIOptions
 {
     /// @brief List of input audio filenames
-    std::string inputs{"data/audio_example.mp3"};
+    std::string inputs{"external/audio_example/file/audio_example.mp3"};
 
     /// @brief Path of the output directory to write audio files in
     std::string output_path{"separated_audio"};
@@ -26,7 +26,7 @@ struct CLIOptions
     std::string filename_format{"{filename}/{instrument}.{codec}"};
 
     /// @brief JSON filename that contains params
-    std::string configuration{"spleeter:2stems"};
+    std::string configuration{"spleeter:5stems"};
 
     /// @brief Set the starting offset to separate audio from
     double offset{0.0};

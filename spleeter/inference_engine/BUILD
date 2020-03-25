@@ -6,24 +6,26 @@ cc_library(
     name = "inference_engine",
     srcs = glob(
         ["*.cpp"],
-        exclude = ["tf_inference_engine.cpp"],
     ),
     hdrs = glob(
         ["*.h"],
-        exclude = ["tf_inference_engine.h"],
     ),
     copts = [
         "-std=c++14",
         "-Wall",
         "-Werror",
     ],
+    data = [
+        "@models//:2stems",
+        "@models//:4stems",
+        "@models//:5stems",
+    ],
     deps = [
         "//spleeter/argument_parser",
         "//spleeter/data_types",
         "//spleeter/logging",
-        # "@org_tensorflow//tensorflow/cc:client_session",
-        # "@org_tensorflow//tensorflow/cc/saved_model:loader",
         "@org_tensorflow//tensorflow/lite:framework",
         "@org_tensorflow//tensorflow/lite/kernels:builtin_ops",
+        "@tensorflow",
     ],
 )

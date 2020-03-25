@@ -7,7 +7,6 @@
 #define SPLEETER_SPLEETER_H_
 
 #include "spleeter/argument_parser/cli_options.h"
-#include "spleeter/argument_parser/i_argument_parser.h"
 #include "spleeter/i_separator.h"
 
 #include <memory>
@@ -19,7 +18,7 @@ class Spleeter
 {
   public:
     /// @brief Constructor.
-    explicit Spleeter(std::unique_ptr<IArgumentParser> argument_parser);
+    explicit Spleeter(const CLIOptions& cli_options);
 
     /// @brief Destructor.
     virtual ~Spleeter() = default;
@@ -34,9 +33,6 @@ class Spleeter
     virtual void Shutdown();
 
   private:
-    /// @brief Argument Parser
-    std::unique_ptr<IArgumentParser> argument_parser_;
-
     /// @brief Parsed Command Line options
     CLIOptions cli_options_;
 

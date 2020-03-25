@@ -10,7 +10,7 @@ cc_binary(
         "-Wall",
         "-Werror",
     ],
-    data = ["//:testdata"],
+    data = ["@audio_example//file"],
     deps = [
         "//spleeter",
     ],

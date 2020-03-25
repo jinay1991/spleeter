@@ -44,7 +44,10 @@ class TFLiteInferenceEngine : public IInferenceEngine
 
     /// @brief Set input data (waveform)
     /// @param waveform [in] - Waveform to be split
-    void SetInputWaveform(const Waveform& waveform) override;
+    /// @param nb_frames [in] - Number of frames within given Waveform
+    /// @param nb_channels [in] - Number of channels within given Waveform
+    void SetInputWaveform(const Waveform& waveform, const std::int32_t nb_frames,
+                          const std::int32_t nb_channels) override;
 
     /// @brief Obtain Results for provided input waveform
     /// @return List of waveforms (split waveforms)

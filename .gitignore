@@ -3,9 +3,6 @@
 .devcontainer/*
 *.zip
 *.tar.xz
-5stems/*
-*.pb
-*.data*
 *.pcm
 *.raw
 
@@ -19,6 +16,10 @@ bazel-*
 model/
 *.tflite
 *.pb
+*.pb
+*.pbtxt
+*.data*
+
 
 # Prerequisites
 *.d
