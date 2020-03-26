@@ -99,8 +99,8 @@ package:
   dependencies:
     - bazel-build-and-test
   script:
-    - bazel build //:spleeter
-    - mv bazel-bin/spleeter.tar.gz libspleeter-dev.tar.gz
+    - bazel build //:spleeter-dev
+    - mv bazel-bin/spleeter-dev.tar.gz libspleeter-dev.tar.gz
   artifacts:
     paths:
       - libspleeter-dev.tar.gz

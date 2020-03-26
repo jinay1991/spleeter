@@ -2,35 +2,90 @@ load("@bazel_tools//tools/build_defs/pkg:pkg.bzl", "pkg_tar")
 
 package(default_visibility = ["//visibility:public"])
 
-# Export Headers
-exports_files(glob([
-    "spleeter/**/*.h",
-]))
+pkg_tar(
+    name = "spleeter-bin",
+    srcs = [
+        "//application:spleeter",
+    ],
+    mode = "0647",
+    package_dir = "bin",
+)
 
 pkg_tar(
-    name = "spleeter",
-    testonly = True,
-    srcs = glob([
-        "**/*.h",
-    ]) + [
-        "//application:spleeter",
+    name = "spleeter-include",
+    srcs = [],
+    mode = "0644",
+    package_dir = "include",
+    tags = ["manual"],
+    deps = [
+        "//spleeter:includes",
+        "//spleeter/argument_parser:includes",
+        "//spleeter/audio:includes",
+        "//spleeter/data_types:includes",
+        "//spleeter/inference_engine:includes",
+        "//spleeter/logging:includes",
+    ],
+)
+
+pkg_tar(
+    name = "spleeter-lib",
+    srcs = [
         "//spleeter",
         "//spleeter/argument_parser",
-        "//spleeter/argument_parser/test:unit_test",
         "//spleeter/audio",
-        "//spleeter/audio/test:unit_test",
+        "//spleeter/data_types",
         "//spleeter/inference_engine",
-        "//spleeter/inference_engine/test:unit_test",
         "//spleeter/logging",
-        "//spleeter/logging/test:unit_test",
-        "//spleeter/test:component_test",
-        "//spleeter/test:unit_test",
-        "@audio_example//file",
-        "@models//:5stems",
-        "@tensorflow",
     ],
+    mode = "0644",
+    package_dir = "lib",
+)
+
+pkg_tar(
+    name = "spleeter-data",
+    srcs = [
+        "@audio_example//file",
+    ],
+    mode = "0644",
+    package_dir = "data",
+)
+
+pkg_tar(
+    name = "spleeter-model",
+    srcs = [
+        "@model//:5stems",
+    ],
+    mode = "0644",
+    package_dir = "model",
+)
+
+pkg_tar(
+    name = "spleeter-third_party",
+    mode = "0644",
+    package_dir = "third_party",
+    deps = [
+        "@audionamix//:wave-includes",
+        "@audionamix//:wave-lib",
+        "@eigen//:eigen-includes",
+        "@eigen//:eigen-lib",
+        "@tensorflow//:tensorflow-includes",
+        "@tensorflow//:tensorflow-lib",
+    ],
+)
+
+pkg_tar(
+    name = "spleeter-dev",
+    testonly = True,
     extension = "tar.gz",
     package_dir = "/spleeter",
     strip_prefix = "/",
     tags = ["manual"],
+    deps = [
+        ":spleeter-bin",
+        ":spleeter-data",
+        ":spleeter-include",
+        ":spleeter-lib",
+        # ":spleeter-model",
+        ":spleeter-third_party",
+    ],
 )
