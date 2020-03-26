@@ -55,6 +55,16 @@ class TFInferenceEngine : public IInferenceEngine
     /// @return List of waveforms (split waveforms)
     Waveforms GetResults() const override;
 
+    /// @brief Provide type of inference engine. Used to determine which inference engine it is.
+    ///
+    /// @return Inference Engine type (i.e. TensorFlow, TensorFlowLite, etc.)
+    InferenceEngineType GetType() const override;
+
+    /// @brief Provide configuration of the model selected
+    ///
+    /// @return configuration
+    std::string GetConfiguration() const override;
+
   private:
     /// @brief Invokes Inference with TensorFlow APIs
     /// @return List of waveforms (split waveforms)

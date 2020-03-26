@@ -103,4 +103,8 @@ std::string TFInferenceEngine::GetModelPath() const
     return model_dir_ + config;
 }
 
+InferenceEngineType TFInferenceEngine::GetType() const { return InferenceEngineType::kTensorFlow; }
+
+std::string TFInferenceEngine::GetConfiguration() const { return configuration_; }
+
 }  // namespace spleeter

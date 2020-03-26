@@ -19,7 +19,7 @@ void InferenceEngine::SelectInferenceEngine(const InferenceEngineType& inference
     {
         default:
         case InferenceEngineType::kTensorFlowLite:
-            inference_engine_ = std::make_unique<TFLiteInferenceEngine>();
+            inference_engine_ = std::make_unique<TFLiteInferenceEngine>(configuration);
             break;
         case InferenceEngineType::kTensorFlow:
             inference_engine_ = std::make_unique<TFInferenceEngine>(configuration);
@@ -41,4 +41,7 @@ void InferenceEngine::SetInputWaveform(const Waveform& waveform, const std::int3
 
 Waveforms InferenceEngine::GetResults() const { return inference_engine_->GetResults(); }
 
+InferenceEngineType InferenceEngine::GetType() const { return inference_engine_->GetType(); };
+
+std::string InferenceEngine::GetConfiguration() const { return inference_engine_->GetConfiguration(); }
 }  // namespace spleeter

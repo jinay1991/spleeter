@@ -48,6 +48,16 @@ class IInferenceEngine
     /// @brief Obtain Results for provided input waveform
     /// @return List of waveforms (split waveforms)
     virtual Waveforms GetResults() const = 0;
+
+    /// @brief Provide type of inference engine. Used to determine which inference engine it is.
+    ///
+    /// @return Inference Engine type (i.e. TensorFlow, TensorFlowLite, etc.)
+    virtual InferenceEngineType GetType() const = 0;
+
+    /// @brief Provide configuration of the model selected
+    ///
+    /// @return configuration
+    virtual std::string GetConfiguration() const = 0;
 };
 }  // namespace spleeter
 #endif  /// SPLEETER_I_INFERENCE_ENGINE_H_

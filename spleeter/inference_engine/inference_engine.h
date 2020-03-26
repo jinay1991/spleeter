@@ -46,6 +46,16 @@ class InferenceEngine
     /// @return vector of pair of (confidence, label idx)
     Waveforms GetResults() const;
 
+    /// @brief Get type of inference engine. Used to determine which inference engine it is.
+    ///
+    /// @return Inference Engine type (i.e. TensorFlow, TensorFlowLite, etc.)
+    InferenceEngineType GetType() const;
+
+    /// @brief Provide configurations set for the model
+    ///
+    /// @return configuration
+    std::string GetConfiguration() const;
+
   private:
     /// @brief Command Line Options
     CLIOptions cli_options_;

@@ -26,6 +26,7 @@ pkg_tar(
         "//spleeter/test:component_test",
         "//spleeter/test:unit_test",
         "@audio_example//file",
+        "@models//:5stems",
         "@tensorflow",
     ],
     extension = "tar.gz",

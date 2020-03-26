@@ -27,8 +27,9 @@ class TFLiteInferenceEngine : public IInferenceEngine
     TFLiteInferenceEngine();
 
     /// @brief Constructor
-    /// @param cli_options [in] - Command Line Interface Options
-    explicit TFLiteInferenceEngine(const CLIOptions& cli_options);
+    ///
+    /// @param configuration [in] - model configuration
+    explicit TFLiteInferenceEngine(const std::string& configuration);
 
     /// @brief Destructor
     ~TFLiteInferenceEngine() = default;
@@ -43,6 +44,7 @@ class TFLiteInferenceEngine : public IInferenceEngine
     void Shutdown() override;
 
     /// @brief Set input data (waveform)
+    ///
     /// @param waveform [in] - Waveform to be split
     /// @param nb_frames [in] - Number of frames within given Waveform
     /// @param nb_channels [in] - Number of channels within given Waveform
@@ -50,8 +52,19 @@ class TFLiteInferenceEngine : public IInferenceEngine
                           const std::int32_t nb_channels) override;
 
     /// @brief Obtain Results for provided input waveform
+    ///
     /// @return List of waveforms (split waveforms)
     Waveforms GetResults() const override;
+
+    /// @brief Provide type of inference engine. Used to determine which inference engine it is.
+    ///
+    /// @return Inference Engine type (i.e. TensorFlow, TensorFlowLite, etc.)
+    InferenceEngineType GetType() const override;
+
+    /// @brief Provide configuration of the model selected
+    ///
+    /// @return configuration
+    std::string GetConfiguration() const override;
 
   private:
     /// @brief Invokes Inference with TFLite Interpreter
@@ -61,11 +74,8 @@ class TFLiteInferenceEngine : public IInferenceEngine
     /// @brief Extracts model path from the provided command line arguments
     virtual std::string GetModelPath() const;
 
-    /// @brief Provide more detail logging
-    virtual bool IsVerbosityEnabled() const;
-
     /// @brief Command Line Options
-    CLIOptions cli_options_;
+    std::string configuration_;
 
     /// @brief Inference results (waveforms)
     Waveforms results_;
