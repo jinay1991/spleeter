@@ -9,6 +9,7 @@ pkg_tar(
     ],
     mode = "0647",
     package_dir = "bin",
+    tags = ["manual"],
 )
 
 pkg_tar(
@@ -39,6 +40,7 @@ pkg_tar(
     ],
     mode = "0644",
     package_dir = "lib",
+    tags = ["manual"],
 )
 
 pkg_tar(
@@ -48,6 +50,7 @@ pkg_tar(
     ],
     mode = "0644",
     package_dir = "data",
+    tags = ["manual"],
 )
 
 pkg_tar(
@@ -64,6 +67,7 @@ pkg_tar(
     name = "spleeter-third_party",
     mode = "0644",
     package_dir = "third_party",
+    tags = ["manual"],
     deps = [
         "@audionamix//:wave-includes",
         "@audionamix//:wave-lib",
