@@ -57,6 +57,7 @@ pkg_tar(
     ],
     mode = "0644",
     package_dir = "model",
+    tags = ["manual"],
 )
 
 pkg_tar(
@@ -86,6 +87,6 @@ pkg_tar(
         ":spleeter-include",
         ":spleeter-lib",
         # ":spleeter-model",
-        ":spleeter-third_party",
+        # ":spleeter-third_party",
     ],
 )
