@@ -21,7 +21,6 @@ cc_library(
         "@models//:4stems",
         "@models//:5stems",
     ],
-    linkstatic = True,
     deps = [
         "//spleeter/argument_parser",
         "//spleeter/data_types",

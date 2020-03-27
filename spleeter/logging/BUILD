@@ -12,7 +12,6 @@ cc_library(
         "-Wall",
         "-Werror",
     ],
-    linkstatic = True,
 )
 
 pkg_tar(

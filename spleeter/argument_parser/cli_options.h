@@ -26,6 +26,7 @@ struct CLIOptions
     std::string filename_format{"{filename}/{instrument}.{codec}"};
 
     /// @brief JSON filename that contains params
+    /// choices: { "spleeter:5stems", "spleeter:4stems", "spleeter:2stems" }
     std::string configuration{"spleeter:5stems"};
 
     /// @brief Set the starting offset to separate audio from
@@ -36,6 +37,7 @@ struct CLIOptions
     double duration{600.0};
 
     /// @brief Audio codec to be used for separate output
+    /// @todo v1.2 supports only *.wav
     /// choices: { wav, mp3, ogg, m4a, wma, flac }
     std::string codec{"wav"};
 
@@ -52,7 +54,7 @@ struct CLIOptions
     std::string audio_path{};
 
     /// @brief Name of the audio adapater to use for audio I/O
-    std::string audio_adapter{};
+    std::string audio_adapter{"audionamix"};
 
     /// @brief Shows verbose logs
     bool verbose{false};

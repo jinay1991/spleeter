@@ -16,11 +16,11 @@ Waveform AudionamixAudioAdapter::Load(const std::string& path, const double /*of
     auto file = wave::File{};
 
     auto ret = file.Open(path, wave::OpenMode::kIn);
-    ASSERT_CHECK(!ret) << "Unable to open " << path << "! (Returned: " << ret << ")";
+    ASSERT_CHECK(!ret) << "Unable to open " << path << ", only *.wav is supported! (Returned: " << ret << ")";
 
     auto waveform = Waveform{};
     ret = file.Read(&waveform);
-    ASSERT_CHECK(!ret) << "Unable to read " << path << "! (Returned: " << ret << ")";
+    ASSERT_CHECK(!ret) << "Unable to read " << path << ", only *.wav is supported! (Returned: " << ret << ")";
 
     /// Save loaded audio properties
     audio_properties_.nb_frames = file.frame_number();

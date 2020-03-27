@@ -58,9 +58,9 @@ Waveforms Separator::Separate(const Waveform& waveform, const AudioProperties& p
 }
 
 void Separator::SeparateToFile(const std::string& audio_descriptor, const std::string& destination,
-                               const std::string& audio_adapter, const double offset, const double duration,
-                               const std::string& codec, const std::int32_t bitrate, const std::string& filename_format,
-                               const bool& synchronous)
+                               const std::string& /*audio_adapter*/, const double offset, const double duration,
+                               const std::string& codec, const std::int32_t bitrate,
+                               const std::string& /*filename_format*/, const bool /*synchronous*/)
 {
     auto waveform = audio_adapter_->Load(audio_descriptor, offset, duration, -1);
 

@@ -63,7 +63,7 @@ class Separator : public ISeparator
                         const std::string& audio_adapter, const double offset = 0.0, const double duration = 600.0,
                         const std::string& codec = "wav", const std::int32_t bitrate = 128000,
                         const std::string& filename_format = "{filename}/{instrument}.{codec}",
-                        const bool& synchronous = true) override;
+                        const bool synchronous = true) override;
 
   private:
     /// @brief Is mwf enabled?

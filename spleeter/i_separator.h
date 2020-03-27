@@ -52,7 +52,7 @@ class ISeparator
     virtual void SeparateToFile(const std::string& audio_descriptor, const std::string& destination,
                                 const std::string& audio_adapter, const double offset, const double duration,
                                 const std::string& codec, const std::int32_t bitrate,
-                                const std::string& filename_format, const bool& synchronous) = 0;
+                                const std::string& filename_format, const bool synchronous) = 0;
 };
 }  // namespace spleeter
 

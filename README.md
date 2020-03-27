@@ -2,6 +2,11 @@
 
 ## Dev Environment
 
+Supported OS:
+
+* Ubuntu 18.04
+* macOS Catalina v10.15
+
 To setup developer environment, the project requires following packages.
 
 ```
@@ -16,6 +21,20 @@ apt-get install -y wget
 
 # Installation of FFMPEG
 apt-get install -y libavcodec-dev libavformat-dev libavfilter-dev libavdevice-dev libswresample-dev libswscale-dev ffmpeg
+
+
+# Installation of python dependencies
+apt-get install -y python python-pip
+python -m pip install -U pip
+python -m pip install -U tensorflow
+python -m pip install -U future
+python -m pip install -U six
+
+# Installation of python3 dependencies
+apt-get install -y python3 python3-pip
+python3 -m pip install -U pip
+python3 -m pip install -U future
+python3 -m pip install -U six
 ```
 
 ### Build System
@@ -38,6 +57,68 @@ Install `docker` tool from official site (here)[https://www.docker.com/products/
 
 ```
 docker pull registry.gitlab.com/jinay1991/spleeter
+```
+
+## Usage
+
+To quickly run the `spleeter` application, run `bazel run //application:spleeter`
+
+To quickly run unit/component tests, run `bazel test //... --test_output=all --cache_test_results=false`
+
+To build package (`*.tar.gz`), run `bazel build //:spleeter-dev`
+
+## Integration
+
+To integrate it external application, please refer `example` directory containing separate `WORKSPACE` uses `spleeter` and it's dependencies.
+
+Please note that `spleeter` has some external dependencies (i.e. `libtensorflow` etc.), which is why `third_party` directory is necessary for downloading all the dependencies and link them together with your application.
+
+Usage on API can be found on [Doxygen]() documentation.
+
+Example implementation can be found in `example/spleeter_app.cpp` (Snipate below)
+
+```
+///
+/// @file
+/// @copyright Copyright (c) 2020, MIT License
+///
+#include "spleeter/argument_parser/cli_options.h"
+#include "spleeter/spleeter.h"
+
+#include <iostream>
+#include <memory>
+
+int main(void)
+{
+    try
+    {
+        /// Initialize
+        auto cli_options = spleeter::CLIOptions{};
+        cli_options.inputs = std::string{"external/audio_example/file/audio_example.wav"};
+        cli_options.output_path = std::string{"separated_audio"};
+        cli_options.configuration = std::string{"spleeter:5stems"};
+
+        cli_options.audio_adapter = std::string{"audionamix"};
+        cli_options.codec = std::string{"wav"};
+        cli_options.bitrate = 192000;
+
+        auto spleeter = std::make_unique<spleeter::Spleeter>(cli_options);
+        spleeter->Init();
+
+        /// Run
+        spleeter->Execute();
+
+        /// Deinitialize
+        spleeter->Shutdown();
+    }
+    catch (std::exception& e)
+    {
+        std::cerr << "Caught Exception!! " << e.what() << std::endl;
+        return 1;
+    }
+
+    return 0;
+}
 ```
 
 ## Reference
