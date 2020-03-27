@@ -53,7 +53,7 @@ apt-get update && apt-get install -y bazel
 
 One can use docker container to use as dev environment,
 
-Install `docker` tool from official site (here)[https://www.docker.com/products/docker-desktop]
+Install `docker` tool from official site [here](https://www.docker.com/products/docker-desktop)
 
 ```
 docker pull registry.gitlab.com/jinay1991/spleeter
@@ -73,7 +73,7 @@ To integrate it external application, please refer `example` directory containin
 
 Please note that `spleeter` has some external dependencies (i.e. `libtensorflow` etc.), which is why `third_party` directory is necessary for downloading all the dependencies and link them together with your application.
 
-Usage on API can be found on [Doxygen]() documentation.
+Usage on API can be found on [Doxygen](https://jinay1991.gitlab.io/spleeter/doc/html/) documentation.
 
 Example implementation can be found in `example/spleeter_app.cpp` (Snipate below)
 
