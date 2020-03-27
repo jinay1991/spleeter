@@ -30,7 +30,7 @@ TEST(ArgumentParserTest, DefaultConstructor)
     EXPECT_FALSE(actual.mwf);
     EXPECT_TRUE(actual.mus_dir.empty());
     EXPECT_TRUE(actual.audio_path.empty());
-    EXPECT_TRUE(actual.audio_adapter.empty());
+    EXPECT_EQ(actual.audio_adapter, "audionamix");
     EXPECT_FALSE(actual.verbose);
 }
 TEST(ArgumentParserTest, WhenHelpArgument)
