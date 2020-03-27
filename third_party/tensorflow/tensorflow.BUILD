@@ -1,5 +1,4 @@
 load("@rules_cc//cc:defs.bzl", "cc_library")
-load("@bazel_tools//tools/build_defs/pkg:pkg.bzl", "pkg_tar")
 
 package(default_visibility = ["//visibility:public"])
 
@@ -27,23 +26,4 @@ cc_library(
         "@com_google_protobuf//:protobuf_headers",
         "@eigen",
     ],
-)
-
-pkg_tar(
-    name = "tensorflow-lib",
-    srcs = glob(["lib/libtensorflow_cc.so*"]),
-    mode = "0644",
-    package_dir = "tensorflow/lib",
-    tags = ["manual"],
-)
-
-pkg_tar(
-    name = "tensorflow-includes",
-    srcs = glob([
-        "include/**/*.h",
-        "include/**/*",
-    ]),
-    mode = "0644",
-    package_dir = "tensorflow/include",
-    tags = ["manual"],
 )
