@@ -4,7 +4,10 @@ package(default_visibility = ["//visibility:public"])
 
 cc_test(
     name = "unit_test",
-    srcs = glob(["*.cpp"]),
+    srcs = glob(
+        ["*.cpp"],
+        exclude = ["tflite_inference_engine_tests.cpp"],
+    ),
     copts = [
         "-std=c++14",
         "-Wall",

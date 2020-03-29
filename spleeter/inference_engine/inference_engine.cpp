@@ -4,7 +4,7 @@
 ///
 #include "spleeter/inference_engine/inference_engine.h"
 #include "spleeter/inference_engine/tf_inference_engine.h"
-#include "spleeter/inference_engine/tflite_inference_engine.h"
+// #include "spleeter/inference_engine/tflite_inference_engine.h"
 
 #include <memory>
 
@@ -18,9 +18,9 @@ void InferenceEngine::SelectInferenceEngine(const InferenceEngineType& inference
     switch (inference_engine)
     {
         default:
-        case InferenceEngineType::kTensorFlowLite:
-            inference_engine_ = std::make_unique<TFLiteInferenceEngine>(configuration);
-            break;
+        // case InferenceEngineType::kTensorFlowLite:
+        //     inference_engine_ = std::make_unique<TFLiteInferenceEngine>(configuration);
+        //     break;
         case InferenceEngineType::kTensorFlow:
             inference_engine_ = std::make_unique<TFInferenceEngine>(configuration);
             break;
