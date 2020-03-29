@@ -7,9 +7,11 @@ cc_library(
     name = "inference_engine",
     srcs = glob(
         ["*.cpp"],
+        exclude = ["tflite_inference_engine.cpp"],
     ),
     hdrs = glob(
         ["*.h"],
+        exclude = ["tflite_inference_engine.h"],
     ),
     copts = [
         "-std=c++14",
@@ -25,8 +27,8 @@ cc_library(
         "//spleeter/argument_parser",
         "//spleeter/data_types",
         "//spleeter/logging",
-        "@org_tensorflow//tensorflow/lite:framework",
-        "@org_tensorflow//tensorflow/lite/kernels:builtin_ops",
+        # "@org_tensorflow//tensorflow/lite:framework",
+        # "@org_tensorflow//tensorflow/lite/kernels:builtin_ops",
         "@tensorflow",
     ],
 )
