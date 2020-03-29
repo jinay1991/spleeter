@@ -27,7 +27,7 @@ Waveform AudionamixAudioAdapter::Load(const std::string& path, const double /*of
     audio_properties_.nb_channels = file.channel_number();
     audio_properties_.sample_rate = file.sample_rate();
 
-    SPLEETER_LOG(DEBUG) << "Loaded waveform from " << path;
+    SPLEETER_LOG(DEBUG) << "Loaded waveform from " << path << " using Audionamix.";
     return waveform;
 }
 
@@ -49,7 +49,7 @@ void AudionamixAudioAdapter::Save(const std::string& path, const Waveform& data,
     ret = file.Write(data);
     ASSERT_CHECK(!ret) << "Unable to write to " << path << "! (Returned: " << ret << ")";
 
-    SPLEETER_LOG(DEBUG) << "Saved waveform to " << path;
+    SPLEETER_LOG(DEBUG) << "Saved waveform to " << path << " using Audionamix.";
 }
 
 AudioProperties AudionamixAudioAdapter::GetProperties() const { return audio_properties_; }

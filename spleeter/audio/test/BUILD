@@ -15,9 +15,7 @@ cc_test(
     ],
     linkstatic = True,
     deps = [
-        "//spleeter/argument_parser",
         "//spleeter/audio",
-        "//spleeter/logging",
         "@googletest//:gtest_main",
     ],
 )

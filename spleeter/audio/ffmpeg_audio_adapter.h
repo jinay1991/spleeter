@@ -24,15 +24,10 @@ extern "C"
 }
 #endif
 
+#include <algorithm>
 #include <cstdint>
 #include <string>
 #include <utility>
-
-/**
- * References:
- * 1) https://rodic.fr/blog/libavcodec-tutorial-decode-audio-file/
- * 2) https://medium.com/@donturner/using-ffmpeg-for-faster-audio-decoding-967894e94e71  <--- Looks good.
- */
 
 namespace spleeter
 {
@@ -71,6 +66,10 @@ class FfmpegAudioAdapter : public IAudioAdapter
     ///
     /// @return audio properties
     AudioProperties GetProperties() const override;
+
+  private:
+    /// @brief Loaded Audio Properties
+    AudioProperties audio_properties_;
 };
 }  // namespace spleeter
 
