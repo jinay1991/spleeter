@@ -123,42 +123,6 @@ Waveform FfmpegAudioAdapter::Load(const std::string& path, const double /*offset
     return data;
 }
 
-static std::int32_t Encode(AVFrame* frame, AVFormatContext* format_context, AVCodecContext* audio_codec_context,
-                           std::int32_t* data_present)
-{
-    AVPacket packet;
-    av_init_packet(&packet);
-    *data_present = 0;
-
-    if (frame)
-    {
-        static std::int64_t pts{0};
-        frame->pts = pts;
-        pts += frame->nb_samples;
-    }
-    auto ret = avcodec_send_frame(audio_codec_context, frame);
-    if (ret == AVERROR_EOF)
-    {
-        av_packet_unref(&packet);
-        return 0;
-    }
-    ASSERT_CHECK_LE(0, ret) << "Unable to send frame to encoder (Returned: " << ret << ")";
-
-    ret = avcodec_receive_packet(audio_codec_context, &packet);
-    if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF)
-    {
-        av_packet_unref(&packet);
-        return 0;
-    }
-    ASSERT_CHECK_LE(0, ret) << "Error during encoding (Returned: " << ret << ")";
-
-    *data_present = 1;
-    packet.stream_index = 0;
-    av_write_frame(format_context, &packet);
-    av_packet_unref(&packet);
-    return 0;
-}
-
 void FfmpegAudioAdapter::Save(const std::string& path, const Waveform& data, const std::int32_t sample_rate,
                               const std::string& codec, const std::int32_t bitrate)
 {
@@ -291,6 +255,7 @@ void FfmpegAudioAdapter::Save(const std::string& path, const Waveform& data, con
         ASSERT_CHECK_LE(0, ret) << "Error during encoding (Returned: " << ret << ")";
 
         packet.stream_index = 0;
+        /// @todo Is it saving the file properly or configuration has some issue?
         ret = av_interleaved_write_frame(format_context, &packet);
         // fwrite(packet.data, 1, packet.size, fout);
         ASSERT_CHECK_LE(0, ret) << "Failed to write frame. (Returned: " << ret << ")";
