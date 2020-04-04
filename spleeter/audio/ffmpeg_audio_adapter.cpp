@@ -216,8 +216,9 @@ void FfmpegAudioAdapter::Save(const std::string& path,
     ///
     audio_codec_context->codec_id = format_context->audio_codec_id;
     audio_codec_context->codec_type = AVMEDIA_TYPE_AUDIO;
-    audio_codec_context->sample_fmt = AV_SAMPLE_FMT_S16;
-    audio_codec_context->sample_rate = sample_rate;
+    audio_codec_context->sample_fmt = audio_codec->sample_fmts ? audio_codec->sample_fmts[0] : AV_SAMPLE_FMT_FLTP;
+    audio_codec_context->sample_rate =
+        audio_codec->supported_samplerates ? audio_codec->supported_samplerates[0] : sample_rate;
     audio_codec_context->channel_layout = AV_CH_LAYOUT_STEREO;
     audio_codec_context->channels = av_get_channel_layout_nb_channels(audio_codec_context->channel_layout);
     audio_codec_context->bit_rate = bitrate;
@@ -226,7 +227,8 @@ void FfmpegAudioAdapter::Save(const std::string& path,
     /// Open Codec
     ///
     ret = avcodec_open2(audio_codec_context, audio_codec, nullptr);
-    ASSERT_CHECK_LE(0, ret) << "Failed to open the context with the audio codec. (Returned: " << ret << ")";
+    ASSERT_CHECK_LE(0, ret) << "Failed to open the context with the audio codec {"
+                            << avcodec_get_name(output_format->audio_codec) << "}. (Returned: " << ret << ")";
 
     ret = avcodec_parameters_from_context(audio_stream->codecpar, audio_codec_context);
     ASSERT_CHECK_LE(0, ret) << "Failed to copy {" << audio_stream->codecpar->codec_id
@@ -246,26 +248,25 @@ void FfmpegAudioAdapter::Save(const std::string& path,
     AVFrame* frame = av_frame_alloc();
     ASSERT_CHECK(frame) << "Failed to allocate frame";
 
-    frame->nb_samples = audio_codec_context->frame_size;
+    frame->nb_samples = (audio_codec_context->codec->capabilities & AV_CODEC_CAP_VARIABLE_FRAME_SIZE)
+                            ? (data.size() / av_get_bytes_per_sample(audio_codec_context->sample_fmt))
+                            : audio_codec_context->frame_size;
     frame->format = audio_codec_context->sample_fmt;
     frame->channels = audio_codec_context->channels;
     frame->channel_layout = audio_codec_context->channel_layout;
     frame->sample_rate = audio_codec_context->sample_rate;
 
-    SPLEETER_LOG(INFO) << "Frame{nb_samples: " << frame->nb_samples << ", format: " << frame->format
-                       << ", channel_layout: " << frame->channel_layout;
-
-    // ret = av_frame_make_writable(frame);
-    // ASSERT_CHECK_LE(0, ret) << "Failed to make frame writable. (Returned: " << ret << ")";
-
     ret = av_frame_get_buffer(frame, 0);
     ASSERT_CHECK_LE(0, ret) << "Failed to allocate audio data buffers. (Returned: " << ret << ")";
+
+    ret = av_frame_make_writable(frame);
+    ASSERT_CHECK_LE(0, ret) << "Failed to make frame writable. (Returned: " << ret << ")";
 
     auto buffer_size = av_samples_get_buffer_size(
         nullptr, audio_codec_context->channels, frame->nb_samples, audio_codec_context->sample_fmt, 0);
     ASSERT_CHECK_LT(0, buffer_size) << "Failed to calculate buffer size for frame. (Returned: " << buffer_size << ")";
 
-    std::uint8_t* buffer = (std::uint8_t*)data.data();  //(std::uint8_t*)av_malloc(frame_size);
+    std::uint8_t* buffer = (std::uint8_t*)av_malloc(buffer_size);
     ret = avcodec_fill_audio_frame(frame,
                                    audio_codec_context->channels,
                                    audio_codec_context->sample_fmt,
@@ -278,11 +279,15 @@ void FfmpegAudioAdapter::Save(const std::string& path,
     ASSERT_CHECK_LE(0, ret) << "Failed to write header information for " << path << ". (Returned: " << ret << ")";
 
     std::int32_t data_present{0};
-    for (auto i = 0U; i < (data.size() / buffer_size); i++, buffer += buffer_size)
+    SPLEETER_LOG(INFO) << "Encoding data with {size:" << data.size() << ", buffer_size: " << buffer_size
+                       << ", bytes_per_sample: " << av_get_bytes_per_sample(audio_codec_context->sample_fmt) << "}";
+    for (auto i = 0U; i < frame->nb_samples; i += frame->nb_samples)
     {
-        frame->data[0] = buffer;
-        // ret = internal::Encode(frame, audio_codec_context, format_context, &data_present);
-        // ASSERT_CHECK_LE(0, ret) << "Failed to encode frame. (Returned: " << ret << ")";
+        SPLEETER_LOG(INFO) << "Occurance [" << i << "/" << frame->nb_samples << "]";
+        frame->data[0] = (std::uint8_t*)(data.data() + i);
+        // frame->data[1] = (std::uint8_t*)(data.data() + i);
+        ret = internal::Encode(frame, audio_codec_context, format_context, &data_present);
+        ASSERT_CHECK_LE(0, ret) << "Failed to encode frame. (Returned: " << ret << ")";
     }
 
     ret = av_write_trailer(format_context);
