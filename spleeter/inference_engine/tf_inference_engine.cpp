@@ -3,13 +3,14 @@
 /// @copyright Copyright (c) 2020. All Rights Reserved.
 ///
 #include "spleeter/inference_engine/tf_inference_engine.h"
-#include "spleeter/logging/logging.h"
 
 #include <cstdint>
 #include <memory>
 #include <string>
 #include <unordered_set>
 #include <vector>
+
+#include "spleeter/logging/logging.h"
 
 namespace spleeter
 {
@@ -30,8 +31,8 @@ std::vector<std::string> GetOutputTensorNames(const std::string& configuration)
     }
     else  // default to "spleeter:5stems"
     {
-        output_tensor_names = std::vector<std::string>{"strided_slice_18", "strided_slice_38", "strided_slice_48",
-                                                       "strided_slice_28", "strided_slice_58"};
+        output_tensor_names = std::vector<std::string>{
+            "strided_slice_18", "strided_slice_38", "strided_slice_48", "strided_slice_28", "strided_slice_58"};
     }
     return output_tensor_names;
 }
@@ -59,7 +60,10 @@ void TFInferenceEngine::Init()
     ASSERT_CHECK(ret.ok()) << "Failed to load saved model";
 }
 
-void TFInferenceEngine::Execute() { results_ = InvokeInference(); }
+void TFInferenceEngine::Execute()
+{
+    results_ = InvokeInference();
+}
 
 void TFInferenceEngine::Shutdown() {}
 
@@ -75,27 +79,31 @@ Waveforms TFInferenceEngine::InvokeInference() const
 
     /// Extract results
     auto waveforms = Waveforms{};
-    std::transform(outputs.begin(), outputs.end(), std::back_inserter(waveforms),
-                   [&](const tensorflow::Tensor& tensor) {
-                       auto waveform = Waveform{};
-                       waveform.resize(input_tensor_.dim_size(0) * input_tensor_.dim_size(1));
+    std::transform(
+        outputs.begin(), outputs.end(), std::back_inserter(waveforms), [&](const tensorflow::Tensor& tensor) {
+            auto waveform = Waveform{};
+            waveform.resize(input_tensor_.dim_size(0) * input_tensor_.dim_size(1));
 
-                       auto tensor_dataptr = tensor.matrix<float>().data();
-                       std::copy(tensor_dataptr, tensor_dataptr + waveform.size(), waveform.begin());
-                       return waveform;
-                   });
+            auto tensor_dataptr = tensor.matrix<float>().data();
+            std::copy(tensor_dataptr, tensor_dataptr + waveform.size(), waveform.begin());
+            return waveform;
+        });
 
     return waveforms;
 }
 
-void TFInferenceEngine::SetInputWaveform(const Waveform& waveform, const std::int32_t nb_frames,
+void TFInferenceEngine::SetInputWaveform(const Waveform& waveform,
+                                         const std::int32_t nb_frames,
                                          const std::int32_t nb_channels)
 {
     input_tensor_ = tensorflow::Tensor{tensorflow::DT_FLOAT, tensorflow::TensorShape{nb_frames, nb_channels}};
     std::copy(waveform.begin(), waveform.end(), input_tensor_.matrix<float>().data());
 }
 
-Waveforms TFInferenceEngine::GetResults() const { return results_; }
+Waveforms TFInferenceEngine::GetResults() const
+{
+    return results_;
+}
 
 std::string TFInferenceEngine::GetModelPath() const
 {
@@ -103,8 +111,14 @@ std::string TFInferenceEngine::GetModelPath() const
     return model_dir_ + config;
 }
 
-InferenceEngineType TFInferenceEngine::GetType() const { return InferenceEngineType::kTensorFlow; }
+InferenceEngineType TFInferenceEngine::GetType() const
+{
+    return InferenceEngineType::kTensorFlow;
+}
 
-std::string TFInferenceEngine::GetConfiguration() const { return configuration_; }
+std::string TFInferenceEngine::GetConfiguration() const
+{
+    return configuration_;
+}
 
 }  // namespace spleeter

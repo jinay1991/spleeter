@@ -5,17 +5,17 @@
 #ifndef SPLEETER_INFERENCE_ENGINE_TF_INFERENCE_ENGINE_H_
 #define SPLEETER_INFERENCE_ENGINE_TF_INFERENCE_ENGINE_H_
 
-#include "spleeter/argument_parser/cli_options.h"
-#include "spleeter/inference_engine/i_inference_engine.h"
-
-#include <tensorflow/cc/client/client_session.h>
-#include <tensorflow/cc/saved_model/loader.h>
-
 #include <cstdint>
 #include <memory>
 #include <string>
 #include <utility>
 #include <vector>
+
+#include <tensorflow/cc/client/client_session.h>
+#include <tensorflow/cc/saved_model/loader.h>
+
+#include "spleeter/argument_parser/cli_options.h"
+#include "spleeter/inference_engine/i_inference_engine.h"
 
 namespace spleeter
 {
@@ -48,7 +48,8 @@ class TFInferenceEngine : public IInferenceEngine
     /// @param waveform [in] - Waveform to be split
     /// @param nb_frames [in] - Number of frames within given Waveform
     /// @param nb_channels [in] - Number of channels within given Waveform
-    void SetInputWaveform(const Waveform& waveform, const std::int32_t nb_frames,
+    void SetInputWaveform(const Waveform& waveform,
+                          const std::int32_t nb_frames,
                           const std::int32_t nb_channels) override;
 
     /// @brief Obtain Results for provided input waveform

@@ -4,13 +4,16 @@
 /// @copyright Copyright (c) 2020, MIT License
 ///
 #include "spleeter/audio/audionamix_audio_adapter.h"
+
 #include "spleeter/logging/logging.h"
 
 namespace spleeter
 {
 AudionamixAudioAdapter::AudionamixAudioAdapter() {}
 
-Waveform AudionamixAudioAdapter::Load(const std::string& path, const double /*offset*/, const double /*duration*/,
+Waveform AudionamixAudioAdapter::Load(const std::string& path,
+                                      const double /*offset*/,
+                                      const double /*duration*/,
                                       const std::int32_t /*sample_rate*/)
 {
     auto file = wave::File{};
@@ -31,8 +34,11 @@ Waveform AudionamixAudioAdapter::Load(const std::string& path, const double /*of
     return waveform;
 }
 
-void AudionamixAudioAdapter::Save(const std::string& path, const Waveform& data, const std::int32_t sample_rate,
-                                  const std::string& /*codec*/, const std::int32_t /*bitrate*/)
+void AudionamixAudioAdapter::Save(const std::string& path,
+                                  const Waveform& data,
+                                  const std::int32_t sample_rate,
+                                  const std::string& /*codec*/,
+                                  const std::int32_t /*bitrate*/)
 {
     auto file = wave::File{};
 
@@ -52,6 +58,9 @@ void AudionamixAudioAdapter::Save(const std::string& path, const Waveform& data,
     SPLEETER_LOG(DEBUG) << "Saved waveform to " << path << " using Audionamix.";
 }
 
-AudioProperties AudionamixAudioAdapter::GetProperties() const { return audio_properties_; }
+AudioProperties AudionamixAudioAdapter::GetProperties() const
+{
+    return audio_properties_;
+}
 
 }  // namespace spleeter

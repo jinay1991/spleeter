@@ -5,13 +5,13 @@
 #ifndef SPLEETER_INFERENCE_ENGINE_INFERENCE_ENGINE_H_
 #define SPLEETER_INFERENCE_ENGINE_INFERENCE_ENGINE_H_
 
-#include "spleeter/argument_parser/cli_options.h"
-#include "spleeter/inference_engine/i_inference_engine.h"
-
 #include <cstdint>
 #include <memory>
 #include <string>
 #include <vector>
+
+#include "spleeter/argument_parser/cli_options.h"
+#include "spleeter/inference_engine/i_inference_engine.h"
 
 namespace spleeter
 {

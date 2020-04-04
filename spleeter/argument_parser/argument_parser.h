@@ -6,14 +6,15 @@
 #ifndef SPLEETER_ARGUMENT_PARSER_ARGUMENT_PARSER_H_
 #define SPLEETER_ARGUMENT_PARSER_ARGUMENT_PARSER_H_
 
-#include "spleeter/argument_parser/cli_options.h"
-#include "spleeter/argument_parser/i_argument_parser.h"
-
-#include <getopt.h>
-#include <unistd.h>
 #include <cstdint>
 #include <string>
 #include <vector>
+
+#include <getopt.h>
+#include <unistd.h>
+
+#include "spleeter/argument_parser/cli_options.h"
+#include "spleeter/argument_parser/i_argument_parser.h"
 
 namespace spleeter
 {

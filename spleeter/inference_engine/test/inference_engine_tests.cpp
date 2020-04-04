@@ -2,11 +2,11 @@
 /// @file
 /// @copyright Copyright (c) 2020, MIT License
 ///
-#include "spleeter/audio/audionamix_audio_adapter.h"
-#include "spleeter/inference_engine/inference_engine.h"
-
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
+
+#include "spleeter/audio/audionamix_audio_adapter.h"
+#include "spleeter/inference_engine/inference_engine.h"
 
 namespace spleeter
 {
@@ -29,8 +29,8 @@ class InferenceEngineTest : public ::testing::Test
 
         unit_.SelectInferenceEngine(InferenceEngineType::kTensorFlow, configuration);
         unit_.Init();
-        unit_.SetInputWaveform(test_waveform_, test_waveform_properties_.nb_frames,
-                               test_waveform_properties_.nb_channels);
+        unit_.SetInputWaveform(
+            test_waveform_, test_waveform_properties_.nb_frames, test_waveform_properties_.nb_channels);
     }
 
     void TearDown() override { unit_.Shutdown(); }

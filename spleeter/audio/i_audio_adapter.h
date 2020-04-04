@@ -6,13 +6,13 @@
 #ifndef SPLEETER_AUDIO_I_AUDIO_ADAPTER_H_
 #define SPLEETER_AUDIO_I_AUDIO_ADAPTER_H_
 
-#include "spleeter/data_types/audio_properties.h"
-#include "spleeter/data_types/waveform.h"
-
 #include <cstdint>
 #include <string>
 #include <utility>
 #include <vector>
+
+#include "spleeter/data_types/audio_properties.h"
+#include "spleeter/data_types/waveform.h"
 
 namespace spleeter
 {
@@ -31,7 +31,9 @@ class IAudioAdapter
     /// @param sample_rate [in]  - Sample rate to load audio with.
     ///
     /// @returns Loaded data as waveform
-    virtual Waveform Load(const std::string& path, const double offset, const double duration,
+    virtual Waveform Load(const std::string& path,
+                          const double offset,
+                          const double duration,
                           const std::int32_t sample_rate) = 0;
 
     /// @brief Write waveform data to the file denoted by the given path using FFMPEG process.
@@ -41,8 +43,11 @@ class IAudioAdapter
     /// @param sample_rate [in] - Sample rate to write file in.
     /// @param codec [in]       - Writing codec to use.
     /// @param bitrate [in]     - Bitrate of the written audio file.
-    virtual void Save(const std::string& path, const Waveform& data, const std::int32_t sample_rate,
-                      const std::string& codec, const std::int32_t bitrate) = 0;
+    virtual void Save(const std::string& path,
+                      const Waveform& data,
+                      const std::int32_t sample_rate,
+                      const std::string& codec,
+                      const std::int32_t bitrate) = 0;
 
     /// @brief Provide properties of the Waveform (nb_frames, nb_channels, sample_rate)
     ///

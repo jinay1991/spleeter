@@ -2,20 +2,20 @@
 /// @file
 /// @copyright Copyright (c) 2020, MIT License
 ///
-#include "spleeter/argument_parser/cli_options.h"
-#include "spleeter/audio/audionamix_audio_adapter.h"
-#include "spleeter/inference_engine/tf_inference_engine.h"
-#include "spleeter/logging/logging.h"
-
-#include <gmock/gmock.h>
-#include <gtest/gtest.h>
-#include <wave/file.h>
-
 #include <algorithm>
 #include <cstdint>
 #include <memory>
 #include <string>
 #include <vector>
+
+#include <gmock/gmock.h>
+#include <gtest/gtest.h>
+#include <wave/file.h>
+
+#include "spleeter/argument_parser/cli_options.h"
+#include "spleeter/audio/audionamix_audio_adapter.h"
+#include "spleeter/inference_engine/tf_inference_engine.h"
+#include "spleeter/logging/logging.h"
 
 namespace spleeter
 {
@@ -36,8 +36,8 @@ class TFInferenceEngineTest : public ::testing::TestWithParam<std::int32_t>
         unit_ = std::make_unique<TFInferenceEngine>(configuration);
         unit_->Init();
 
-        unit_->SetInputWaveform(test_waveform, test_waveform_properties.nb_frames,
-                                test_waveform_properties.nb_channels);
+        unit_->SetInputWaveform(
+            test_waveform, test_waveform_properties.nb_frames, test_waveform_properties.nb_channels);
     }
 
     void TearDown() override { unit_->Shutdown(); }

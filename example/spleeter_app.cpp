@@ -2,11 +2,11 @@
 /// @file
 /// @copyright Copyright (c) 2020, MIT License
 ///
-#include "spleeter/argument_parser/cli_options.h"
-#include "spleeter/spleeter.h"
-
 #include <iostream>
 #include <memory>
+
+#include "spleeter/argument_parser/cli_options.h"
+#include "spleeter/spleeter.h"
 
 int main(void)
 {

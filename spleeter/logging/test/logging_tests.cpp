@@ -3,10 +3,10 @@
 /// @brief Contains unit tests for Logging APIs
 /// @copyright Copyright (c) 2020. All Rights Reserved.
 ///
-#include "spleeter/logging/logging.h"
-
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
+
+#include "spleeter/logging/logging.h"
 
 namespace spleeter
 {
@@ -14,7 +14,10 @@ namespace logging
 {
 namespace
 {
-TEST(LoggingWrapperTest, AssertionMacro) { EXPECT_EXIT(ASSERT_CHECK(false), ::testing::KilledBySignal(SIGABRT), ""); }
+TEST(LoggingWrapperTest, AssertionMacro)
+{
+    EXPECT_EXIT(ASSERT_CHECK(false), ::testing::KilledBySignal(SIGABRT), "");
+}
 TEST(LoggingWrapperTest, AssertionCompareMacro)
 {
     EXPECT_EXIT(ASSERT_CHECK_EQ(1, 2), ::testing::KilledBySignal(SIGABRT), "");

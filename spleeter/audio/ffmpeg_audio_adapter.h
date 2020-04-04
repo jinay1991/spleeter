@@ -10,8 +10,7 @@
 #include "spleeter/data_types/audio_properties.h"
 
 #ifndef __cplusplus__
-extern "C"
-{
+extern "C" {
 #endif
 #include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
@@ -49,7 +48,9 @@ class FfmpegAudioAdapter : public IAudioAdapter
     /// @param sample_rate [in]  - Sample rate to load audio with.
     ///
     /// @returns Loaded data as waveform
-    Waveform Load(const std::string& path, const double offset, const double duration,
+    Waveform Load(const std::string& path,
+                  const double offset,
+                  const double duration,
                   const std::int32_t sample_rate) override;
 
     /// @brief Write waveform data to the file denoted by the given path using FFMPEG process.
@@ -59,7 +60,10 @@ class FfmpegAudioAdapter : public IAudioAdapter
     /// @param sample_rate [in] - Sample rate to write file in.
     /// @param codec [in]       - Writing codec to use.
     /// @param bitrate [in]     - Bitrate of the written audio file.
-    void Save(const std::string& path, const Waveform& data, const std::int32_t sample_rate, const std::string& codec,
+    void Save(const std::string& path,
+              const Waveform& data,
+              const std::int32_t sample_rate,
+              const std::string& codec,
               const std::int32_t bitrate) override;
 
     /// @brief Provide properties of the Waveform (nb_frames, nb_channels, sample_rate)

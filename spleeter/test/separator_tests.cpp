@@ -2,13 +2,13 @@
 /// @file
 /// @copyright Copyright (c) 2020, MIT License
 ///
+#include <gmock/gmock.h>
+#include <gtest/gtest.h>
+
 #include "spleeter/argument_parser/cli_options.h"
 #include "spleeter/audio/audionamix_audio_adapter.h"
 #include "spleeter/i_separator.h"
 #include "spleeter/separator.h"
-
-#include <gmock/gmock.h>
-#include <gtest/gtest.h>
 
 #include <experimental/filesystem>
 
@@ -46,9 +46,15 @@ TEST_P(SeparatorTest, GivenConfiguration_ExpectSeparatedWaveforms)
 /// @brief In this, test that SeparateToFile saves all the resultant 5 waveforms to file (for given 5stems model)
 TEST_P(SeparatorTest, GivenTypicalInputs_ExpectSeparatedToFiles)
 {
-    unit_->SeparateToFile(cli_options_.inputs, cli_options_.output_path, cli_options_.audio_adapter,
-                          cli_options_.offset, cli_options_.duration, cli_options_.codec, cli_options_.bitrate,
-                          cli_options_.filename_format, false);
+    unit_->SeparateToFile(cli_options_.inputs,
+                          cli_options_.output_path,
+                          cli_options_.audio_adapter,
+                          cli_options_.offset,
+                          cli_options_.duration,
+                          cli_options_.codec,
+                          cli_options_.bitrate,
+                          cli_options_.filename_format,
+                          false);
 
     EXPECT_TRUE(std::experimental::filesystem::exists(cli_options_.output_path));
 }

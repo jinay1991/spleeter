@@ -3,24 +3,28 @@
 /// @copyright Copyright (c) 2020. All Rights Reserved.
 ///
 #include "spleeter/inference_engine/tflite_inference_engine.h"
-#include "spleeter/logging/logging.h"
 
-#include "tensorflow/lite/kernels/register.h"
-#include "tensorflow/lite/optional_debug_tools.h"
-
-#include <sys/time.h>
 #include <algorithm>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
 #include <string>
 
+#include <sys/time.h>
+
+#include "spleeter/logging/logging.h"
+#include "tensorflow/lite/kernels/register.h"
+#include "tensorflow/lite/optional_debug_tools.h"
+
 namespace spleeter
 {
 namespace
 {
 /// @brief Convert to usec (microseconds)
-constexpr double get_us(struct timeval t) { return (t.tv_sec * 1000000 + t.tv_usec); }
+constexpr double get_us(struct timeval t)
+{
+    return (t.tv_sec * 1000000 + t.tv_usec);
+}
 
 inline std::ostream& operator<<(std::ostream& os, const TfLiteIntArray* v)
 {
@@ -139,16 +143,29 @@ Waveforms TFLiteInferenceEngine::InvokeInference() const
     return Waveforms{};
 }
 
-void TFLiteInferenceEngine::SetInputWaveform(const Waveform& waveform, const std::int32_t nb_frames,
+void TFLiteInferenceEngine::SetInputWaveform(const Waveform& waveform,
+                                             const std::int32_t nb_frames,
                                              const std::int32_t nb_channels)
 {
 }
 
-Waveforms TFLiteInferenceEngine::GetResults() const { return results_; }
+Waveforms TFLiteInferenceEngine::GetResults() const
+{
+    return results_;
+}
 
-std::string TFLiteInferenceEngine::GetModelPath() const { return "data/model.t"; }
+std::string TFLiteInferenceEngine::GetModelPath() const
+{
+    return "data/model.t";
+}
 
-InferenceEngineType TFLiteInferenceEngine::GetType() const { return InferenceEngineType::kTensorFlowLite; };
+InferenceEngineType TFLiteInferenceEngine::GetType() const
+{
+    return InferenceEngineType::kTensorFlowLite;
+};
 
-std::string TFLiteInferenceEngine::GetConfiguration() const { return configuration_; }
+std::string TFLiteInferenceEngine::GetConfiguration() const
+{
+    return configuration_;
+}
 }  // namespace spleeter

@@ -6,11 +6,11 @@
 #ifndef SPLEETER_I_INFERENCE_ENGINE_H_
 #define SPLEETER_I_INFERENCE_ENGINE_H_
 
-#include "spleeter/data_types/waveform.h"
-
 #include <cstdint>
 #include <string>
 #include <vector>
+
+#include "spleeter/data_types/waveform.h"
 
 namespace spleeter
 {
@@ -42,7 +42,8 @@ class IInferenceEngine
     /// @param waveform [in] - Waveform to be split
     /// @param nb_frames [in] - Number of frames within given Waveform
     /// @param nb_channels [in] - Number of channels within given Waveform
-    virtual void SetInputWaveform(const Waveform& waveform, const std::int32_t nb_frames,
+    virtual void SetInputWaveform(const Waveform& waveform,
+                                  const std::int32_t nb_frames,
                                   const std::int32_t nb_channels) = 0;
 
     /// @brief Obtain Results for provided input waveform

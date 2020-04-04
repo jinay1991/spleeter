@@ -6,13 +6,13 @@
 #ifndef SPLEETER_AUDIO_AUDIONAMIX_AUDIO_ADAPTER_H_
 #define SPLEETER_AUDIO_AUDIONAMIX_AUDIO_ADAPTER_H_
 
-#include "spleeter/audio/i_audio_adapter.h"
-#include "spleeter/data_types/audio_properties.h"
+#include <cstdint>
+#include <string>
 
 #include <wave/file.h>
 
-#include <cstdint>
-#include <string>
+#include "spleeter/audio/i_audio_adapter.h"
+#include "spleeter/data_types/audio_properties.h"
 
 namespace spleeter
 {
@@ -34,7 +34,9 @@ class AudionamixAudioAdapter : public IAudioAdapter
     /// @param sample_rate [in]  - Sample rate to load audio with.
     ///
     /// @returns Loaded data a (waveform, sample_rate) pair.
-    Waveform Load(const std::string& path, const double offset, const double duration,
+    Waveform Load(const std::string& path,
+                  const double offset,
+                  const double duration,
                   const std::int32_t sample_rate) override;
 
     /// @brief Write waveform data to the file denoted by the given path using FFMPEG process.
@@ -44,7 +46,10 @@ class AudionamixAudioAdapter : public IAudioAdapter
     /// @param sample_rate [in] - Sample rate to write file in.
     /// @param codec [in]       - Writing codec to use.
     /// @param bitrate [in]     - Bitrate of the written audio file.
-    void Save(const std::string& path, const Waveform& data, const std::int32_t sample_rate, const std::string& codec,
+    void Save(const std::string& path,
+              const Waveform& data,
+              const std::int32_t sample_rate,
+              const std::string& codec,
               const std::int32_t bitrate) override;
 
     /// @brief Provide shape of the Waveform (nb_frames, nb_channels)

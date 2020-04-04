@@ -3,13 +3,13 @@
 /// @brief Contains component tests for Spleeter
 /// @copyright Copyright (c) 2020, MIT License
 ///
-#include "spleeter/spleeter.h"
+#include <memory>
+#include <vector>
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-#include <memory>
-#include <vector>
+#include "spleeter/spleeter.h"
 
 namespace spleeter
 {

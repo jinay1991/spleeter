@@ -3,6 +3,7 @@
 /// @copyright Copyright (c) 2020, MIT License
 ///
 #include "spleeter/argument_parser/argument_parser.h"
+
 #include "spleeter/logging/logging.h"
 
 namespace spleeter
@@ -58,7 +59,10 @@ ArgumentParser::ArgumentParser(int argc, char* argv[])
 
 ArgumentParser::~ArgumentParser() {}
 
-CLIOptions ArgumentParser::GetParsedArgs() const { return cli_options_; }
+CLIOptions ArgumentParser::GetParsedArgs() const
+{
+    return cli_options_;
+}
 
 CLIOptions ArgumentParser::ParseArgs(int argc, char* argv[])
 {

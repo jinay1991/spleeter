@@ -25,7 +25,10 @@ LoggingWrapper::LoggingWrapper(const LogSeverity& severity, const bool should_lo
 {
 }
 
-std::stringstream& LoggingWrapper::Stream() { return stream_; }
+std::stringstream& LoggingWrapper::Stream()
+{
+    return stream_;
+}
 
 LoggingWrapper::~LoggingWrapper()
 {

@@ -31,8 +31,9 @@ inline std::ostream& operator<<(std::ostream& out, const Waveforms& waveforms)
 {
     std::int32_t idx{0};
     out << "Waveforms{\n";
-    std::for_each(waveforms.begin(), waveforms.end(),
-                  [&](const auto& waveform) { out << "  " << idx++ << ". " << waveform << "\n"; });
+    std::for_each(waveforms.begin(), waveforms.end(), [&](const auto& waveform) {
+        out << "  " << idx++ << ". " << waveform << "\n";
+    });
     out << "}";
     return out;
 }

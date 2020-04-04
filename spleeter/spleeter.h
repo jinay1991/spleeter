@@ -6,10 +6,10 @@
 #ifndef SPLEETER_SPLEETER_H_
 #define SPLEETER_SPLEETER_H_
 
+#include <memory>
+
 #include "spleeter/argument_parser/cli_options.h"
 #include "spleeter/i_separator.h"
-
-#include <memory>
 
 namespace spleeter
 {

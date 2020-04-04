@@ -6,15 +6,15 @@
 #ifndef SPLEETER_SEPARATOR_H_
 #define SPLEETER_SEPARATOR_H_
 
-#include "spleeter/argument_parser/cli_options.h"
-#include "spleeter/audio/i_audio_adapter.h"
-#include "spleeter/i_separator.h"
-#include "spleeter/inference_engine/inference_engine.h"
-
 #include <cstdint>
 #include <memory>
 #include <string>
 #include <vector>
+
+#include "spleeter/argument_parser/cli_options.h"
+#include "spleeter/audio/i_audio_adapter.h"
+#include "spleeter/i_separator.h"
+#include "spleeter/inference_engine/inference_engine.h"
 
 namespace spleeter
 {
@@ -59,9 +59,13 @@ class Separator : public ISeparator
     /// @param bitrate [in]          - (Optional) Export bitrate.
     /// @param filename_format [in]  - (Optional) Filename format.
     /// @param synchronous [in]      - (Optional) True is should by synchronous.
-    void SeparateToFile(const std::string& audio_descriptor, const std::string& destination,
-                        const std::string& audio_adapter, const double offset = 0.0, const double duration = 600.0,
-                        const std::string& codec = "wav", const std::int32_t bitrate = 128000,
+    void SeparateToFile(const std::string& audio_descriptor,
+                        const std::string& destination,
+                        const std::string& audio_adapter,
+                        const double offset = 0.0,
+                        const double duration = 600.0,
+                        const std::string& codec = "wav",
+                        const std::int32_t bitrate = 128000,
                         const std::string& filename_format = "{filename}/{instrument}.{codec}",
                         const bool synchronous = true) override;
 

@@ -6,11 +6,11 @@
 #ifndef SPLEETER_I_SEPARATOR_H_
 #define SPLEETER_I_SEPARATOR_H_
 
-#include "spleeter/data_types/audio_properties.h"
-#include "spleeter/data_types/waveform.h"
-
 #include <string>
 #include <vector>
+
+#include "spleeter/data_types/audio_properties.h"
+#include "spleeter/data_types/waveform.h"
 
 namespace spleeter
 {
@@ -49,10 +49,15 @@ class ISeparator
     /// @param bitrate [in]          - Export bitrate.
     /// @param filename_format [in]  - Filename format.
     /// @param synchronous [in]      - True is should by synchronous.
-    virtual void SeparateToFile(const std::string& audio_descriptor, const std::string& destination,
-                                const std::string& audio_adapter, const double offset, const double duration,
-                                const std::string& codec, const std::int32_t bitrate,
-                                const std::string& filename_format, const bool synchronous) = 0;
+    virtual void SeparateToFile(const std::string& audio_descriptor,
+                                const std::string& destination,
+                                const std::string& audio_adapter,
+                                const double offset,
+                                const double duration,
+                                const std::string& codec,
+                                const std::int32_t bitrate,
+                                const std::string& filename_format,
+                                const bool synchronous) = 0;
 };
 }  // namespace spleeter
 

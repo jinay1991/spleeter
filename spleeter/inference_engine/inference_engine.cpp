@@ -3,10 +3,11 @@
 /// @copyright Copyright (c) 2020, MIT License
 ///
 #include "spleeter/inference_engine/inference_engine.h"
-#include "spleeter/inference_engine/tf_inference_engine.h"
-#include "spleeter/inference_engine/tflite_inference_engine.h"
 
 #include <memory>
+
+#include "spleeter/inference_engine/tf_inference_engine.h"
+#include "spleeter/inference_engine/tflite_inference_engine.h"
 
 namespace spleeter
 {
@@ -27,21 +28,40 @@ void InferenceEngine::SelectInferenceEngine(const InferenceEngineType& inference
     }
 }
 
-void InferenceEngine::Init() { inference_engine_->Init(); }
+void InferenceEngine::Init()
+{
+    inference_engine_->Init();
+}
 
-void InferenceEngine::Execute() { inference_engine_->Execute(); }
+void InferenceEngine::Execute()
+{
+    inference_engine_->Execute();
+}
 
-void InferenceEngine::Shutdown() { inference_engine_->Shutdown(); }
+void InferenceEngine::Shutdown()
+{
+    inference_engine_->Shutdown();
+}
 
-void InferenceEngine::SetInputWaveform(const Waveform& waveform, const std::int32_t nb_frames,
+void InferenceEngine::SetInputWaveform(const Waveform& waveform,
+                                       const std::int32_t nb_frames,
                                        const std::int32_t nb_channels)
 {
     inference_engine_->SetInputWaveform(waveform, nb_frames, nb_channels);
 }
 
-Waveforms InferenceEngine::GetResults() const { return inference_engine_->GetResults(); }
+Waveforms InferenceEngine::GetResults() const
+{
+    return inference_engine_->GetResults();
+}
 
-InferenceEngineType InferenceEngine::GetType() const { return inference_engine_->GetType(); };
+InferenceEngineType InferenceEngine::GetType() const
+{
+    return inference_engine_->GetType();
+};
 
-std::string InferenceEngine::GetConfiguration() const { return inference_engine_->GetConfiguration(); }
+std::string InferenceEngine::GetConfiguration() const
+{
+    return inference_engine_->GetConfiguration();
+}
 }  // namespace spleeter
