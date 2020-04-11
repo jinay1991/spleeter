@@ -1,1 +1,2 @@
 build --color=yes
+build --test_env="GTEST_COLOR=TRUE"
