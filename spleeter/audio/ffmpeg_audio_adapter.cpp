@@ -109,8 +109,6 @@ Waveform FfmpegAudioAdapter::Load(const std::string& path,
     ///
     /// Read Audio
     ///
-    AVPacket packet;
-    av_init_packet(&packet);
 
     SwrContext* swr_context = swr_alloc();
     ASSERT_CHECK(swr_context) << "Failed to allocate resampler.";
@@ -132,6 +130,9 @@ Waveform FfmpegAudioAdapter::Load(const std::string& path,
     std::uint8_t* buffer = (std::uint8_t*)av_malloc(MAX_AUDIO_FRAME_SIZE * 2);
     ASSERT_CHECK(buffer) << "Failed to allocate buffer";
 
+    AVPacket packet;
+    av_init_packet(&packet);
+
     Waveform data{};
     std::int32_t nb_samples{0};
     while (av_read_frame(format_context, &packet) >= 0)
@@ -139,35 +140,27 @@ Waveform FfmpegAudioAdapter::Load(const std::string& path,
         AVFrame* frame = av_frame_alloc();
         ASSERT_CHECK(frame) << "Failed to allocate frame";
 
-        av_packet_rescale_ts(&packet, audio_stream->time_base, audio_codec_context->time_base);
-
-        if (packet.stream_index == stream_index)
+        ret = avcodec_send_packet(audio_codec_context, &packet);
+        ASSERT_CHECK_LE(0, ret) << "Failed to send packet for decoding. (Returned: " << ret << ")";
+        while (ret >= 0)
         {
-            ret = avcodec_send_packet(audio_codec_context, &packet);
-            ASSERT_CHECK_LE(0, ret) << "Failed to send packet for decoding. (Returned: " << ret << ")";
-            while (ret >= 0)
+            ret = avcodec_receive_frame(audio_codec_context, frame);
+            if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF)
             {
-                ret = avcodec_receive_frame(audio_codec_context, frame);
-                if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF)
-                {
-                    break;
-                }
-                ASSERT_CHECK_EQ(0, ret) << "Failed to decode received packet. (Returned: " << ret << ")";
-
-                auto unpadded_linesize = frame->nb_samples * av_get_bytes_per_sample(audio_codec_context->sample_fmt);
-                ret = swr_convert(
-                    swr_context, &buffer, unpadded_linesize, (const std::uint8_t**)frame->data, frame->nb_samples);
-                ASSERT_CHECK_LE(0, ret) << "Failed to resample. (Returned: " << ret << ")";
-
-                /// copy to file as well.
-                for (auto idx = 0; idx < unpadded_linesize; ++idx)
-                {
-                    data.push_back(buffer[idx]);
-                }
-
-                /// frame
-                nb_samples += frame->nb_samples;
+                break;
             }
+            ASSERT_CHECK_EQ(0, ret) << "Failed to decode received packet. (Returned: " << ret << ")";
+
+            auto buffer_size = frame->nb_samples * av_get_bytes_per_sample(audio_codec_context->sample_fmt);
+            ret = swr_convert(swr_context, &buffer, buffer_size, (const std::uint8_t**)frame->data, frame->nb_samples);
+            ASSERT_CHECK_LE(0, ret) << "Failed to resample. (Returned: " << ret << ")";
+
+            for (auto idx = 0; idx < buffer_size; ++idx)
+            {
+                data.push_back(buffer[idx]);
+            }
+
+            nb_samples += frame->nb_samples;
         }
 
         av_frame_free(&frame);
@@ -192,7 +185,7 @@ Waveform FfmpegAudioAdapter::Load(const std::string& path,
 void FfmpegAudioAdapter::Save(const std::string& path,
                               const Waveform& data,
                               const std::int32_t sample_rate,
-                              const std::string& codec,
+                              const std::string& /*codec*/,
                               const std::int32_t bitrate)
 {
     ///
@@ -227,6 +220,13 @@ void FfmpegAudioAdapter::Save(const std::string& path,
     audio_codec_context->channels = av_get_channel_layout_nb_channels(audio_codec_context->channel_layout);
     audio_codec_context->bit_rate = bitrate;
 
+    audio_stream->time_base = AVRational{1, sample_rate};
+
+    if (output_format->flags & AVFMT_GLOBALHEADER)
+    {
+        audio_codec_context->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
+    }
+
     ///
     /// Open Codec
     ///
@@ -248,7 +248,11 @@ void FfmpegAudioAdapter::Save(const std::string& path,
 
     if (audio_codec_context->codec->capabilities & AV_CODEC_CAP_VARIABLE_FRAME_SIZE)
     {
-        audio_codec_context->frame_size = data.size() / audio_codec_context->channels;
+        audio_codec_context->frame_size =
+            av_rescale_rnd(data.size() / av_get_channel_layout_nb_channels(AV_CH_LAYOUT_STEREO),
+                           sample_rate,
+                           sample_rate,
+                           AV_ROUND_UP);
     }
 
     ///
@@ -269,24 +273,6 @@ void FfmpegAudioAdapter::Save(const std::string& path,
     ret = av_frame_make_writable(frame);
     ASSERT_CHECK_LE(0, ret) << "Failed to make frame writable. (Returned: " << ret << ")";
 
-    auto buffer_size = av_samples_get_buffer_size(
-        nullptr, audio_codec_context->channels, audio_codec_context->frame_size, audio_codec_context->sample_fmt, 0);
-    ASSERT_CHECK_LE(0, buffer_size) << "Failed to calculate output buffer size. (Returned: " << buffer_size << ")";
-
-    auto buffer = (std::uint8_t*)av_malloc(buffer_size);
-    ASSERT_CHECK(buffer) << "Failed to allocate array. (Returned: " << ret << ")";
-
-    ret = avcodec_fill_audio_frame(frame,
-                                   audio_codec_context->channels,
-                                   audio_codec_context->sample_fmt,
-                                   (const std::uint8_t*)buffer,
-                                   buffer_size,
-                                   0);
-    ASSERT_CHECK_LE(0, ret) << "Failed to fill audio frame. (Returned: " << ret << ")";
-
-    ret = avformat_write_header(format_context, nullptr);
-    ASSERT_CHECK_LE(0, ret) << "Failed to write header information for " << path << ". (Returned: " << ret << ")";
-
     ///
     /// Allocate Resampler
     ///
@@ -304,27 +290,67 @@ void FfmpegAudioAdapter::Save(const std::string& path,
                                      nullptr);
     ASSERT_CHECK(swr_context) << "Failed to set options for resampler.";
 
-    SPLEETER_LOG(DEBUG) << "swr_alloc_set_opts(swr_context," << audio_codec_context->channel_layout << ","
-                        << av_get_sample_fmt_name(audio_codec_context->sample_fmt) << ","
-                        << audio_codec_context->sample_rate << "," << AV_CH_LAYOUT_STEREO << ","
-                        << av_get_sample_fmt_name(AV_SAMPLE_FMT_FLTP) << "," << sample_rate << "," << 0 << ","
-                        << "nullptr"
-                        << ");";
-
     ret = swr_init(swr_context);
     ASSERT_CHECK_LE(0, ret) << "Failed to initialize resampler. (Returned: " << ret << ")";
 
-    auto input_buffer = (const std::uint8_t*)data.data();
-    auto input_buffer_size = data.size() * sizeof(data[0]);
-    SPLEETER_LOG(INFO) << "Input {size: " << input_buffer_size << "}";
-    SPLEETER_LOG(INFO) << "Output {size: " << buffer_size << "}";
+    auto buffer_size = av_samples_get_buffer_size(
+        nullptr, audio_codec_context->channels, audio_codec_context->frame_size, audio_codec_context->sample_fmt, 0);
+    ASSERT_CHECK_LE(0, buffer_size) << "Failed to calculate output buffer size. (Returned: " << buffer_size << ")";
 
-    /// @todo FIXME: Unable to convert buffers to output type.
-    // ret = swr_convert(swr_context, &buffer, buffer_size, (const std::uint8_t**)&input_buffer, input_buffer_size);
-    // ASSERT_CHECK_LE(0, ret) << "Failed to convert buffer using resampler. (Returned: " << ret << ")";
+    auto buffer = (std::uint8_t*)av_malloc(buffer_size);
+    ASSERT_CHECK(buffer) << "Failed to allocate array. (Returned: " << ret << ")";
+
+    std::uint8_t** src_data{nullptr};
+    std::int32_t src_linesize{0};
+    std::uint8_t** dst_data{nullptr};
+    std::int32_t dst_linesize{0};
+    ret = av_samples_alloc_array_and_samples(&src_data,
+                                             &src_linesize,
+                                             av_get_channel_layout_nb_channels(AV_CH_LAYOUT_STEREO),
+                                             (data.size() / av_get_channel_layout_nb_channels(AV_CH_LAYOUT_STEREO)),
+                                             AV_SAMPLE_FMT_FLTP,
+                                             0);
+    ASSERT_CHECK_LE(0, ret) << "Failed to allocate src samples. (Returned: " << ret << ")";
+
+    ret = av_samples_fill_arrays(src_data,
+                                 &src_linesize,
+                                 (const std::uint8_t*)data.data(),
+                                 av_get_channel_layout_nb_channels(AV_CH_LAYOUT_STEREO),
+                                 (data.size() / av_get_channel_layout_nb_channels(AV_CH_LAYOUT_STEREO)),
+                                 AV_SAMPLE_FMT_FLTP,
+                                 0);
+    ASSERT_CHECK_LE(0, ret) << "Failed to fill src samples. (Returned: " << ret << ")";
+
+    ret = av_samples_alloc_array_and_samples(&dst_data,
+                                             &dst_linesize,
+                                             audio_codec_context->channels,
+                                             audio_codec_context->frame_size,
+                                             audio_codec_context->sample_fmt,
+                                             0);
+    ASSERT_CHECK_LE(0, ret) << "Failed to allocate dst samples. (Returned: " << ret << ")";
+
+    ret = swr_convert(swr_context,
+                      dst_data,
+                      audio_codec_context->frame_size,
+                      (const std::uint8_t**)src_data,
+                      (data.size() / av_get_channel_layout_nb_channels(AV_CH_LAYOUT_STEREO)));
+    ASSERT_CHECK_LE(0, ret) << "Failed to convert buffer using resampler. (Returned: " << ret << ")";
+
+    // ret = avcodec_fill_audio_frame(frame,
+    //                                audio_codec_context->channels,
+    //                                audio_codec_context->sample_fmt,
+    //                                *dst_data,
+    //                                audio_codec_context->frame_size,
+    //                                1);
+    // ASSERT_CHECK_LE(0, ret) << "Failed to fill audio frame. (Returned: " << ret << ")";
+
+    ret = avformat_write_header(format_context, nullptr);
+    ASSERT_CHECK_LE(0, ret) << "Failed to write header information for " << path << ". (Returned: " << ret << ")";
 
     SPLEETER_LOG(INFO) << "Encoding given data {size: " << buffer_size << ", nb_samples: " << frame->nb_samples << "}";
     std::int32_t data_present{0};
+    frame->data[0] = dst_data[0];
+    frame->data[1] = dst_data[1];
     ret = internal::Encode(frame, audio_codec_context, format_context, &data_present);
     ASSERT_CHECK_LE(0, ret) << "Failed to encode frame. (Returned: " << ret << ")";
 

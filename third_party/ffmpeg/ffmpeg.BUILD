@@ -22,37 +22,10 @@ AVLIBS = [
     for avlib in AVLIBS
 ]
 
-# cc_library(
-#     name = "avformat",
-#     srcs = glob(["libavformat.so*"]),
-# )
-
-# cc_library(
-#     name = "avutil",
-#     srcs = glob(["libavutil.so*"]),
-# )
-
-# cc_library(
-#     name = "avcodec",
-#     srcs = glob(["libavcodec.so*"]),
-# )
-
-# cc_library(
-#     name = "swresample",
-#     srcs = glob(["libswresample.so*"]),
-# )
-
-# cc_library(
-#     name = "avfilter",
-#     srcs = glob(["libavfilter.so*"]),
-# )
-
-# cc_library(
-#     name = "avdevice",
-#     srcs = glob(["libavdevice.so*"]),
-# )
-
-# cc_library(
-#     name = "swscale",
-#     srcs = glob(["libswscale.so*"]),
-# )
+cc_library(
+    name = "ffmpeg",
+    deps = [
+        ":{}".format(avlib)
+        for avlib in AVLIBS
+    ],
+)
