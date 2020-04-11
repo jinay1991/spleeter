@@ -2,15 +2,15 @@
 /// @file
 /// @copyright Copyright (c) 2020, MIT License
 ///
-#include <algorithm>
-#include <cstdint>
-#include <string>
+#include "spleeter/audio/audionamix_audio_adapter.h"
+#include "spleeter/audio/ffmpeg_audio_adapter.h"
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-#include "spleeter/audio/audionamix_audio_adapter.h"
-#include "spleeter/audio/ffmpeg_audio_adapter.h"
+#include <algorithm>
+#include <cstdint>
+#include <string>
 
 namespace spleeter
 {
@@ -59,7 +59,6 @@ TYPED_TEST_P(AudioAdapterTest, DISABLED_GivenAudioFile_ExpectRawWaveform)
     const auto actual = this->unit_->Load(this->test_input_, 0.0, -1, this->test_sample_rate_);
     EXPECT_FALSE(actual.empty());
     EXPECT_EQ(959664U, actual.size());
-    // EXPECT_THAT(this->test_waveform_, ::testing::ContainerEq(actual));
 
     const auto actual_properties = this->unit_->GetProperties();
     const auto expected_properties = this->GetTestWaveformProperties();
@@ -81,7 +80,6 @@ TYPED_TEST_P(AudioAdapterTest, GivenRawWaveform_ExpectSavedFileHasSameProperties
     const auto actual = audio_adapter.Load(test_results, 0, -1, this->test_sample_rate_);
     EXPECT_FALSE(actual.empty());
     EXPECT_EQ(959664U, actual.size());
-    // EXPECT_THAT(this->test_waveform_, ::testing::ContainerEq(actual));
 
     const auto actual_properties = audio_adapter.GetProperties();
     const auto expected_properties = this->GetTestWaveformProperties();

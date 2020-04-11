@@ -256,7 +256,7 @@ void FfmpegAudioAdapter::Save(const std::string& path,
     }
 
     ///
-    /// Write Audio
+    /// Allocate sample frame
     ///
     AVFrame* frame = av_frame_alloc();
     ASSERT_CHECK(frame) << "Failed to allocate frame";
@@ -284,7 +284,7 @@ void FfmpegAudioAdapter::Save(const std::string& path,
                                      audio_codec_context->sample_fmt,
                                      audio_codec_context->sample_rate,
                                      AV_CH_LAYOUT_STEREO,
-                                     AV_SAMPLE_FMT_FLTP,
+                                     AV_SAMPLE_FMT_FLT,
                                      sample_rate,
                                      0,
                                      nullptr);
@@ -293,13 +293,9 @@ void FfmpegAudioAdapter::Save(const std::string& path,
     ret = swr_init(swr_context);
     ASSERT_CHECK_LE(0, ret) << "Failed to initialize resampler. (Returned: " << ret << ")";
 
-    auto buffer_size = av_samples_get_buffer_size(
-        nullptr, audio_codec_context->channels, audio_codec_context->frame_size, audio_codec_context->sample_fmt, 0);
-    ASSERT_CHECK_LE(0, buffer_size) << "Failed to calculate output buffer size. (Returned: " << buffer_size << ")";
-
-    auto buffer = (std::uint8_t*)av_malloc(buffer_size);
-    ASSERT_CHECK(buffer) << "Failed to allocate array. (Returned: " << ret << ")";
-
+    ///
+    /// Resample the data
+    ///
     std::uint8_t** src_data{nullptr};
     std::int32_t src_linesize{0};
     std::uint8_t** dst_data{nullptr};
@@ -307,8 +303,8 @@ void FfmpegAudioAdapter::Save(const std::string& path,
     ret = av_samples_alloc_array_and_samples(&src_data,
                                              &src_linesize,
                                              av_get_channel_layout_nb_channels(AV_CH_LAYOUT_STEREO),
-                                             (data.size() / av_get_channel_layout_nb_channels(AV_CH_LAYOUT_STEREO)),
-                                             AV_SAMPLE_FMT_FLTP,
+                                             data.size(),
+                                             AV_SAMPLE_FMT_FLT,
                                              0);
     ASSERT_CHECK_LE(0, ret) << "Failed to allocate src samples. (Returned: " << ret << ")";
 
@@ -316,8 +312,8 @@ void FfmpegAudioAdapter::Save(const std::string& path,
                                  &src_linesize,
                                  (const std::uint8_t*)data.data(),
                                  av_get_channel_layout_nb_channels(AV_CH_LAYOUT_STEREO),
-                                 (data.size() / av_get_channel_layout_nb_channels(AV_CH_LAYOUT_STEREO)),
-                                 AV_SAMPLE_FMT_FLTP,
+                                 data.size(),
+                                 AV_SAMPLE_FMT_FLT,
                                  0);
     ASSERT_CHECK_LE(0, ret) << "Failed to fill src samples. (Returned: " << ret << ")";
 
@@ -329,33 +325,24 @@ void FfmpegAudioAdapter::Save(const std::string& path,
                                              0);
     ASSERT_CHECK_LE(0, ret) << "Failed to allocate dst samples. (Returned: " << ret << ")";
 
-    ret = swr_convert(swr_context,
-                      dst_data,
-                      audio_codec_context->frame_size,
-                      (const std::uint8_t**)src_data,
-                      (data.size() / av_get_channel_layout_nb_channels(AV_CH_LAYOUT_STEREO)));
+    ret = swr_convert(
+        swr_context, dst_data, audio_codec_context->frame_size, (const std::uint8_t**)src_data, data.size());
     ASSERT_CHECK_LE(0, ret) << "Failed to convert buffer using resampler. (Returned: " << ret << ")";
 
-    // ret = avcodec_fill_audio_frame(frame,
-    //                                audio_codec_context->channels,
-    //                                audio_codec_context->sample_fmt,
-    //                                *dst_data,
-    //                                audio_codec_context->frame_size,
-    //                                1);
-    // ASSERT_CHECK_LE(0, ret) << "Failed to fill audio frame. (Returned: " << ret << ")";
-
+    ///
+    /// Encode samples
+    ///
     ret = avformat_write_header(format_context, nullptr);
     ASSERT_CHECK_LE(0, ret) << "Failed to write header information for " << path << ". (Returned: " << ret << ")";
 
-    SPLEETER_LOG(INFO) << "Encoding given data {size: " << buffer_size << ", nb_samples: " << frame->nb_samples << "}";
     std::int32_t data_present{0};
     frame->data[0] = dst_data[0];
-    frame->data[1] = dst_data[1];
+    frame->data[1] = dst_data[0] + dst_linesize;
     ret = internal::Encode(frame, audio_codec_context, format_context, &data_present);
     ASSERT_CHECK_LE(0, ret) << "Failed to encode frame. (Returned: " << ret << ")";
 
     ///
-    /// Write queued frames
+    /// Write queued samples
     ///
     data_present = 0;
     do
@@ -376,9 +363,14 @@ void FfmpegAudioAdapter::Save(const std::string& path,
         ASSERT_CHECK_LE(0, ret) << "Failed to close " << path << ". (Returned: " << ret << ")";
         SPLEETER_LOG(DEBUG) << "Successfully closed " << path << " after writing.";
     }
+
+    // av_freep(&src_data[0]);
+    // av_freep(&src_data);
+    av_freep(&dst_data[0]);
+    av_freep(&dst_data);
     swr_free(&swr_context);
-    av_free(buffer);
     av_frame_free(&frame);
+    av_free(audio_stream);
     avformat_free_context(format_context);
     avcodec_close(audio_codec_context);
     avcodec_free_context(&audio_codec_context);
