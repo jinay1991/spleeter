@@ -3,10 +3,10 @@
 /// @brief Contains unit tests for Logging APIs
 /// @copyright Copyright (c) 2020. All Rights Reserved.
 ///
+#include "spleeter/logging/logging.h"
+
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
-
-#include "spleeter/logging/logging.h"
 
 namespace spleeter
 {

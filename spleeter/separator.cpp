@@ -5,13 +5,13 @@
 ///
 #include "spleeter/separator.h"
 
-#include <algorithm>
-#include <memory>
-#include <vector>
-
 #include "spleeter/audio/audionamix_audio_adapter.h"
 #include "spleeter/audio/ffmpeg_audio_adapter.h"
 #include "spleeter/logging/logging.h"
+
+#include <algorithm>
+#include <memory>
+#include <vector>
 
 #include <experimental/filesystem>
 

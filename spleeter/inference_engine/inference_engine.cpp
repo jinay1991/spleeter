@@ -4,10 +4,10 @@
 ///
 #include "spleeter/inference_engine/inference_engine.h"
 
-#include <memory>
-
 #include "spleeter/inference_engine/tf_inference_engine.h"
 #include "spleeter/inference_engine/tflite_inference_engine.h"
+
+#include <memory>
 
 namespace spleeter
 {

@@ -2,20 +2,20 @@
 /// @file
 /// @copyright Copyright (c) 2020, MIT License
 ///
-#include <algorithm>
-#include <cstdint>
-#include <memory>
-#include <string>
-#include <vector>
+#include "spleeter/argument_parser/cli_options.h"
+#include "spleeter/audio/audionamix_audio_adapter.h"
+#include "spleeter/inference_engine/tf_inference_engine.h"
+#include "spleeter/logging/logging.h"
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 #include <wave/file.h>
 
-#include "spleeter/argument_parser/cli_options.h"
-#include "spleeter/audio/audionamix_audio_adapter.h"
-#include "spleeter/inference_engine/tf_inference_engine.h"
-#include "spleeter/logging/logging.h"
+#include <algorithm>
+#include <cstdint>
+#include <memory>
+#include <string>
+#include <vector>
 
 namespace spleeter
 {

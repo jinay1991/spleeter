@@ -4,17 +4,17 @@
 ///
 #include "spleeter/inference_engine/tflite_inference_engine.h"
 
+#include "spleeter/logging/logging.h"
+#include "tensorflow/lite/kernels/register.h"
+#include "tensorflow/lite/optional_debug_tools.h"
+
+#include <sys/time.h>
+
 #include <algorithm>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
 #include <string>
-
-#include <sys/time.h>
-
-#include "spleeter/logging/logging.h"
-#include "tensorflow/lite/kernels/register.h"
-#include "tensorflow/lite/optional_debug_tools.h"
 
 namespace spleeter
 {

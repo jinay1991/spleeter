@@ -3,12 +3,12 @@
 /// @brief Contains unit tests for Argument Parser APIs
 /// @copyright Copyright (c) 2020. All Rights Reserved.
 ///
-#include <string>
+#include "spleeter/argument_parser/argument_parser.h"
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-#include "spleeter/argument_parser/argument_parser.h"
+#include <string>
 
 namespace spleeter
 {

@@ -6,13 +6,13 @@
 #ifndef SPLEETER_AUDIO_AUDIONAMIX_AUDIO_ADAPTER_H_
 #define SPLEETER_AUDIO_AUDIONAMIX_AUDIO_ADAPTER_H_
 
-#include <cstdint>
-#include <string>
+#include "spleeter/audio/i_audio_adapter.h"
+#include "spleeter/data_types/audio_properties.h"
 
 #include <wave/file.h>
 
-#include "spleeter/audio/i_audio_adapter.h"
-#include "spleeter/data_types/audio_properties.h"
+#include <cstdint>
+#include <string>
 
 namespace spleeter
 {

@@ -2,13 +2,13 @@
 /// @file
 /// @copyright Copyright (c) 2020, MIT License
 ///
-#include <gmock/gmock.h>
-#include <gtest/gtest.h>
-
 #include "spleeter/argument_parser/cli_options.h"
 #include "spleeter/audio/audionamix_audio_adapter.h"
 #include "spleeter/i_separator.h"
 #include "spleeter/separator.h"
+
+#include <gmock/gmock.h>
+#include <gtest/gtest.h>
 
 #include <experimental/filesystem>
 

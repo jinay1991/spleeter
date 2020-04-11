@@ -6,11 +6,11 @@
 #ifndef SPLEETER_I_INFERENCE_ENGINE_H_
 #define SPLEETER_I_INFERENCE_ENGINE_H_
 
+#include "spleeter/data_types/waveform.h"
+
 #include <cstdint>
 #include <string>
 #include <vector>
-
-#include "spleeter/data_types/waveform.h"
 
 namespace spleeter
 {

@@ -4,13 +4,13 @@
 ///
 #include "spleeter/inference_engine/tf_inference_engine.h"
 
+#include "spleeter/logging/logging.h"
+
 #include <cstdint>
 #include <memory>
 #include <string>
 #include <unordered_set>
 #include <vector>
-
-#include "spleeter/logging/logging.h"
 
 namespace spleeter
 {

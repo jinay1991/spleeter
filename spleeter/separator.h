@@ -6,15 +6,15 @@
 #ifndef SPLEETER_SEPARATOR_H_
 #define SPLEETER_SEPARATOR_H_
 
-#include <cstdint>
-#include <memory>
-#include <string>
-#include <vector>
-
 #include "spleeter/argument_parser/cli_options.h"
 #include "spleeter/audio/i_audio_adapter.h"
 #include "spleeter/i_separator.h"
 #include "spleeter/inference_engine/inference_engine.h"
+
+#include <cstdint>
+#include <memory>
+#include <string>
+#include <vector>
 
 namespace spleeter
 {

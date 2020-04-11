@@ -6,11 +6,11 @@
 #ifndef SPLEETER_I_SEPARATOR_H_
 #define SPLEETER_I_SEPARATOR_H_
 
-#include <string>
-#include <vector>
-
 #include "spleeter/data_types/audio_properties.h"
 #include "spleeter/data_types/waveform.h"
+
+#include <string>
+#include <vector>
 
 namespace spleeter
 {
