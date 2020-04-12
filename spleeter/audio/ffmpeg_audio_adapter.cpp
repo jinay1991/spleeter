@@ -8,6 +8,7 @@
 #include "spleeter/logging/logging.h"
 
 #include <algorithm>
+#include <memory>
 
 namespace spleeter
 {
@@ -61,6 +62,7 @@ static std::int32_t Encode(AVFrame* frame,
 
     return 0;
 }
+
 }  // namespace internal
 
 FfmpegAudioAdapter::FfmpegAudioAdapter()
@@ -109,7 +111,6 @@ Waveform FfmpegAudioAdapter::Load(const std::string& path,
     ///
     /// Read Audio
     ///
-
     SwrContext* swr_context = swr_alloc();
     ASSERT_CHECK(swr_context) << "Failed to allocate resampler.";
 
@@ -177,8 +178,8 @@ Waveform FfmpegAudioAdapter::Load(const std::string& path,
     avcodec_close(audio_codec_context);
     avformat_close_input(&format_context);
 
-    SPLEETER_LOG(DEBUG) << "Decodec waveform with " << audio_properties_;
-    SPLEETER_LOG(DEBUG) << "Loaded waveform from " << path << " using FFMPEG.";
+    SPLEETER_LOG(DEBUG) << "Decoded waveform with " << audio_properties_;
+    SPLEETER_LOG(INFO) << "Loaded waveform from " << path << " using FFMPEG.";
     return data;
 }
 
@@ -325,6 +326,10 @@ void FfmpegAudioAdapter::Save(const std::string& path,
                                              0);
     ASSERT_CHECK_LE(0, ret) << "Failed to allocate dst samples. (Returned: " << ret << ")";
 
+    SPLEETER_LOG(INFO) << "Converting given waveform {size: " << data.size()
+                       << ", sample_fmt: " << av_get_sample_fmt_name(AV_SAMPLE_FMT_FLT)
+                       << "} to {size: " << audio_codec_context->frame_size
+                       << ", sample_fmt: " << av_get_sample_fmt_name(audio_codec_context->sample_fmt) << "}";
     ret = swr_convert(
         swr_context, dst_data, audio_codec_context->frame_size, (const std::uint8_t**)src_data, data.size());
     ASSERT_CHECK_LE(0, ret) << "Failed to convert buffer using resampler. (Returned: " << ret << ")";
@@ -363,6 +368,8 @@ void FfmpegAudioAdapter::Save(const std::string& path,
         ASSERT_CHECK_LE(0, ret) << "Failed to close " << path << ". (Returned: " << ret << ")";
         SPLEETER_LOG(DEBUG) << "Successfully closed " << path << " after writing.";
     }
+    swr_close(swr_context);
+    avcodec_close(audio_codec_context);
 
     // av_freep(&src_data[0]);
     // av_freep(&src_data);
@@ -372,7 +379,6 @@ void FfmpegAudioAdapter::Save(const std::string& path,
     av_frame_free(&frame);
     av_free(audio_stream);
     avformat_free_context(format_context);
-    avcodec_close(audio_codec_context);
     avcodec_free_context(&audio_codec_context);
 
     SPLEETER_LOG(DEBUG) << "Saved waveform to " << path << " using FFMPEG.";

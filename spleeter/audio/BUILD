@@ -1,4 +1,4 @@
-load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library")
+load("@rules_cc//cc:defs.bzl", "cc_library")
 load("@bazel_tools//tools/build_defs/pkg:pkg.bzl", "pkg_tar")
 
 package(default_visibility = ["//visibility:public"])
@@ -15,17 +15,6 @@ cc_library(
         "//spleeter/data_types",
         "//spleeter/logging",
         "@audionamix//:wave",
-        "@ffmpeg",
-    ],
-)
-
-cc_binary(
-    name = "transcode",
-    srcs = ["transcode.c"],
-    data = [
-        "@audio_example//file",
-    ],
-    deps = [
         "@ffmpeg",
     ],
 )

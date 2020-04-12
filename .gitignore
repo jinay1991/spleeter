@@ -5,6 +5,8 @@
 *.tar.xz
 *.pcm
 *.raw
+*.mp3
+*.wav
 
 # bazel build files
 bazel-*

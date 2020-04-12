@@ -54,7 +54,7 @@ class AudioAdapterTest : public ::testing::Test
 TYPED_TEST_SUITE_P(AudioAdapterTest);
 
 /// @test In this, test that Load method returns raw waveform and updates audio properties
-TYPED_TEST_P(AudioAdapterTest, DISABLED_GivenAudioFile_ExpectRawWaveform)
+TYPED_TEST_P(AudioAdapterTest, GivenAudioFile_ExpectRawWaveform)
 {
     const auto actual = this->unit_->Load(this->test_input_, 0.0, -1, this->test_sample_rate_);
     EXPECT_FALSE(actual.empty());
@@ -89,7 +89,7 @@ TYPED_TEST_P(AudioAdapterTest, GivenRawWaveform_ExpectSavedFileHasSameProperties
 }
 
 REGISTER_TYPED_TEST_SUITE_P(AudioAdapterTest,
-                            DISABLED_GivenAudioFile_ExpectRawWaveform,
+                            GivenAudioFile_ExpectRawWaveform,
                             GivenRawWaveform_ExpectSavedFileHasSameProperties);
 
 typedef ::testing::Types<FfmpegAudioAdapter> AudioAdapterTestTypes;
