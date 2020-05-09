@@ -338,6 +338,4 @@ if __name__ == "__main__":
     # model.build()
     # model.summary()
 
-    converter = tf.lite.TFLiteConverter.from_keras_model(model)
-    with open("unet.tflite", "wb") as fp:
-        fp.write(converter.convert())
+    tf.saved_model.save(model, export_dir="saved_model")

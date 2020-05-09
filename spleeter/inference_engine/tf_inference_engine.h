@@ -5,7 +5,6 @@
 #ifndef SPLEETER_INFERENCE_ENGINE_TF_INFERENCE_ENGINE_H_
 #define SPLEETER_INFERENCE_ENGINE_TF_INFERENCE_ENGINE_H_
 
-#include "spleeter/argument_parser/cli_options.h"
 #include "spleeter/inference_engine/i_inference_engine.h"
 
 #include <tensorflow/cc/client/client_session.h>

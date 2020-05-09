@@ -6,8 +6,7 @@
 
 #include "spleeter/inference_engine/tf_inference_engine.h"
 #include "spleeter/inference_engine/tflite_inference_engine.h"
-
-#include <memory>
+#include "spleeter/inference_engine/torch_inference_engine.h"
 
 namespace spleeter
 {
@@ -24,6 +23,9 @@ void InferenceEngine::SelectInferenceEngine(const InferenceEngineType& inference
             break;
         case InferenceEngineType::kTensorFlow:
             inference_engine_ = std::make_unique<TFInferenceEngine>(configuration);
+            break;
+        case InferenceEngineType::kTorch:
+            inference_engine_ = std::make_unique<TorchInferenceEngine>(configuration);
             break;
     }
 }

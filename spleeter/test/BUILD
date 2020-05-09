@@ -8,11 +8,6 @@ cc_test(
         ["*.cpp"],
         exclude = ["spleeter_tests.cpp"],
     ),
-    copts = [
-        "-std=c++14",
-        "-Wall",
-        "-Werror",
-    ],
     data = [
         "@audio_example//file",
     ],
@@ -30,11 +25,6 @@ cc_test(
 cc_test(
     name = "component_test",
     srcs = ["spleeter_tests.cpp"],
-    copts = [
-        "-std=c++14",
-        "-Wall",
-        "-Werror",
-    ],
     data = [
         "@audio_example//file",
     ],

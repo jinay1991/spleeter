@@ -7,11 +7,6 @@ cc_test(
     srcs = glob(
         ["*.cpp"],
     ),
-    copts = [
-        "-std=c++14",
-        "-Wall",
-        "-Werror",
-    ],
     data = [
         "@audio_example//file",
     ],

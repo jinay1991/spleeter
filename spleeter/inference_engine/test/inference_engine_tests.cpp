@@ -4,76 +4,88 @@
 ///
 #include "spleeter/audio/audionamix_audio_adapter.h"
 #include "spleeter/inference_engine/inference_engine.h"
+#include "spleeter/inference_engine/tf_inference_engine.h"
+#include "spleeter/inference_engine/tflite_inference_engine.h"
+#include "spleeter/inference_engine/torch_inference_engine.h"
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
+
+#include <cstdint>
+#include <memory>
+#include <string>
 
 namespace spleeter
 {
 namespace
 {
+template <typename T>
 class InferenceEngineTest : public ::testing::Test
 {
   public:
-    InferenceEngineTest() : unit_{}, test_waveform_{}, test_waveform_properties_{} {}
+    InferenceEngineTest()
+        : test_input_{"external/audio_example/file/audio_example.wav"}, test_waveform_{}, test_waveform_properties_{}
+    {
+    }
 
   protected:
     void SetUp() override
     {
-        std::string test_input = "external/audio_example/file/audio_example.wav";
-        std::string configuration = "spleeter:5stems";
+        const std::string configuration = "spleeter:5stems";
 
-        auto audio_adapter = AudionamixAudioAdapter{};
-        test_waveform_ = audio_adapter.Load(test_input, 0, -1, 44100);
-        test_waveform_properties_ = audio_adapter.GetProperties();
+        AudionamixAudioAdapter audio_adapter{};
+        this->test_waveform_ = audio_adapter.Load(this->test_input_, 0, -1, 44100);
+        this->test_waveform_properties_ = audio_adapter.GetProperties();
 
-        unit_.SelectInferenceEngine(InferenceEngineType::kTensorFlow, configuration);
-        unit_.Init();
-        unit_.SetInputWaveform(
-            test_waveform_, test_waveform_properties_.nb_frames, test_waveform_properties_.nb_channels);
+        this->unit_ = std::make_unique<T>(configuration);
+        this->unit_->Init();
+        this->unit_->SetInputWaveform(this->test_waveform_,
+                                      this->test_waveform_properties_.nb_frames,
+                                      this->test_waveform_properties_.nb_channels);
     }
 
-    void TearDown() override { unit_.Shutdown(); }
+    void TearDown() override { unit_->Shutdown(); }
 
-    InferenceEngine unit_;
+    const std::string test_input_;
     Waveform test_waveform_;
     AudioProperties test_waveform_properties_;
+
+    std::unique_ptr<IInferenceEngine> unit_;
 };
+TYPED_TEST_SUITE_P(InferenceEngineTest);
 
-TEST_F(InferenceEngineTest, SelectInferenceEngine)
+TYPED_TEST_P(InferenceEngineTest, Sanity)
 {
-    unit_.SelectInferenceEngine(InferenceEngineType::kTensorFlow, "spleeter:2stems");
-    EXPECT_EQ(InferenceEngineType::kTensorFlow, unit_.GetType());
-    EXPECT_EQ("spleeter:2stems", unit_.GetConfiguration());
+    this->unit_->Execute();
 
-    unit_.SelectInferenceEngine(InferenceEngineType::kTensorFlowLite, "spleeter:2stems");
-    EXPECT_EQ(InferenceEngineType::kTensorFlowLite, unit_.GetType());
-    EXPECT_EQ("spleeter:2stems", unit_.GetConfiguration());
-}
-
-TEST_F(InferenceEngineTest, SanityForTensorFlowInferenceEngine)
-{
-    unit_.SelectInferenceEngine(InferenceEngineType::kTensorFlow, "spleeter:5stems");
-    unit_.Init();
-    unit_.SetInputWaveform(test_waveform_, test_waveform_properties_.nb_frames, test_waveform_properties_.nb_channels);
-
-    unit_.Execute();
-
-    auto actual = unit_.GetResults();
-    EXPECT_EQ(InferenceEngineType::kTensorFlow, unit_.GetType());
+    auto actual = this->unit_->GetResults();
     EXPECT_EQ(5U, actual.size());
 }
 
-TEST_F(InferenceEngineTest, DISABLED_SanityForTensorFlowLiteInferenceEngine)
-{
-    unit_.SelectInferenceEngine(InferenceEngineType::kTensorFlowLite, "spleeter:5stems");
-    unit_.Init();
-    unit_.SetInputWaveform(test_waveform_, test_waveform_properties_.nb_frames, test_waveform_properties_.nb_channels);
-    unit_.Execute();
+REGISTER_TYPED_TEST_SUITE_P(InferenceEngineTest, Sanity);
 
-    auto actual = unit_.GetResults();
-    EXPECT_EQ(InferenceEngineType::kTensorFlowLite, unit_.GetType());
-    EXPECT_EQ(5U, actual.size());
+typedef ::testing::Types<TFInferenceEngine, /*TFLiteInferenceEngine,*/ TorchInferenceEngine> InferenceEngineTestTypes;
+INSTANTIATE_TYPED_TEST_SUITE_P(TypeTests, InferenceEngineTest, InferenceEngineTestTypes);
+
+class InferenceEngineTypeTest : public ::testing::TestWithParam<InferenceEngineType>
+{
+  public:
+    InferenceEngineTypeTest() : configuration_{"spleeter:5stems"}, unit_{} {}
+
+  protected:
+    const std::string configuration_;
+    InferenceEngine unit_;
+};
+TEST_P(InferenceEngineTypeTest, GivenInferenceEngine_ExpectSelectedEngine)
+{
+    unit_.SelectInferenceEngine(GetParam(), configuration_);
+
+    EXPECT_EQ(GetParam(), unit_.GetType());
 }
+INSTANTIATE_TEST_CASE_P(TypeTests,
+                        InferenceEngineTypeTest,
+                        ::testing::Values(InferenceEngineType::kTensorFlow,
+                                          InferenceEngineType::kTensorFlowLite,
+                                          InferenceEngineType::kTorch));
 }  // namespace
 }  // namespace spleeter

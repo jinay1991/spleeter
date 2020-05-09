@@ -6,6 +6,7 @@ load("@//third_party/googletest:googletest.bzl", "googletest")
 load("@//third_party/models:models.bzl", "models")
 load("@//third_party/nlohmann:nlohmann.bzl", "nlohmann")
 load("@//third_party/tensorflow:tensorflow.bzl", "tensorflow")
+load("@//third_party/torch:torch.bzl", "torch")
 load("@//third_party/zlib:zlib.bzl", "zlib")
 
 def third_party_dependencies():
@@ -18,4 +19,5 @@ def third_party_dependencies():
     models()
     nlohmann()
     tensorflow()
+    torch()
     zlib()

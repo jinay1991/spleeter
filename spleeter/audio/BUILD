@@ -7,10 +7,6 @@ cc_library(
     name = "audio",
     srcs = glob(["*.cpp"]),
     hdrs = glob(["*.h"]),
-    copts = [
-        "-std=c++14",
-        "-Wall",
-    ],
     deps = [
         "//spleeter/data_types",
         "//spleeter/logging",

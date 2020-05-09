@@ -5,11 +5,6 @@ package(default_visibility = ["//visibility:public"])
 cc_test(
     name = "unit_test",
     srcs = glob(["*.cpp"]),
-    copts = [
-        "-std=c++14",
-        "-Wall",
-        "-Werror",
-    ],
     linkstatic = True,
     deps = [
         "//spleeter/logging",

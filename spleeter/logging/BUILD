@@ -7,11 +7,6 @@ cc_library(
     name = "logging",
     srcs = glob(["*.cpp"]),
     hdrs = glob(["*.h"]),
-    copts = [
-        "-std=c++14",
-        "-Wall",
-        "-Werror",
-    ],
 )
 
 pkg_tar(

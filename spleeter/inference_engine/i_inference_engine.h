@@ -19,8 +19,7 @@ enum class InferenceEngineType : std::uint32_t
 {
     kTensorFlowLite = 0U,
     kTensorFlow = 1U,
-    // kTorch = 2, /// not-supported
-    // kCaffe = 3, /// not-supported
+    kTorch = 2U
 };
 /// @brief Inference Engine Interface class
 class IInferenceEngine
@@ -60,5 +59,28 @@ class IInferenceEngine
     /// @return configuration
     virtual std::string GetConfiguration() const = 0;
 };
+inline const char* to_string(const InferenceEngineType& inference_engine_type)
+{
+    switch (inference_engine_type)
+    {
+        case InferenceEngineType::kTensorFlow:
+            return "kTensorFlow";
+        case InferenceEngineType::kTensorFlowLite:
+            return "kTensorFlowLite";
+        case InferenceEngineType::kTorch:
+            return "kTorch";
+        default:
+            return "ERROR: Invalid type provided";
+    }
+    return "ERROR: Invalid type provided";
+}
+
+inline std::ostream& operator<<(std::ostream& stream, const InferenceEngineType& inference_engine_type)
+{
+    const char* name = to_string(inference_engine_type);
+    stream << name;
+    return stream;
+}
+
 }  // namespace spleeter
 #endif  /// SPLEETER_I_INFERENCE_ENGINE_H_
