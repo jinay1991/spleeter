@@ -1,78 +1,45 @@
-load("@rules_cc//cc:defs.bzl", "cc_library")
+load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test")
 load("@bazel_tools//tools/build_defs/pkg:pkg.bzl", "pkg_tar")
-
-package(default_visibility = ["//visibility:public"])
-
-cc_library(
-    name = "tflite_inference_engine",
-    srcs = [
-        "tflite_inference_engine.cpp",
-    ],
-    hdrs = [
-        "i_inference_engine.h",
-        "tflite_inference_engine.h",
-    ],
-    deps = [
-        "//spleeter/data_types",
-        "//spleeter/logging",
-        "@org_tensorflow//tensorflow/lite:framework",
-        "@org_tensorflow//tensorflow/lite/kernels:builtin_ops",
-    ],
-)
-
-cc_library(
-    name = "tf_inference_engine",
-    srcs = [
-        "tf_inference_engine.cpp",
-    ],
-    hdrs = [
-        "i_inference_engine.h",
-        "tf_inference_engine.h",
-    ],
-    deps = [
-        "//spleeter/data_types",
-        "//spleeter/logging",
-        "@tensorflow",
-    ],
-)
-
-cc_library(
-    name = "torch_inference_engine",
-    srcs = [
-        "torch_inference_engine.cpp",
-    ],
-    hdrs = [
-        "i_inference_engine.h",
-        "torch_inference_engine.h",
-    ],
-    deps = [
-        "//spleeter/data_types",
-        "//spleeter/logging",
-        "@torch",
-    ],
-)
 
 cc_library(
     name = "inference_engine",
     srcs = [
-        "inference_engine.cpp",
+        "inference_engine_strategy.cpp",
+        "null_inference_engine.cpp",
+        "tf_inference_engine.cpp",
+        "tflite_inference_engine.cpp",
     ],
     hdrs = [
         "i_inference_engine.h",
-        "inference_engine.h",
+        "inference_engine_strategy.h",
+        "null_inference_engine.h",
+        "tf_inference_engine.h",
+        "tflite_inference_engine.h",
     ],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//spleeter/datatypes",
+        "//spleeter/logging",
+        "@tensorflow",
+        "@tensorflowlite",
+    ],
+)
+
+cc_test(
+    name = "unit_tests",
+    srcs = ["test/inference_engine_tests.cpp"],
     data = [
-        "@models//:2stems",
-        "@models//:4stems",
+        "@audio_example//file",
         "@models//:5stems",
     ],
+    linkstatic = True,
+    tags = ["unit"],
+    visibility = ["//visibility:public"],
     deps = [
-        ":tf_inference_engine",
-        ":tflite_inference_engine",
-        ":torch_inference_engine",
-        "//spleeter/argument_parser",
-        "//spleeter/data_types",
+        ":inference_engine",
+        "//spleeter/audio",
         "//spleeter/logging",
+        "@googletest//:gtest_main",
     ],
 )
 
@@ -82,4 +49,5 @@ pkg_tar(
     mode = "0644",
     package_dir = "spleeter/inference_engine",
     tags = ["manual"],
+    visibility = ["//visibility:public"],
 )

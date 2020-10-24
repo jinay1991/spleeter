@@ -3,11 +3,11 @@
 /// @brief Contains interface for Audio Adapter
 /// @copyright Copyright (c) 2020, MIT License
 ///
-#ifndef SPLEETER_AUDIO_I_AUDIO_ADAPTER_H_
-#define SPLEETER_AUDIO_I_AUDIO_ADAPTER_H_
+#ifndef SPLEETER_AUDIO_I_AUDIO_ADAPTER_H
+#define SPLEETER_AUDIO_I_AUDIO_ADAPTER_H
 
-#include "spleeter/data_types/audio_properties.h"
-#include "spleeter/data_types/waveform.h"
+#include "spleeter/datatypes/audio_properties.h"
+#include "spleeter/datatypes/waveform.h"
 
 #include <cstdint>
 #include <string>
@@ -39,7 +39,7 @@ class IAudioAdapter
     /// @brief Write waveform data to the file denoted by the given path using FFMPEG process.
     ///
     /// @param path [in]        - Path of the audio file to save data in.
-    /// @param data [in]        - Waveform data to write.
+    /// @param waveform [in]    - Waveform data to write.
     /// @param sample_rate [in] - Sample rate to write file in.
     /// @param codec [in]       - Writing codec to use.
     /// @param bitrate [in]     - Bitrate of the written audio file.
@@ -56,4 +56,4 @@ class IAudioAdapter
 };
 }  // namespace spleeter
 
-#endif  /// SPLEETER_AUDIO_I_AUDIO_ADAPTER_H_
+#endif  /// SPLEETER_AUDIO_I_AUDIO_ADAPTER_H

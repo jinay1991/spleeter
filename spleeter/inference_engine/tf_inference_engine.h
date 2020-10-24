@@ -1,10 +1,11 @@
 ///
 /// @file
-/// @copyright Copyright (c) 2020, MIT License
+/// @copyright Copyright (c) 2020. MIT License
 ///
-#ifndef SPLEETER_INFERENCE_ENGINE_TF_INFERENCE_ENGINE_H_
-#define SPLEETER_INFERENCE_ENGINE_TF_INFERENCE_ENGINE_H_
+#ifndef SPLEETER_INFERENCE_ENGINE_TF_INFERENCE_ENGINE_H
+#define SPLEETER_INFERENCE_ENGINE_TF_INFERENCE_ENGINE_H
 
+#include "spleeter/datatypes/inference_engine.h"
 #include "spleeter/inference_engine/i_inference_engine.h"
 
 #include <tensorflow/cc/client/client_session.h>
@@ -13,71 +14,42 @@
 #include <cstdint>
 #include <memory>
 #include <string>
-#include <utility>
 #include <vector>
 
 namespace spleeter
 {
 /// @brief TensorFlow Inference Engine class
-class TFInferenceEngine : public IInferenceEngine
+class TFInferenceEngine final : public IInferenceEngine
 {
   public:
-    /// @brief Default Constructor
-    TFInferenceEngine();
-
     /// @brief Constructor
-    ///
-    /// @param configuration [in] - configurations
-    explicit TFInferenceEngine(const std::string& configuration);
-
-    /// @brief Destructor
-    ~TFInferenceEngine() = default;
+    /// @param params[in] Inference Engine Parameters such as model input/output node names
+    explicit TFInferenceEngine(const InferenceEngineParameters& params);
 
     /// @brief Initialise TensorFlow Inference Engine
     void Init() override;
 
     /// @brief Execute Inference with TensorFlow Inference Engine
-    void Execute() override;
+    /// @param waveform [in] - Waveform to be split
+    void Execute(const Waveform& waveform) override;
 
     /// @brief Release TensorFlow Inference Engine
     void Shutdown() override;
 
-    /// @brief Set input data (waveform)
-    ///
-    /// @param waveform [in] - Waveform to be split
-    /// @param nb_frames [in] - Number of frames within given Waveform
-    /// @param nb_channels [in] - Number of channels within given Waveform
-    void SetInputWaveform(const Waveform& waveform,
-                          const std::int32_t nb_frames,
-                          const std::int32_t nb_channels) override;
-
-    /// @brief Obtain Results for provided input waveform
+    /// @brief Provide results in terms of Matrix
     /// @return List of waveforms (split waveforms)
     Waveforms GetResults() const override;
 
-    /// @brief Provide type of inference engine. Used to determine which inference engine it is.
-    ///
-    /// @return Inference Engine type (i.e. TensorFlow, TensorFlowLite, etc.)
-    InferenceEngineType GetType() const override;
-
-    /// @brief Provide configuration of the model selected
-    ///
-    /// @return configuration
-    std::string GetConfiguration() const override;
-
   private:
-    /// @brief Invokes Inference with TensorFlow APIs
-    /// @return List of waveforms (split waveforms)
-    virtual Waveforms InvokeInference() const;
+    /// @brief Updates Input Tensor by copying waveform to input_tensor
+    /// @param waveform [in] - Waveform to be split
+    void UpdateInput(const Waveform& waveform);
 
-    /// @brief Extracts model path from the provided command line arguments
-    virtual std::string GetModelPath() const;
+    /// @brief Updates Output Tensors by running the tensorflow session
+    void UpdateTensors();
 
-    /// @brief Model Configurations
-    std::string configuration_;
-
-    /// @brief Inference results (waveforms)
-    Waveforms results_;
+    /// @brief Converts output_tensors to cv::Mat results
+    void UpdateOutputs();
 
     /// @brief Saved Model bundle
     std::shared_ptr<tensorflow::SavedModelBundle> bundle_;
@@ -85,15 +57,22 @@ class TFInferenceEngine : public IInferenceEngine
     /// @brief Input Tensor
     tensorflow::Tensor input_tensor_;
 
+    /// @brief Input Tensor name
+    const std::string input_tensor_name_;
+
     /// @brief Output Tensors
     std::vector<tensorflow::Tensor> output_tensors_;
 
     /// @brief Output Tensors names
-    std::vector<std::string> output_tensor_names_;
+    const std::vector<std::string> output_tensor_names_;
 
     /// @brief Model root directory
-    const std::string model_dir_;
+    const std::string model_path_;
+
+    /// @brief Output Tensors saved as cv::Mat
+    Waveforms results_;
 };
 
 }  // namespace spleeter
-#endif  /// SPLEETER_INFERENCE_ENGINE_TF_INFERENCE_ENGINE_H_
+
+#endif  /// SPLEETER_INFERENCE_ENGINE_TF_INFERENCE_ENGINE_H

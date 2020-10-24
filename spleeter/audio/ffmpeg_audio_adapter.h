@@ -3,14 +3,15 @@
 /// @brief Contains implementation of FFMPEG based Audio Adapter
 /// @copyright Copyright (c) 2020, MIT License
 ///
-#ifndef SPLEETER_AUDIO_FFMPEG_AUDIO_ADAPTER_H_
-#define SPLEETER_AUDIO_FFMPEG_AUDIO_ADAPTER_H_
+#ifndef SPLEETER_AUDIO_FFMPEG_AUDIO_ADAPTER_H
+#define SPLEETER_AUDIO_FFMPEG_AUDIO_ADAPTER_H
 
 #include "spleeter/audio/i_audio_adapter.h"
-#include "spleeter/data_types/audio_properties.h"
+#include "spleeter/datatypes/audio_properties.h"
 
 #ifndef __cplusplus__
-extern "C" {
+extern "C"
+{
 #endif
 #include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
@@ -31,14 +32,11 @@ extern "C" {
 namespace spleeter
 {
 /// @brief An AudioAdapter implementation that use FFMPEG libraries to perform I/O operation for audio processing.
-class FfmpegAudioAdapter : public IAudioAdapter
+class FfmpegAudioAdapter final : public IAudioAdapter
 {
   public:
     /// @brief Constructor.
     FfmpegAudioAdapter();
-
-    /// @brief Destructor.
-    ~FfmpegAudioAdapter() = default;
 
     /// @brief Loads the audio file denoted by the given path and returns it data as a waveform.
     ///
@@ -56,12 +54,12 @@ class FfmpegAudioAdapter : public IAudioAdapter
     /// @brief Write waveform data to the file denoted by the given path using FFMPEG process.
     ///
     /// @param path [in]        - Path of the audio file to save data in.
-    /// @param data [in]        - Waveform data to write.
+    /// @param waveform [in]    - Waveform data to write.
     /// @param sample_rate [in] - Sample rate to write file in.
     /// @param codec [in]       - Writing codec to use.
     /// @param bitrate [in]     - Bitrate of the written audio file.
     void Save(const std::string& path,
-              const Waveform& data,
+              const Waveform& waveform,
               const std::int32_t sample_rate,
               const std::string& codec,
               const std::int32_t bitrate) override;
@@ -77,4 +75,4 @@ class FfmpegAudioAdapter : public IAudioAdapter
 };
 }  // namespace spleeter
 
-#endif  /// SPLEETER_AUDIO_FFMPEG_AUDIO_ADAPTER_H_
+#endif  /// SPLEETER_AUDIO_FFMPEG_AUDIO_ADAPTER_H

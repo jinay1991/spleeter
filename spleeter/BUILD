@@ -13,7 +13,7 @@ cc_library(
     deps = [
         "//spleeter/argument_parser",
         "//spleeter/audio",
-        "//spleeter/data_types",
+        "//spleeter/datatypes",
         "//spleeter/inference_engine",
         "//spleeter/logging",
         "@nlohmann//:json",

@@ -6,119 +6,104 @@
 
 #include "spleeter/logging/logging.h"
 
-#include <cstdint>
-#include <memory>
-#include <string>
 #include <unordered_set>
-#include <vector>
 
 namespace spleeter
 {
-namespace internal
+namespace
 {
-std::vector<std::string> GetOutputTensorNames(const std::string& configuration)
+/// @brief Converts tensorflow::Tensor to waveform (aka cv::Mat)
+///
+/// @param tensor[in] tensorflow::Tensor in [NxHxWxC form]
+///
+/// @return Equivalent waveform for given tensorflow::Tensor by copying contents.
+Waveform ConvertToWaveform(const tensorflow::Tensor& tensor)
 {
-    auto output_tensor_names = std::vector<std::string>{};
-    if (configuration == "spleeter:2stems")
-    {
-        output_tensor_names = std::vector<std::string>{"strided_slice_13", "strided_slice_23"};
-    }
-
-    else if (configuration == "spleeter:4stems")
-    {
-        output_tensor_names =
-            std::vector<std::string>{"strided_slice_13", "strided_slice_23", "strided_slice_33", "strided_slice_43"};
-    }
-    else  // default to "spleeter:5stems"
-    {
-        output_tensor_names = std::vector<std::string>{
-            "strided_slice_18", "strided_slice_38", "strided_slice_48", "strided_slice_28", "strided_slice_58"};
-    }
-    return output_tensor_names;
+    tensorflow::Tensor tensor_matrix = tensor;
+    const auto rows = tensor_matrix.dims() > 1 ? static_cast<std::int32_t>(tensor_matrix.dim_size(1)) : 1;
+    const auto cols = tensor_matrix.dims() > 2 ? static_cast<std::int32_t>(tensor_matrix.dim_size(2)) : 1;
+    const auto channels = tensor_matrix.dims() > 3 ? static_cast<std::int32_t>(tensor_matrix.dim_size(3)) : 1;
+    const auto size = rows * cols * channels;
+    auto* tensor_ptr = tensor_matrix.flat<float>().data();
+    Waveform waveform{};
+    waveform.nb_frames = rows;
+    waveform.nb_channels = channels;
+    std::copy(tensor_ptr, tensor_ptr + size, std::back_inserter(waveform.data));
+    return waveform;
 }
-}  // namespace internal
 
-TFInferenceEngine::TFInferenceEngine() : TFInferenceEngine{"spleeter:5stems"} {}
+/// @brief Converts waveform to tensorflow::Tensor
+///
+/// @param waveform[in] waveform
+///
+/// @return Equivalent tensorflow::Tensor for given waveform by copying the its contents to tensor.
+tensorflow::Tensor ConvertToTensor(const Waveform& waveform)
+{
+    tensorflow::Tensor tensor{tensorflow::DT_FLOAT, tensorflow::TensorShape{waveform.nb_frames, waveform.nb_channels}};
+    std::copy(waveform.data.begin(), waveform.data.end(), tensor.matrix<float>().data());
+    return tensor;
+}
+}  // namespace
 
-TFInferenceEngine::TFInferenceEngine(const std::string& configuration)
-    : configuration_{configuration},
-      bundle_{std::make_shared<tensorflow::SavedModelBundle>()},
+TFInferenceEngine::TFInferenceEngine(const InferenceEngineParameters& params)
+    : bundle_{std::make_shared<tensorflow::SavedModelBundle>()},
       input_tensor_{},
+      input_tensor_name_{params.input_tensor_name},
       output_tensors_{},
-      output_tensor_names_{internal::GetOutputTensorNames(configuration_)},
-      model_dir_{"external/models/"}
+      output_tensor_names_{params.output_tensor_names},
+      model_path_{params.model_path}
 {
 }
 
 void TFInferenceEngine::Init()
 {
-    auto session_options = tensorflow::SessionOptions{};
-    auto run_options = tensorflow::RunOptions{};
-    auto tags = std::unordered_set<std::string>{{"serve"}};
+    tensorflow::SessionOptions session_options{};
+    tensorflow::RunOptions run_options{};
+    std::unordered_set<std::string> tags{"serve"};
 
-    auto ret = tensorflow::LoadSavedModel(session_options, run_options, GetModelPath(), tags, bundle_.get());
-    ASSERT_CHECK(ret.ok()) << "Failed to load saved model";
+    const auto ret = tensorflow::LoadSavedModel(session_options, run_options, model_path_, tags, bundle_.get());
+    ASSERT_CHECK(ret.ok()) << "Failed to load saved model '" << model_path_ << "', (Message: " << ret.error_message()
+                           << ")";
+
+    SPLEETER_LOG(INFO) << "Successfully loaded saved model from '" << model_path_ << "'.";
 }
 
-void TFInferenceEngine::Execute()
+void TFInferenceEngine::Execute(const Waveform& waveform)
 {
-    results_ = InvokeInference();
+    UpdateInput(waveform);
+    UpdateTensors();
+    UpdateOutputs();
 }
 
 void TFInferenceEngine::Shutdown() {}
-
-Waveforms TFInferenceEngine::InvokeInference() const
-{
-    auto inputs = std::vector<std::pair<std::string, tensorflow::Tensor>>{{"Placeholder", input_tensor_}};
-    auto target_node_names = std::vector<std::string>{};
-    auto outputs = std::vector<tensorflow::Tensor>{};
-    auto status = bundle_->GetSession()->Run(inputs, output_tensor_names_, target_node_names, &outputs);
-    ASSERT_CHECK(status.ok()) << "Unable to run Session, (Returned: " << status.ok() << ")";
-
-    SPLEETER_LOG(INFO) << "Successfully received split " << outputs.size() << " waves.";
-
-    /// Extract results
-    auto waveforms = Waveforms{};
-    std::transform(
-        outputs.begin(), outputs.end(), std::back_inserter(waveforms), [&](const tensorflow::Tensor& tensor) {
-            auto waveform = Waveform{};
-            waveform.resize(input_tensor_.dim_size(0) * input_tensor_.dim_size(1));
-
-            auto tensor_dataptr = tensor.matrix<float>().data();
-            std::copy(tensor_dataptr, tensor_dataptr + waveform.size(), waveform.begin());
-            return waveform;
-        });
-
-    return waveforms;
-}
-
-void TFInferenceEngine::SetInputWaveform(const Waveform& waveform,
-                                         const std::int32_t nb_frames,
-                                         const std::int32_t nb_channels)
-{
-    input_tensor_ = tensorflow::Tensor{tensorflow::DT_FLOAT, tensorflow::TensorShape{nb_frames, nb_channels}};
-    std::copy(waveform.begin(), waveform.end(), input_tensor_.matrix<float>().data());
-}
 
 Waveforms TFInferenceEngine::GetResults() const
 {
     return results_;
 }
 
-std::string TFInferenceEngine::GetModelPath() const
+void TFInferenceEngine::UpdateInput(const Waveform& waveform)
 {
-    auto config = configuration_.substr(configuration_.find_first_of(':') + 1);
-    return model_dir_ + config;
+    input_tensor_ = ConvertToTensor(waveform);
 }
 
-InferenceEngineType TFInferenceEngine::GetType() const
+void TFInferenceEngine::UpdateTensors()
 {
-    return InferenceEngineType::kTensorFlow;
+    const std::vector<std::pair<std::string, tensorflow::Tensor>> inputs{{input_tensor_name_, input_tensor_}};
+    const std::vector<std::string> target_node_names{};
+
+    const auto ret = bundle_->GetSession()->Run(inputs, output_tensor_names_, target_node_names, &output_tensors_);
+    ASSERT_CHECK(ret.ok()) << "Unable to run Session, (Message: " << ret.error_message() << ")";
+
+    SPLEETER_LOG(INFO) << "Successfully received results " << output_tensors_.size() << " outputs.";
 }
 
-std::string TFInferenceEngine::GetConfiguration() const
+void TFInferenceEngine::UpdateOutputs()
 {
-    return configuration_;
+    std::transform(
+        output_tensors_.cbegin(), output_tensors_.cend(), std::back_inserter(results_), [](auto const& tensor) {
+            return ConvertToWaveform(tensor);
+        });
 }
 
 }  // namespace spleeter

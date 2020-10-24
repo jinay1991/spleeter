@@ -5,146 +5,78 @@
 #include "spleeter/inference_engine/tflite_inference_engine.h"
 
 #include "spleeter/logging/logging.h"
-#include "tensorflow/lite/kernels/register.h"
-#include "tensorflow/lite/optional_debug_tools.h"
 
-#include <sys/time.h>
-
-#include <algorithm>
-#include <fstream>
-#include <iomanip>
-#include <iostream>
-#include <string>
+#include <tensorflow/lite/builtin_op_data.h>
+#include <tensorflow/lite/kernels/register.h>
+#include <tensorflow/lite/optional_debug_tools.h>
 
 namespace spleeter
 {
-namespace
+
+TFLiteInferenceEngine::TFLiteInferenceEngine(const InferenceEngineParameters& params)
+    : model_path_{params.model_path}, results_{}
 {
-/// @brief Convert to usec (microseconds)
-constexpr double get_us(struct timeval t)
-{
-    return (t.tv_sec * 1000000 + t.tv_usec);
 }
-
-inline std::ostream& operator<<(std::ostream& os, const TfLiteIntArray* v)
-{
-    if (!v)
-    {
-        os << " (null)";
-        return os;
-    }
-    for (int k = 0; k < v->size; k++)
-    {
-        os << " " << std::dec << std::setw(4) << v->data[k];
-    }
-    return os;
-}
-
-inline std::ostream& operator<<(std::ostream& os, const TfLiteType& type)
-{
-    switch (type)
-    {
-        case kTfLiteFloat32:
-            os << "float32";
-            break;
-        case kTfLiteInt32:
-            os << "int32";
-            break;
-        case kTfLiteUInt8:
-            os << "uint8";
-            break;
-        case kTfLiteInt8:
-            os << "int8";
-            break;
-        case kTfLiteInt64:
-            os << "int64";
-            break;
-        case kTfLiteString:
-            os << "string";
-            break;
-        case kTfLiteBool:
-            os << "bool";
-            break;
-        case kTfLiteInt16:
-            os << "int16";
-            break;
-        case kTfLiteComplex64:
-            os << "complex64";
-            break;
-        case kTfLiteFloat16:
-            os << "float16";
-            break;
-        case kTfLiteNoType:
-            os << "no type";
-            break;
-        default:
-            os << "(invalid)";
-            break;
-    }
-    return os;
-}
-
-}  // namespace
-
-TFLiteInferenceEngine::TFLiteInferenceEngine() : TFLiteInferenceEngine{"spleeter:5stems"} {}
-
-TFLiteInferenceEngine::TFLiteInferenceEngine(const std::string& configuration) : configuration_{configuration} {}
 
 void TFLiteInferenceEngine::Init()
 {
-    model_ = tflite::FlatBufferModel::BuildFromFile(GetModelPath().c_str());
-    ASSERT_CHECK(model_) << "Failed to mmap model " << GetModelPath();
+    model_ = tflite::FlatBufferModel::BuildFromFile(model_path_.c_str());
+    ASSERT_CHECK(model_) << "Failed to read model " << model_path_;
     model_->error_reporter();
 
-    tflite::ops::builtin::BuiltinOpResolver resolver;
+    tflite::ops::builtin::BuiltinOpResolver resolver{};
 
     tflite::InterpreterBuilder(*model_, resolver)(&interpreter_);
     ASSERT_CHECK(interpreter_) << "Failed to construct interpreter";
 
     ASSERT_CHECK_EQ(interpreter_->AllocateTensors(), TfLiteStatus::kTfLiteOk) << "Failed to allocate tensors!";
 
-    PrintInterpreterState(interpreter_.get());
+    SPLEETER_LOG(INFO) << "Successfully loaded tflite model from '" << model_path_ << "'.";
 }
 
-void TFLiteInferenceEngine::Execute()
+void TFLiteInferenceEngine::Execute(const Waveform& waveform)
 {
-    SetInputWaveform(Waveform{}, 0, 0);
-    results_ = InvokeInference();
+    UpdateInput(waveform);
+    UpdateTensors();
+    UpdateOutputs();
 }
 
 void TFLiteInferenceEngine::Shutdown() {}
-
-Waveforms TFLiteInferenceEngine::InvokeInference() const
-{
-    auto error_code = interpreter_->Invoke();
-    ASSERT_CHECK_EQ(error_code, TfLiteStatus::kTfLiteOk) << "Failed to invoke tflite!";
-
-    return Waveforms{};
-}
-
-void TFLiteInferenceEngine::SetInputWaveform(const Waveform& waveform,
-                                             const std::int32_t nb_frames,
-                                             const std::int32_t nb_channels)
-{
-}
 
 Waveforms TFLiteInferenceEngine::GetResults() const
 {
     return results_;
 }
 
-std::string TFLiteInferenceEngine::GetModelPath() const
+void TFLiteInferenceEngine::UpdateInput(const Waveform& waveform)
 {
-    return "data/model.t";
+    const auto input = interpreter_->inputs()[0];
+
+    TfLiteIntArray* dims = interpreter_->tensor(input)->dims;
+    const auto wanted_height = dims->data[1];
+    const auto wanted_width = dims->data[2];
+    const auto wanted_channels = dims->data[3];
+    const auto mean = 1.0;
+    const auto stddev = 0.0;
+
+    /// @todo Update inputs for inference
 }
 
-InferenceEngineType TFLiteInferenceEngine::GetType() const
+void TFLiteInferenceEngine::UpdateTensors()
 {
-    return InferenceEngineType::kTensorFlowLite;
-};
-
-std::string TFLiteInferenceEngine::GetConfiguration() const
-{
-    return configuration_;
+    const auto ret = interpreter_->Invoke();
+    ASSERT_CHECK_EQ(ret, TfLiteStatus::kTfLiteOk) << "Failed to invoke tflite!";
 }
+
+void TFLiteInferenceEngine::UpdateOutputs()
+{
+    const auto output = interpreter_->outputs()[0];
+    const auto output_dims = interpreter_->tensor(output)->dims;
+    const auto output_size = output_dims->data[output_dims->size - 1];
+
+    results_.resize(output_size);
+
+    /// @todo Update results with inference output
+}
+
 }  // namespace spleeter

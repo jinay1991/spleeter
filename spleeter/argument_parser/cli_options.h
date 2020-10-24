@@ -3,8 +3,10 @@
 /// @brief Contains command line interface options definitions
 /// @copyright Copyright (c) 2020, MIT License
 ///
-#ifndef SPLEETER_ARGUMENT_PARSER_CLI_OPTIONS_H_
-#define SPLEETER_ARGUMENT_PARSER_CLI_OPTIONS_H_
+#ifndef SPLEETER_ARGUMENT_PARSER_CLI_OPTIONS_H
+#define SPLEETER_ARGUMENT_PARSER_CLI_OPTIONS_H
+
+#include "spleeter/datatypes/inference_engine.h"
 
 #include <string>
 
@@ -28,6 +30,13 @@ struct CLIOptions
     /// @brief JSON filename that contains params
     /// choices: { "spleeter:5stems", "spleeter:4stems", "spleeter:2stems" }
     std::string configuration{"spleeter:5stems"};
+
+    /// @brief Inference Engine Parameters (contains model_path, input/output tensor names)
+    InferenceEngineParameters inference_engine_params{
+        "external/models/5stems",
+        "Placeholder",
+        {"strided_slice_18", "strided_slice_38", "strided_slice_48", "strided_slice_28", "strided_slice_58"},
+        "spleeter:5stems"};
 
     /// @brief Set the starting offset to separate audio from
     double offset{0.0};
@@ -61,4 +70,4 @@ struct CLIOptions
 };
 
 }  // namespace spleeter
-#endif  /// SPLEETER_ARGUMENT_PARSER_CLI_OPTIONS_H_
+#endif  /// SPLEETER_ARGUMENT_PARSER_CLI_OPTIONS_H

@@ -26,11 +26,19 @@ def models():
             url = "https://github.com/deezer/spleeter/releases/download/v1.4.0/5stems.tar.gz",
         )
 
-    if "models" not in native.existing_rules():
+    if "models_1.14" not in native.existing_rules():
         http_archive(
-            name = "models",
+            name = "models_1.14",
             build_file = "//third_party/models:models.BUILD",
             strip_prefix = "exported",
             sha256 = "7d78053099cd8b6d6afabee6bb17aa85f34346e78155b6f6691f4b6568a43ce2",
             url = "https://github.com/gvne/spleeterpp/releases/download/tf_cc-1.14.0/spleeter-models.zip",
+        )
+
+    if "models" not in native.existing_rules():
+        http_archive(
+            name = "models",
+            build_file = "//third_party/models:models.BUILD",
+            sha256 = "edfdbdb9b830698fc859afbb9f1e5d8b2a7da1ec33ed1ccc288e9a57ef0c4ca2",
+            url = "https://github.com/jinay1991/spleeter/releases/download/v2.3/models.zip",
         )

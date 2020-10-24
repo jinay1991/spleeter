@@ -22,13 +22,11 @@ class AudioAdapterTest : public ::testing::Test
   public:
     AudioAdapterTest()
         : test_sample_rate_{44100},
-          test_input_{"external/audio_example/file/audio_example.wav"},
+          test_waveform_path_{"external/audio_example/file/audio_example.wav"},
           test_waveform_{},
           test_waveform_properties_{}
     {
     }
-
-    ~AudioAdapterTest() = default;
 
     Waveform GetTestWaveform() const { return test_waveform_; }
 
@@ -38,14 +36,14 @@ class AudioAdapterTest : public ::testing::Test
     void SetUp() override
     {
         AudionamixAudioAdapter audio_adapter{};
-        test_waveform_ = audio_adapter.Load(test_input_, 0, -1, test_sample_rate_);
+        test_waveform_ = audio_adapter.Load(test_waveform_path_, 0, -1, 44100);
         test_waveform_properties_ = audio_adapter.GetProperties();
 
         unit_ = std::make_unique<T>();
     }
 
     const std::int32_t test_sample_rate_;
-    const std::string test_input_;
+    const std::string test_waveform_path_;
     Waveform test_waveform_;
     AudioProperties test_waveform_properties_;
 
@@ -56,9 +54,9 @@ TYPED_TEST_SUITE_P(AudioAdapterTest);
 /// @test In this, test that Load method returns raw waveform and updates audio properties
 TYPED_TEST_P(AudioAdapterTest, GivenAudioFile_ExpectRawWaveform)
 {
-    const auto actual = this->unit_->Load(this->test_input_, 0.0, -1, this->test_sample_rate_);
-    EXPECT_FALSE(actual.empty());
-    EXPECT_EQ(959664U, actual.size());
+    const auto actual = this->unit_->Load(this->test_waveform_path_, 0.0, -1, this->test_sample_rate_);
+    EXPECT_FALSE(actual.data.empty());
+    EXPECT_EQ(959664U, actual.data.size());
 
     const auto actual_properties = this->unit_->GetProperties();
     const auto expected_properties = this->GetTestWaveformProperties();
@@ -78,8 +76,8 @@ TYPED_TEST_P(AudioAdapterTest, GivenRawWaveform_ExpectSavedFileHasSameProperties
 
     AudionamixAudioAdapter audio_adapter{};
     const auto actual = audio_adapter.Load(test_results, 0, -1, this->test_sample_rate_);
-    EXPECT_FALSE(actual.empty());
-    EXPECT_EQ(959664U, actual.size());
+    EXPECT_FALSE(actual.data.empty());
+    EXPECT_EQ(959664U, actual.data.size());
 
     const auto actual_properties = audio_adapter.GetProperties();
     const auto expected_properties = this->GetTestWaveformProperties();

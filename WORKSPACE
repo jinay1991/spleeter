@@ -1,22 +1,13 @@
 workspace(name = "spleeter")
 
-load("@spleeter//third_party:dependencies.bzl", "third_party_dependencies")
+load("@spleeter//third_party:dependencies.bzl", "spleeter_dependencies")
 
-third_party_dependencies()
+spleeter_dependencies()
 
-## Load bazel skylib as Submodule
-load("@bazel_skylib//:workspace.bzl", "bazel_skylib_workspace")
+load("@tensorflowlite//third_party:dependencies.bzl", "tensorflowlite_dependencies")
 
-bazel_skylib_workspace()
+tensorflowlite_dependencies()
 
-## Load bazel rules as Submodule
-load("@io_bazel_rules_closure//closure:repositories.bzl", "rules_closure_dependencies", "rules_closure_toolchains")
+load("@tensorflow//third_party:dependencies.bzl", "tensorflow_dependencies")
 
-rules_closure_dependencies()
-
-rules_closure_toolchains()
-
-## Load TensorFlow as Submodule
-load("@org_tensorflow//tensorflow:workspace.bzl", "tf_workspace")
-
-tf_workspace()
+tensorflow_dependencies()

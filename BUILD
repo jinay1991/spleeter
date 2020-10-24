@@ -22,7 +22,7 @@ pkg_tar(
         "//spleeter:includes",
         "//spleeter/argument_parser:includes",
         "//spleeter/audio:includes",
-        "//spleeter/data_types:includes",
+        "//spleeter/datatypes:includes",
         "//spleeter/inference_engine:includes",
         "//spleeter/logging:includes",
     ],
@@ -34,7 +34,7 @@ pkg_tar(
         "//spleeter",
         "//spleeter/argument_parser",
         "//spleeter/audio",
-        "//spleeter/data_types",
+        "//spleeter/datatypes",
         "//spleeter/inference_engine",
         "//spleeter/logging",
     ],
@@ -63,19 +63,19 @@ pkg_tar(
     tags = ["manual"],
 )
 
+filegroup(
+    name = "spleeter-third_party_files",
+    srcs = glob(["third_party/**/*"]),
+)
+
 pkg_tar(
     name = "spleeter-third_party",
+    srcs = [
+        ":spleeter-third_party_files",
+    ],
     mode = "0644",
     package_dir = "third_party",
     tags = ["manual"],
-    deps = [
-        "@audionamix//:wave-includes",
-        "@audionamix//:wave-lib",
-        "@eigen//:eigen-includes",
-        "@eigen//:eigen-lib",
-        "@tensorflow//:tensorflow-includes",
-        "@tensorflow//:tensorflow-lib",
-    ],
 )
 
 pkg_tar(
@@ -90,7 +90,6 @@ pkg_tar(
         ":spleeter-data",
         ":spleeter-include",
         ":spleeter-lib",
-        # ":spleeter-model",
-        # ":spleeter-third_party",
+        ":spleeter-third_party",
     ],
 )

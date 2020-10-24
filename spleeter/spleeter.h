@@ -3,8 +3,8 @@
 /// @brief Contains High Level API/Class for Spleeter application
 /// @copyright Copyright (c) 2020, MIT License
 ///
-#ifndef SPLEETER_SPLEETER_H_
-#define SPLEETER_SPLEETER_H_
+#ifndef SPLEETER_SPLEETER_H
+#define SPLEETER_SPLEETER_H
 
 #include "spleeter/argument_parser/cli_options.h"
 #include "spleeter/i_separator.h"
@@ -20,17 +20,14 @@ class Spleeter
     /// @brief Constructor.
     explicit Spleeter(const CLIOptions& cli_options);
 
-    /// @brief Destructor.
-    virtual ~Spleeter() = default;
-
     /// @brief Initialize Spleeter
-    virtual void Init();
+    void Init();
 
     /// @brief Execute Spleeter
-    virtual void Execute();
+    void Execute();
 
     /// @brief Shutdown Spleeter (release any occupied resources)
-    virtual void Shutdown();
+    void Shutdown();
 
   private:
     /// @brief Parsed Command Line options
@@ -41,4 +38,4 @@ class Spleeter
 };
 }  // namespace spleeter
 
-#endif  /// SPLEETER_SPLEETER_H_
+#endif  /// SPLEETER_SPLEETER_H

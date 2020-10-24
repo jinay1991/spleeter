@@ -21,21 +21,23 @@ Waveform AudionamixAudioAdapter::Load(const std::string& path,
     auto ret = file.Open(path, wave::OpenMode::kIn);
     ASSERT_CHECK(!ret) << "Unable to open " << path << ", only *.wav is supported! (Returned: " << ret << ")";
 
-    auto waveform = Waveform{};
-    ret = file.Read(&waveform);
+    Waveform waveform{};
+    ret = file.Read(&waveform.data);
     ASSERT_CHECK(!ret) << "Unable to read " << path << ", only *.wav is supported! (Returned: " << ret << ")";
 
     /// Save loaded audio properties
     audio_properties_.nb_frames = file.frame_number();
     audio_properties_.nb_channels = file.channel_number();
     audio_properties_.sample_rate = file.sample_rate();
+    waveform.nb_channels = audio_properties_.nb_channels;
+    waveform.nb_frames = audio_properties_.nb_frames;
 
     SPLEETER_LOG(DEBUG) << "Loaded waveform from " << path << " using Audionamix.";
     return waveform;
 }
 
 void AudionamixAudioAdapter::Save(const std::string& path,
-                                  const Waveform& data,
+                                  const Waveform& waveform,
                                   const std::int32_t sample_rate,
                                   const std::string& /*codec*/,
                                   const std::int32_t /*bitrate*/)
@@ -52,7 +54,7 @@ void AudionamixAudioAdapter::Save(const std::string& path,
     }
     file.set_channel_number(2);
 
-    ret = file.Write(data);
+    ret = file.Write(waveform.data);
     ASSERT_CHECK(!ret) << "Unable to write to " << path << "! (Returned: " << ret << ")";
 
     SPLEETER_LOG(DEBUG) << "Saved waveform to " << path << " using Audionamix.";

@@ -1,90 +1,65 @@
 ///
 /// @file
-/// @copyright Copyright (c) 2020, MIT License
+/// @copyright Copyright (c) 2020. MIT License
 ///
-#ifndef SPLEETER_INFERENCE_ENGINE_TFLITE_INFERENCE_ENGINE_H_
-#define SPLEETER_INFERENCE_ENGINE_TFLITE_INFERENCE_ENGINE_H_
+#ifndef SPLEETER_INFERENCE_ENGINE_TFLITE_INFERENCE_ENGINE_H
+#define SPLEETER_INFERENCE_ENGINE_TFLITE_INFERENCE_ENGINE_H
 
+#include "spleeter/datatypes/inference_engine.h"
 #include "spleeter/inference_engine/i_inference_engine.h"
-#include "tensorflow/lite/interpreter.h"
-#include "tensorflow/lite/model.h"
 
-#include <cstdint>
+#include <tensorflow/lite/interpreter.h>
+#include <tensorflow/lite/model.h>
+
 #include <memory>
-#include <string>
-#include <utility>
-#include <vector>
 
 namespace spleeter
 {
 /// @brief TFLite Inference Engine class
-class TFLiteInferenceEngine : public IInferenceEngine
+class TFLiteInferenceEngine final : public IInferenceEngine
 {
   public:
-    /// @brief Default Constructor
-    TFLiteInferenceEngine();
-
     /// @brief Constructor
-    ///
-    /// @param configuration [in] - model configuration
-    explicit TFLiteInferenceEngine(const std::string& configuration);
-
-    /// @brief Destructor
-    ~TFLiteInferenceEngine() = default;
+    explicit TFLiteInferenceEngine(const InferenceEngineParameters& params);
 
     /// @brief Initialise TFLite Inference Engine
     void Init() override;
 
     /// @brief Execute Inference with TFLite Inference Engine
-    void Execute() override;
+    /// @param waveform [in] - Waveform to be split
+    void Execute(const Waveform& waveform) override;
 
     /// @brief Release TFLite Inference Engine
     void Shutdown() override;
-
-    /// @brief Set input data (waveform)
-    ///
-    /// @param waveform [in] - Waveform to be split
-    /// @param nb_frames [in] - Number of frames within given Waveform
-    /// @param nb_channels [in] - Number of channels within given Waveform
-    void SetInputWaveform(const Waveform& waveform,
-                          const std::int32_t nb_frames,
-                          const std::int32_t nb_channels) override;
 
     /// @brief Obtain Results for provided input waveform
     ///
     /// @return List of waveforms (split waveforms)
     Waveforms GetResults() const override;
 
-    /// @brief Provide type of inference engine. Used to determine which inference engine it is.
-    ///
-    /// @return Inference Engine type (i.e. TensorFlow, TensorFlowLite, etc.)
-    InferenceEngineType GetType() const override;
-
-    /// @brief Provide configuration of the model selected
-    ///
-    /// @return configuration
-    std::string GetConfiguration() const override;
-
   private:
-    /// @brief Invokes Inference with TFLite Interpreter
-    /// @return List of waveforms (split waveforms)
-    virtual Waveforms InvokeInference() const;
+    /// @brief Updates Input Tensor by copying waveform to input_tensor
+    /// @param waveform [in] - Waveform to be split
+    void UpdateInput(const Waveform& waveform);
 
-    /// @brief Extracts model path from the provided command line arguments
-    virtual std::string GetModelPath() const;
+    /// @brief Updates Output Tensors by running the tensorflow session
+    void UpdateTensors();
 
-    /// @brief Command Line Options
-    std::string configuration_;
+    /// @brief Converts output_tensors to Waveforms results
+    void UpdateOutputs();
 
-    /// @brief Inference results (waveforms)
-    Waveforms results_;
+    /// @brief Model root directory
+    const std::string model_path_;
 
     /// @brief TFLite Model Buffer Instance
     std::unique_ptr<tflite::FlatBufferModel> model_;
 
     /// @brief TFLite Model Interpreter instance
     std::unique_ptr<tflite::Interpreter> interpreter_;
+
+    /// @brief Output Tensors saved as Waveforms
+    Waveforms results_;
 };
 
 }  // namespace spleeter
-#endif  /// SPLEETER_INFERENCE_ENGINE_TFLITE_INFERENCE_ENGINE_H_
+#endif  /// SPLEETER_INFERENCE_ENGINE_TFLITE_INFERENCE_ENGINE_H

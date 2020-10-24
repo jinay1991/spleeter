@@ -10,6 +10,9 @@ cc_test(
     ),
     data = [
         "@audio_example//file",
+        "@models//:2stems",
+        "@models//:4stems",
+        "@models//:5stems",
     ],
     linkopts = [
         "-lstdc++fs",
@@ -27,6 +30,7 @@ cc_test(
     srcs = ["spleeter_tests.cpp"],
     data = [
         "@audio_example//file",
+        "@models//:5stems",
     ],
     linkstatic = True,
     deps = [

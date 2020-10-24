@@ -2,6 +2,21 @@ load("@rules_cc//cc:defs.bzl", "cc_library")
 
 package(default_visibility = ["//visibility:public"])
 
+config_setting(
+    name = "macos",
+    constraint_values = ["@bazel_tools//platforms:osx"],
+)
+
+config_setting(
+    name = "windows",
+    constraint_values = ["@bazel_tools//platforms:windows"],
+)
+
+config_setting(
+    name = "linux",
+    constraint_values = ["@bazel_tools//platforms:linux"],
+)
+
 cc_library(
     name = "zlib",
     srcs = [
@@ -33,7 +48,7 @@ cc_library(
     ],
     hdrs = ["zlib.h"],
     copts = select({
-        "@org_tensorflow//tensorflow:windows": [],
+        ":windows": [],
         "//conditions:default": [
             "-Wno-shift-negative-value",
             "-DZ_HAVE_UNISTD_H",

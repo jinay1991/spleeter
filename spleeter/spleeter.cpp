@@ -11,7 +11,8 @@
 namespace spleeter
 {
 Spleeter::Spleeter(const CLIOptions& cli_options)
-    : cli_options_{cli_options}, separator_{std::make_unique<Separator>(cli_options_.configuration, cli_options_.mwf)}
+    : cli_options_{cli_options},
+      separator_{std::make_unique<Separator>(cli_options_.inference_engine_params, cli_options_.mwf)}
 {
 }
 

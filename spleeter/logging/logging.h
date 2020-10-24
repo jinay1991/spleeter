@@ -12,8 +12,8 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==============================================================================*/
-#ifndef SPLEETER_LOGGING_LOGGING_H_
-#define SPLEETER_LOGGING_LOGGING_H_
+#ifndef SPLEETER_LOGGING_LOGGING_H
+#define SPLEETER_LOGGING_LOGGING_H
 
 #include <cstdint>
 #include <iostream>
@@ -100,4 +100,4 @@ class LoggingWrapper
 /// @param [in] b - attribute b
 #define ASSERT_CHECK_LE(a, b) ASSERT_CHECK(a <= b)
 
-#endif  /// SPLEETER_LOGGING_LOGGING_H_
+#endif  /// SPLEETER_LOGGING_LOGGING_H

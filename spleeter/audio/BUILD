@@ -8,7 +8,7 @@ cc_library(
     srcs = glob(["*.cpp"]),
     hdrs = glob(["*.h"]),
     deps = [
-        "//spleeter/data_types",
+        "//spleeter/datatypes",
         "//spleeter/logging",
         "@audionamix//:wave",
         "@ffmpeg",

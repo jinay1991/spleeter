@@ -134,7 +134,7 @@ Waveform FfmpegAudioAdapter::Load(const std::string& path,
     AVPacket packet;
     av_init_packet(&packet);
 
-    Waveform data{};
+    Waveform waveform{};
     std::int32_t nb_samples{0};
     while (av_read_frame(format_context, &packet) >= 0)
     {
@@ -158,7 +158,7 @@ Waveform FfmpegAudioAdapter::Load(const std::string& path,
 
             for (auto idx = 0; idx < buffer_size; ++idx)
             {
-                data.push_back(buffer[idx]);
+                waveform.data.push_back(buffer[idx]);
             }
 
             nb_samples += frame->nb_samples;
@@ -171,6 +171,8 @@ Waveform FfmpegAudioAdapter::Load(const std::string& path,
     audio_properties_.nb_channels = audio_codec_context->channels;
     audio_properties_.nb_frames = nb_samples;
     audio_properties_.sample_rate = sample_rate;
+    waveform.nb_frames = audio_properties_.nb_frames;
+    waveform.nb_channels = audio_properties_.nb_channels;
 
     av_packet_unref(&packet);
     av_free(buffer);
@@ -180,11 +182,11 @@ Waveform FfmpegAudioAdapter::Load(const std::string& path,
 
     SPLEETER_LOG(DEBUG) << "Decoded waveform with " << audio_properties_;
     SPLEETER_LOG(INFO) << "Loaded waveform from " << path << " using FFMPEG.";
-    return data;
+    return waveform;
 }
 
 void FfmpegAudioAdapter::Save(const std::string& path,
-                              const Waveform& data,
+                              const Waveform& waveform,
                               const std::int32_t sample_rate,
                               const std::string& /*codec*/,
                               const std::int32_t bitrate)
@@ -250,7 +252,7 @@ void FfmpegAudioAdapter::Save(const std::string& path,
     if (audio_codec_context->codec->capabilities & AV_CODEC_CAP_VARIABLE_FRAME_SIZE)
     {
         audio_codec_context->frame_size =
-            av_rescale_rnd(data.size() / av_get_channel_layout_nb_channels(AV_CH_LAYOUT_STEREO),
+            av_rescale_rnd(waveform.data.size() / av_get_channel_layout_nb_channels(AV_CH_LAYOUT_STEREO),
                            sample_rate,
                            sample_rate,
                            AV_ROUND_UP);
@@ -304,16 +306,16 @@ void FfmpegAudioAdapter::Save(const std::string& path,
     ret = av_samples_alloc_array_and_samples(&src_data,
                                              &src_linesize,
                                              av_get_channel_layout_nb_channels(AV_CH_LAYOUT_STEREO),
-                                             data.size(),
+                                             waveform.data.size(),
                                              AV_SAMPLE_FMT_FLT,
                                              0);
     ASSERT_CHECK_LE(0, ret) << "Failed to allocate src samples. (Returned: " << ret << ")";
 
     ret = av_samples_fill_arrays(src_data,
                                  &src_linesize,
-                                 (const std::uint8_t*)data.data(),
+                                 (const std::uint8_t*)waveform.data.data(),
                                  av_get_channel_layout_nb_channels(AV_CH_LAYOUT_STEREO),
-                                 data.size(),
+                                 waveform.data.size(),
                                  AV_SAMPLE_FMT_FLT,
                                  0);
     ASSERT_CHECK_LE(0, ret) << "Failed to fill src samples. (Returned: " << ret << ")";
@@ -326,12 +328,12 @@ void FfmpegAudioAdapter::Save(const std::string& path,
                                              0);
     ASSERT_CHECK_LE(0, ret) << "Failed to allocate dst samples. (Returned: " << ret << ")";
 
-    SPLEETER_LOG(INFO) << "Converting given waveform {size: " << data.size()
+    SPLEETER_LOG(INFO) << "Converting given waveform {size: " << waveform.data.size()
                        << ", sample_fmt: " << av_get_sample_fmt_name(AV_SAMPLE_FMT_FLT)
                        << "} to {size: " << audio_codec_context->frame_size
                        << ", sample_fmt: " << av_get_sample_fmt_name(audio_codec_context->sample_fmt) << "}";
     ret = swr_convert(
-        swr_context, dst_data, audio_codec_context->frame_size, (const std::uint8_t**)src_data, data.size());
+        swr_context, dst_data, audio_codec_context->frame_size, (const std::uint8_t**)src_data, waveform.data.size());
     ASSERT_CHECK_LE(0, ret) << "Failed to convert buffer using resampler. (Returned: " << ret << ")";
 
     ///

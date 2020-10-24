@@ -39,24 +39,20 @@ std::vector<std::string> GetWaveformNames(const std::string& configuration)
 }
 }  // namespace internal
 
-Separator::Separator(const std::string& configuration, const bool mwf)
+Separator::Separator(const InferenceEngineParameters& inference_engine_param, const bool mwf)
     : mwf_{mwf},
       audio_adapter_{std::make_unique<AudionamixAudioAdapter>()},
       inference_engine_{},
-      waveform_name_{internal::GetWaveformNames(configuration)}
+      waveform_name_{internal::GetWaveformNames(inference_engine_param.configuration)}
 {
-    inference_engine_.SelectInferenceEngine(InferenceEngineType::kTensorFlow, configuration);
+    inference_engine_.SelectInferenceEngine(InferenceEngineType::kTensorFlow, inference_engine_param);
     inference_engine_.Init();
 }
 
-Waveforms Separator::Separate(const Waveform& waveform, const AudioProperties& properties)
+Waveforms Separator::Separate(const Waveform& waveform)
 {
-    inference_engine_.SetInputWaveform(waveform, properties.nb_frames, properties.nb_channels);
-
-    inference_engine_.Execute();
-
-    auto waveforms = inference_engine_.GetResults();
-    return waveforms;
+    inference_engine_.Execute(waveform);
+    return inference_engine_.GetResults();
 }
 
 void Separator::SeparateToFile(const std::string& audio_descriptor,
@@ -69,9 +65,9 @@ void Separator::SeparateToFile(const std::string& audio_descriptor,
                                const std::string& /*filename_format*/,
                                const bool /*synchronous*/)
 {
-    auto waveform = audio_adapter_->Load(audio_descriptor, offset, duration, -1);
+    const auto waveform = audio_adapter_->Load(audio_descriptor, offset, duration, -1);
 
-    auto waveforms = Separate(waveform, audio_adapter_->GetProperties());
+    auto waveforms = Separate(waveform);
 
     for (auto idx = 0U; idx < waveforms.size(); ++idx)
     {
@@ -79,7 +75,7 @@ void Separator::SeparateToFile(const std::string& audio_descriptor,
         {
             std::experimental::filesystem::create_directory(destination);
         }
-        auto path = destination + "/" + waveform_name_[idx] + "." + codec;
+        const auto path = destination + "/" + waveform_name_[idx] + "." + codec;
         audio_adapter_->Save(path, waveforms[idx], -1, codec, bitrate);
     }
 }

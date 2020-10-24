@@ -3,13 +3,14 @@
 /// @brief Contains class definition for Separator which implements class ISeparator.
 /// @copyright Copyright (c) 2020, MIT License
 ///
-#ifndef SPLEETER_SEPARATOR_H_
-#define SPLEETER_SEPARATOR_H_
+#ifndef SPLEETER_SEPARATOR_H
+#define SPLEETER_SEPARATOR_H
 
 #include "spleeter/argument_parser/cli_options.h"
 #include "spleeter/audio/i_audio_adapter.h"
+#include "spleeter/datatypes/inference_engine.h"
 #include "spleeter/i_separator.h"
-#include "spleeter/inference_engine/inference_engine.h"
+#include "spleeter/inference_engine/inference_engine_strategy.h"
 
 #include <cstdint>
 #include <memory>
@@ -19,17 +20,14 @@
 namespace spleeter
 {
 /// @brief Perform separation
-class Separator : public ISeparator
+class Separator final : public ISeparator
 {
   public:
     /// @brief Constructor
     ///
-    /// @param params_descriptor [in] - Descriptor for TF params to be used.
-    /// @param mwf [in]               - (Optional) True if MWF should be used, False otherwise.
-    explicit Separator(const std::string& configuration, const bool mwf = false);
-
-    /// @brief Destructor.
-    virtual ~Separator() = default;
+    /// @param inference_engine_param [in] - Parameters for inference
+    /// @param mwf [in]                    - (Optional) True if MWF should be used, False otherwise.
+    explicit Separator(const InferenceEngineParameters& inference_engine_param, const bool mwf = false);
 
     /// @brief Performs source separation over the given waveform.
     ///
@@ -42,7 +40,7 @@ class Separator : public ISeparator
     /// @param waveform [in] Waveform to apply separation on.
     ///
     /// @returns Separated waveforms
-    Waveforms Separate(const Waveform& waveform, const AudioProperties& properties) override;
+    Waveforms Separate(const Waveform& waveform) override;
 
     /// @brief Performs source separation and export result to file using given audio adapter.
     ///
@@ -77,11 +75,11 @@ class Separator : public ISeparator
     std::unique_ptr<IAudioAdapter> audio_adapter_;
 
     /// @brief Inference Engine
-    InferenceEngine inference_engine_;
+    InferenceEngineStrategy inference_engine_;
 
     /// @brief List of waveform names (used to save files)
     std::vector<std::string> waveform_name_;
 };
 }  // namespace spleeter
 
-#endif  /// SPLEETER_SEPARATOR_H_
+#endif  /// SPLEETER_SEPARATOR_H

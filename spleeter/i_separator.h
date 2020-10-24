@@ -3,11 +3,11 @@
 /// @brief Contains interface definitions for Separator.
 /// @copyright Copyright (c) 2020, MIT License
 ///
-#ifndef SPLEETER_I_SEPARATOR_H_
-#define SPLEETER_I_SEPARATOR_H_
+#ifndef SPLEETER_I_SEPARATOR_H
+#define SPLEETER_I_SEPARATOR_H
 
-#include "spleeter/data_types/audio_properties.h"
-#include "spleeter/data_types/waveform.h"
+#include "spleeter/datatypes/audio_properties.h"
+#include "spleeter/datatypes/waveform.h"
 
 #include <string>
 #include <vector>
@@ -32,7 +32,7 @@ class ISeparator
     /// @param waveform [in] Waveform to apply separation on.
     ///
     /// @returns Separated waveforms
-    virtual Waveforms Separate(const Waveform& waveform, const AudioProperties& properties) = 0;
+    virtual Waveforms Separate(const Waveform& waveform) = 0;
 
     /// @brief Performs source separation and export result to file using given audio adapter.
     ///
@@ -61,4 +61,4 @@ class ISeparator
 };
 }  // namespace spleeter
 
-#endif  /// SPLEETER_I_SEPARATOR_H_
+#endif  /// SPLEETER_I_SEPARATOR_H
