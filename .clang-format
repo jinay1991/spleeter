@@ -20,7 +20,7 @@ BraceWrapping:
   BeforeCatch: true
   BeforeElse: true
   IndentBraces: false
-BreakBeforeBraces: Custom
+BreakBeforeBraces: Allman
 ColumnLimit: 120
 DerivePointerAlignment: false
 IncludeCategories:
