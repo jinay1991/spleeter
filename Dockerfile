@@ -2,14 +2,14 @@ FROM ubuntu:20.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update && apt-get upgrade -y && apt-get autoremove -y
+RUN apt-get update
 
 # Installation of general dependencies
-RUN apt-get install -y build-essential gcc g++ gdb lcov make cmake
-RUN apt-get install -y libtool clang-format clang-tidy
+RUN apt-get install -y build-essential
+RUN apt-get install -y clangd clang-format clang-tidy
+RUN apt-get install -y libtool
 RUN apt-get install -y git git-lfs
 RUN apt-get install -y wget curl vim
-RUN apt-get install -y libncurses5
 
 # Installation of dependencies to Doxygen
 RUN apt-get install -y doxygen graphviz plantuml
@@ -27,17 +27,12 @@ RUN apt-get update && apt-get install -y bazel
 RUN echo "source /etc/bash_completion.d/bazel" >> ~/.bashrc
 
 # Installation of Bazel Tools
-RUN wget https://github.com/bazelbuild/buildtools/releases/download/3.4.0/buildifier
+RUN wget https://github.com/bazelbuild/buildtools/releases/download/3.5.0/buildifier
 RUN chmod +x buildifier
 RUN mv buildifier /usr/bin
 
 # Installation of FFMPEG
 RUN apt-get install -y libavcodec-dev libavformat-dev libavfilter-dev libavdevice-dev libswresample-dev libswscale-dev ffmpeg
-
-# Installation of python3 dependencies
-RUN apt-get install -y python3-dev python3-tk python3-numpy python3-pip
-RUN python3 -m pip install -U pip
-RUN python3 -m pip install -U numpy tensorflow matplotlib pandas scikit-image sklearn
 
 # cleanup
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*

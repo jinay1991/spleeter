@@ -42,8 +42,8 @@ cppcheck:
   before_script:
     - apt-get update && apt-get install -y cppcheck python python-pygments
   script:
-    - cppcheck --template=gcc --enable=all --inconclusive --std=c++14 -I perception/**/*.h perception/**/*.cpp  > static_code_analysis.log
-    - cppcheck --template=gcc --enable=all --inconclusive --std=c++14 -I perception/**/*.h perception/**/*.cpp --xml 2> static_code_analysis.xml
+    - cppcheck --template=gcc --enable=all --inconclusive --std=c++14 -I spleeter/**/*.h spleeter/**/*.cpp  > static_code_analysis.log
+    - cppcheck --template=gcc --enable=all --inconclusive --std=c++14 -I spleeter/**/*.h spleeter/**/*.cpp --xml 2> static_code_analysis.xml
     - cppcheck-htmlreport --file=static_code_analysis.xml --report-dir=static_code_analysis_report --source-dir=.
   artifacts:
     name: static_code_analysis
@@ -58,7 +58,12 @@ cppcheck:
 # ------------
 bazel-build-and-test:
   stage: build
-  image: registry.gitlab.com/jinay1991/spleeter
+  before_script:
+    - apt-get update && apt-get install -y build-essential 
+    - curl https://bazel.build/bazel-release.pub.gpg | apt-key add -
+    - echo "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" | tee /etc/apt/sources.list.d/bazel.list
+    - apt-get update && apt-get install -y bazel
+    - apt-get update && apt-get install -y libavcodec-dev libavformat-dev libavfilter-dev libavdevice-dev libswresample-dev libswscale-dev ffmpeg
   script:
     - bazel build //... 
     - bazel test //...  --test_output=all --nocache_test_results
@@ -93,7 +98,10 @@ doxygen:
 # ------------
 code-coverage:
   stage: test
-  image: registry.gitlab.com/jinay1991/spleeter
+  dependencies: 
+    - bazel-build-and-test
+  before_script:
+    - apt-get update && apt-get install -y openjdk-11-jdk openjdk-11-jre
   script:
     - bazel coverage -s --combined_report=lcov --instrumentation_filter=//... --coverage_report_generator=@bazel_tools//tools/test:coverage_report_generator  //...
     - export OUTPUT_DIR=$(bazel info execution_root)

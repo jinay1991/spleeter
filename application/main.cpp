@@ -2,12 +2,12 @@
 /// @file
 /// @copyright Copyright (c) 2020, MIT License
 ///
-#include <memory>
-
 #include "spleeter/argument_parser/argument_parser.h"
 #include "spleeter/argument_parser/i_argument_parser.h"
 #include "spleeter/logging/logging.h"
 #include "spleeter/spleeter.h"
+
+#include <memory>
 
 int main(int argc, char** argv)
 {
