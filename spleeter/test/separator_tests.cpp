@@ -25,8 +25,9 @@ class SeparatorTest : public ::testing::TestWithParam<std::int32_t>
   protected:
     void SetUp() override
     {
-        cli_options_.configuration = "spleeter:" + std::to_string(GetParam()) + "stems";
-        cli_options_.inference_engine_params.model_path = "external/models/" + std::to_string(GetParam()) + "stems";
+        const auto stem{std::to_string(GetParam()) + "stems"};
+        cli_options_.configuration = "spleeter:" + stem;
+        cli_options_.inference_engine_params.model_path = "external/models/" + stem + "/saved_model";
         cli_options_.inference_engine_params.output_tensor_names = GetOutputTensorNames(cli_options_.configuration);
         cli_options_.inference_engine_params.configuration = cli_options_.configuration;
 

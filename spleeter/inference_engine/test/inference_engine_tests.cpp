@@ -21,27 +21,6 @@ namespace spleeter
 {
 namespace
 {
-
-std::vector<std::string> GetOutputTensorNames(const std::string& configuration)
-{
-    std::vector<std::string> output_tensor_names{};
-    if (configuration == "spleeter:2stems")
-    {
-        output_tensor_names = std::vector<std::string>{"strided_slice_13", "strided_slice_23"};
-    }
-    else if (configuration == "spleeter:4stems")
-    {
-        output_tensor_names =
-            std::vector<std::string>{"strided_slice_13", "strided_slice_23", "strided_slice_33", "strided_slice_43"};
-    }
-    else  // default to "spleeter:5stems"
-    {
-        output_tensor_names = std::vector<std::string>{
-            "strided_slice_18", "strided_slice_38", "strided_slice_48", "strided_slice_28", "strided_slice_58"};
-    }
-    return output_tensor_names;
-}
-
 template <typename T>
 InferenceEngineParameters GetInferenceEngineParameter()
 {
@@ -52,8 +31,8 @@ template <>
 InferenceEngineParameters GetInferenceEngineParameter<TFInferenceEngine>()
 {
     return InferenceEngineParameters{
-        "external/models/5stems",
-        "Placeholder",
+        "external/models/5stems/saved_model",
+        "waveform",
         {"strided_slice_18", "strided_slice_38", "strided_slice_48", "strided_slice_28", "strided_slice_58"},
         "spleeter:5stems"};
 }
@@ -62,8 +41,8 @@ template <>
 InferenceEngineParameters GetInferenceEngineParameter<TFLiteInferenceEngine>()
 {
     return InferenceEngineParameters{
-        "external/models/5stems.tflite",
-        "Placeholder",
+        "external/models/5stems/5stems.tflite",
+        "waveform",
         {"strided_slice_18", "strided_slice_38", "strided_slice_48", "strided_slice_28", "strided_slice_58"},
         "spleeter:5stems"};
 }

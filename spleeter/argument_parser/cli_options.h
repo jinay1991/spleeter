@@ -33,8 +33,8 @@ struct CLIOptions
 
     /// @brief Inference Engine Parameters (contains model_path, input/output tensor names)
     InferenceEngineParameters inference_engine_params{
-        "external/models/5stems",
-        "Placeholder",
+        "external/models/5stems/saved_model",
+        "waveform",
         {"strided_slice_18", "strided_slice_38", "strided_slice_48", "strided_slice_28", "strided_slice_58"},
         "spleeter:5stems"};
 
