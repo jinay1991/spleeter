@@ -69,8 +69,9 @@ bazel-build-and-test:
     - bazel build //... 
     - bazel test //...  --test_output=all --nocache_test_results
   after_script:
-    - pip install -U pip 
-    - pip install -U xunitmerge
+    - apt-get update && apt-get install -y python3-pip
+    - pip3 install -U pip 
+    - pip3 install -U xunitmerge
     - xunitmerge $(find bazel-out/ -name test.xml) ./merged_test_results.xml
   artifacts:
     reports:
