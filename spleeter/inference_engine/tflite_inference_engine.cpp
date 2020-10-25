@@ -39,6 +39,20 @@ Waveform ConvertToWaveform(const TfLiteTensor* tensor)
 
 }  // namespace
 
+inline std::ostream& operator<<(std::ostream& os, const TfLiteIntArray* v)
+{
+    if (!v)
+    {
+        os << " (null)";
+        return os;
+    }
+    for (int k = 0; k < v->size; k++)
+    {
+        os << " " << std::dec << std::setw(4) << v->data[k];
+    }
+    return os;
+}
+
 TFLiteInferenceEngine::TFLiteInferenceEngine(const InferenceEngineParameters& params)
     : input_tensor_name_{params.input_tensor_name},
       output_tensor_names_{params.output_tensor_names},
@@ -80,20 +94,18 @@ Waveforms TFLiteInferenceEngine::GetResults() const
 
 void TFLiteInferenceEngine::UpdateInput(const Waveform& waveform)
 {
-    // TfLiteTensor* input_tensor = interpreter_->input_tensor(0);
-    // ASSERT_CHECK_EQ(input_tensor->name, input_tensor_name_)
-    //     << "Received input tensor name does not match with input tensor from graph.";
+    const auto input_tensor_indicies = interpreter_->inputs();
+    ASSERT_CHECK_EQ(input_tensor_indicies.size(), 1) << "Provided model has more than 1 input";
 
-    // TfLiteIntArray* input_dims = input_tensor->dims;
-    // std::cout << "--> " << input_dims->size << std::endl;
-    // input_dims->data[0] = waveform.nb_frames;    // (N)
-    // input_dims->data[1] = waveform.nb_channels;  // (C)
+    TfLiteTensor* input_tensor = interpreter_->tensor(input_tensor_indicies.at(0U));
+    ASSERT_CHECK_EQ(input_tensor->name, input_tensor_name_)
+        << "Received input tensor name does not match with input tensor from graph.";
 
-    // ASSERT_CHECK_EQ(waveform.data.size(), waveform.nb_channels * waveform.nb_frames)
-    //     << "Provide waveform vector aligned with it's properties nb_frames and nb_channels";
-    // std::cout << "waveform: " << waveform << std::endl;
-    // float* tensor_ptr = interpreter_->typed_input_tensor<float>(0);
+    /// @todo Copy received waveform to input tensor
+    // float* tensor_ptr = interpreter_->typed_tensor<float>(input_tensor_indicies.at(0U));
     // std::copy(waveform.data.cbegin(), waveform.data.cend(), tensor_ptr);
+
+    SPLEETER_LOG(INFO) << "Successfully loaded input waveform!!";
 }
 
 void TFLiteInferenceEngine::UpdateTensors()
@@ -111,9 +123,8 @@ void TFLiteInferenceEngine::UpdateOutputs()
                    output_tensor_indicies_.cend(),
                    std::back_inserter(results_),
                    [this](const auto& tensor_index) {
-                       //    const TfLiteTensor* tensor = interpreter_->output_tensor(tensor_index);
-                       //    return ConvertToWaveform(tensor);
-                       return Waveform{};
+                       const TfLiteTensor* tensor = interpreter_->tensor(tensor_index);
+                       return ConvertToWaveform(tensor);
                    });
 }
 
