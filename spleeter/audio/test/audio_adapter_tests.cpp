@@ -54,7 +54,10 @@ TYPED_TEST_SUITE_P(AudioAdapterTest);
 /// @test In this, test that Load method returns raw waveform and updates audio properties
 TYPED_TEST_P(AudioAdapterTest, GivenAudioFile_ExpectRawWaveform)
 {
+    // When
     const auto actual = this->unit_->Load(this->test_waveform_path_, 0.0, -1, this->test_sample_rate_);
+
+    // Then
     EXPECT_FALSE(actual.data.empty());
     EXPECT_EQ(959664U, actual.data.size());
 
@@ -68,12 +71,15 @@ TYPED_TEST_P(AudioAdapterTest, GivenAudioFile_ExpectRawWaveform)
 /// @test In this, test that Save method saves the file and validated against source audio properties.
 TYPED_TEST_P(AudioAdapterTest, GivenRawWaveform_ExpectSavedFileHasSameProperties)
 {
-    const auto bitrate = std::int32_t{192000};
+    // Given
+    const std::int32_t bitrate{192000};
     const auto test_codec = "wav";
     const auto test_results = "test_sample.wav";
 
+    // When
     this->unit_->Save(test_results, this->GetTestWaveform(), this->test_sample_rate_, test_codec, bitrate);
 
+    // Then
     AudionamixAudioAdapter audio_adapter{};
     const auto actual = audio_adapter.Load(test_results, 0, -1, this->test_sample_rate_);
     EXPECT_FALSE(actual.data.empty());

@@ -364,7 +364,7 @@ void FfmpegAudioAdapter::Save(const std::string& path,
     ///
     /// Cleanup
     ///
-    if (!(format_context->flags & AVFMT_NOFILE))
+    if (format_context && !(format_context->flags & AVFMT_NOFILE))
     {
         ret = avio_close(format_context->pb);
         ASSERT_CHECK_LE(0, ret) << "Failed to close " << path << ". (Returned: " << ret << ")";
@@ -372,7 +372,6 @@ void FfmpegAudioAdapter::Save(const std::string& path,
     }
     swr_close(swr_context);
     avcodec_close(audio_codec_context);
-
     // av_freep(&src_data[0]);
     // av_freep(&src_data);
     av_freep(&dst_data[0]);
@@ -380,7 +379,6 @@ void FfmpegAudioAdapter::Save(const std::string& path,
     swr_free(&swr_context);
     av_frame_free(&frame);
     av_free(audio_stream);
-    avformat_free_context(format_context);
     avcodec_free_context(&audio_codec_context);
 
     SPLEETER_LOG(DEBUG) << "Saved waveform to " << path << " using FFMPEG.";
