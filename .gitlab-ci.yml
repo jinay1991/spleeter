@@ -58,6 +58,7 @@ cppcheck:
 # ------------
 bazel-build-and-test:
   stage: build
+  image: ubuntu:20.04
   before_script:
     - apt-get update && apt-get install -y build-essential 
     - curl https://bazel.build/bazel-release.pub.gpg | apt-key add -
@@ -98,6 +99,7 @@ doxygen:
 # ------------
 code-coverage:
   stage: test
+  image: ubuntu:20.04
   dependencies: 
     - bazel-build-and-test
   before_script:
@@ -128,6 +130,7 @@ code-coverage:
 # -------------
 package:
   stage: deploy
+  image: ubuntu:20.04
   dependencies:
     - bazel-build-and-test
   before_script:
@@ -144,6 +147,7 @@ package:
   
 pages:
   stage: deploy
+  image: ubuntu:20.04
   dependencies:
     - code-coverage
     - cppcheck
