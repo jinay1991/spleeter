@@ -21,7 +21,7 @@ clang-format:
   stage: check
   image: ubuntu:20.04
   before_script:
-    - apt-get update && apt-get install -y libtool clang-format clang-tidy
+    - apt-get update && apt-get install -y clang-format
   script:
     - find . -regex '.*\.\(ino\|cpp\|hpp\|cc\|cxx\|h\)' -exec cat {} \; | diff -u <(find . -regex '.*\.\(ino\|cpp\|hpp\|cc\|cxx\|h\)' -exec clang-format -style=file {} -verbose \;) -
 
@@ -105,7 +105,7 @@ code-coverage:
   dependencies: 
     - bazel-build-and-test
   before_script:
-    - apt-get update && apt-get install -y build-essential 
+    - apt-get update && apt-get install -y build-essential libtool lcov
     - curl https://bazel.build/bazel-release.pub.gpg | apt-key add -
     - echo "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" | tee /etc/apt/sources.list.d/bazel.list
     - apt-get update && apt-get install -y bazel
