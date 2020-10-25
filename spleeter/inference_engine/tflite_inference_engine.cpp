@@ -10,11 +10,41 @@
 #include <tensorflow/lite/kernels/register.h>
 #include <tensorflow/lite/optional_debug_tools.h>
 
+#include <iomanip>
+#include <ostream>
+
 namespace spleeter
 {
+namespace
+{
+/// @brief Converts TfLiteTensor to waveform
+///
+/// @param tensor[in] TfLiteTensor in [NxHxWxC form]
+///
+/// @return Equivalent waveform for given TfLiteTensor by copying contents.
+Waveform ConvertToWaveform(const TfLiteTensor* tensor)
+{
+    const TfLiteIntArray* tensor_dims = tensor->dims;
+    const auto rows = tensor_dims->size > 1 ? static_cast<std::int32_t>(tensor_dims->data[1]) : 1;
+    const auto cols = tensor_dims->size > 2 ? static_cast<std::int32_t>(tensor_dims->data[2]) : 1;
+    const auto channels = tensor_dims->size > 3 ? static_cast<std::int32_t>(tensor_dims->data[3]) : 1;
+    const auto size = rows * cols * channels;
+    const float* tensor_ptr = reinterpret_cast<const float*>(tensor->data.raw);
+    Waveform waveform{};
+    waveform.nb_frames = rows;
+    waveform.nb_channels = channels;
+    std::copy(tensor_ptr, tensor_ptr + size, std::back_inserter(waveform.data));
+    return waveform;
+}
+
+}  // namespace
 
 TFLiteInferenceEngine::TFLiteInferenceEngine(const InferenceEngineParameters& params)
-    : model_path_{params.model_path}, results_{}
+    : input_tensor_name_{params.input_tensor_name},
+      output_tensor_names_{params.output_tensor_names},
+      output_tensor_indicies_{},
+      model_path_{params.model_path},
+      results_{}
 {
 }
 
@@ -50,33 +80,41 @@ Waveforms TFLiteInferenceEngine::GetResults() const
 
 void TFLiteInferenceEngine::UpdateInput(const Waveform& waveform)
 {
-    const auto input = interpreter_->inputs()[0];
+    // TfLiteTensor* input_tensor = interpreter_->input_tensor(0);
+    // ASSERT_CHECK_EQ(input_tensor->name, input_tensor_name_)
+    //     << "Received input tensor name does not match with input tensor from graph.";
 
-    TfLiteIntArray* dims = interpreter_->tensor(input)->dims;
-    const auto wanted_height = dims->data[1];
-    const auto wanted_width = dims->data[2];
-    const auto wanted_channels = dims->data[3];
-    const auto mean = 1.0;
-    const auto stddev = 0.0;
+    // TfLiteIntArray* input_dims = input_tensor->dims;
+    // std::cout << "--> " << input_dims->size << std::endl;
+    // input_dims->data[0] = waveform.nb_frames;    // (N)
+    // input_dims->data[1] = waveform.nb_channels;  // (C)
 
-    /// @todo Update inputs for inference
+    // ASSERT_CHECK_EQ(waveform.data.size(), waveform.nb_channels * waveform.nb_frames)
+    //     << "Provide waveform vector aligned with it's properties nb_frames and nb_channels";
+    // std::cout << "waveform: " << waveform << std::endl;
+    // float* tensor_ptr = interpreter_->typed_input_tensor<float>(0);
+    // std::copy(waveform.data.cbegin(), waveform.data.cend(), tensor_ptr);
 }
 
 void TFLiteInferenceEngine::UpdateTensors()
 {
     const auto ret = interpreter_->Invoke();
     ASSERT_CHECK_EQ(ret, TfLiteStatus::kTfLiteOk) << "Failed to invoke tflite!";
+
+    output_tensor_indicies_ = interpreter_->outputs();
+    SPLEETER_LOG(INFO) << "Successfully received results " << output_tensor_indicies_.size() << " outputs.";
 }
 
 void TFLiteInferenceEngine::UpdateOutputs()
 {
-    const auto output = interpreter_->outputs()[0];
-    const auto output_dims = interpreter_->tensor(output)->dims;
-    const auto output_size = output_dims->data[output_dims->size - 1];
-
-    results_.resize(output_size);
-
-    /// @todo Update results with inference output
+    std::transform(output_tensor_indicies_.cbegin(),
+                   output_tensor_indicies_.cend(),
+                   std::back_inserter(results_),
+                   [this](const auto& tensor_index) {
+                       //    const TfLiteTensor* tensor = interpreter_->output_tensor(tensor_index);
+                       //    return ConvertToWaveform(tensor);
+                       return Waveform{};
+                   });
 }
 
 }  // namespace spleeter

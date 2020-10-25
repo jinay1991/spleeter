@@ -48,14 +48,23 @@ class TFLiteInferenceEngine final : public IInferenceEngine
     /// @brief Converts output_tensors to Waveforms results
     void UpdateOutputs();
 
-    /// @brief Model root directory
-    const std::string model_path_;
-
     /// @brief TFLite Model Buffer Instance
     std::unique_ptr<tflite::FlatBufferModel> model_;
 
     /// @brief TFLite Model Interpreter instance
     std::unique_ptr<tflite::Interpreter> interpreter_;
+
+    /// @brief Input Tensor name
+    const std::string input_tensor_name_;
+
+    /// @brief Output Tensors names
+    const std::vector<std::string> output_tensor_names_;
+
+    /// @brief TFLite Inference output tensor indices
+    std::vector<std::int32_t> output_tensor_indicies_;
+
+    /// @brief Model root directory
+    const std::string model_path_;
 
     /// @brief Output Tensors saved as Waveforms
     Waveforms results_;

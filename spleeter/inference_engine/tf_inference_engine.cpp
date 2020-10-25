@@ -12,7 +12,7 @@ namespace spleeter
 {
 namespace
 {
-/// @brief Converts tensorflow::Tensor to waveform (aka cv::Mat)
+/// @brief Converts tensorflow::Tensor to waveform
 ///
 /// @param tensor[in] tensorflow::Tensor in [NxHxWxC form]
 ///
@@ -51,7 +51,8 @@ TFInferenceEngine::TFInferenceEngine(const InferenceEngineParameters& params)
       input_tensor_name_{params.input_tensor_name},
       output_tensors_{},
       output_tensor_names_{params.output_tensor_names},
-      model_path_{params.model_path}
+      model_path_{params.model_path},
+      results_{}
 {
 }
 

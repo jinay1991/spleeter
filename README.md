@@ -141,6 +141,8 @@ If you use **Spleeter** in your work, please cite:
 }
 ```
 
+Converted official checkpoint to TFLite Model using https://github.com/tinoucas/spleeter-tflite-convert
+
 ## License
 The code of **Spleeter** is MIT-licensed.
 
