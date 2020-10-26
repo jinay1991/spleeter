@@ -113,6 +113,7 @@ code-coverage:
     - apt-get update && apt-get install -y openjdk-11-jdk openjdk-11-jre
   script:
     - bazel coverage -s --combined_report=lcov --instrumentation_filter=//... --coverage_report_generator=@bazel_tools//tools/test:coverage_report_generator  //...
+  after_script:
     - export OUTPUT_DIR=$(bazel info execution_root)
     - export COVERAGE_INFO=$(find $OUTPUT_DIR -name coverage.dat)
     - genhtml -s --num-spaces 4 --legend --highlight --sort -t "Code Coverage" --demangle-cpp --function-coverage --branch-coverage -o coverage $COVERAGE_INFO
@@ -128,26 +129,6 @@ code-coverage:
     refs:
       - master
 
-# -------------
-# Stage: Deploy
-# -------------
-package:
-  stage: deploy
-  image: ubuntu:20.04
-  dependencies:
-    - bazel-build-and-test
-  before_script:
-    - apt-get update && apt-get install -y build-essential curl git 
-    - curl https://bazel.build/bazel-release.pub.gpg | apt-key add -
-    - echo "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" | tee /etc/apt/sources.list.d/bazel.list
-    - apt-get update && apt-get install -y bazel
-  script:
-    - bazel build //:spleeter-dev
-    - mv bazel-bin/spleeter-dev.tar.gz libspleeter-dev.tar.gz
-  artifacts:
-    paths:
-      - libspleeter-dev.tar.gz
-  
 pages:
   stage: deploy
   image: ubuntu:20.04
