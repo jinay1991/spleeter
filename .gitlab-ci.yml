@@ -83,6 +83,7 @@ bazel-build-and-test:
 doxygen:
   stage: build
   image: ubuntu:20.04
+  needs: []
   before_script:
     - apt-get update && apt-get install -y doxygen graphviz plantuml
   script:
@@ -133,7 +134,7 @@ code-coverage:
 pages:
   stage: deploy
   image: ubuntu:20.04
-  dependencies:
+  needs:
     - code-coverage
     - cppcheck
     - doxygen
