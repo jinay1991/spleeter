@@ -21,6 +21,12 @@ namespace spleeter
 {
 namespace
 {
+
+using ::testing::AllOf;
+using ::testing::Each;
+using ::testing::Field;
+using ::testing::Property;
+
 template <typename T>
 InferenceEngineParameters GetInferenceEngineParameter()
 {
@@ -53,12 +59,11 @@ class InferenceEngineFixture_WithInferenceEngineType : public ::testing::Test
   public:
     InferenceEngineFixture_WithInferenceEngineType()
         : test_waveform_path_{"external/audio_example/file/audio_example.wav"},
-          test_waveform_{},
+          audio_adapter_{},
+          test_waveform_{audio_adapter_.Load(test_waveform_path_, 0, -1, 44100)},
           inference_engine_parameters_{GetInferenceEngineParameter<T>()},
           unit_{std::make_unique<T>(inference_engine_parameters_)}
     {
-        AudionamixAudioAdapter audio_adapter{};
-        test_waveform_ = audio_adapter.Load(test_waveform_path_, 0, -1, 44100);
     }
 
   protected:
@@ -69,9 +74,12 @@ class InferenceEngineFixture_WithInferenceEngineType : public ::testing::Test
     Waveforms GetInferenceResults() const { return unit_->GetResults(); }
     InferenceEngineParameters GetInferenceParameters() const { return inference_engine_parameters_; }
 
+    std::int32_t GetFrames() const { return test_waveform_.nb_frames; }
+
   private:
     const std::string test_waveform_path_;
-    Waveform test_waveform_;
+    AudionamixAudioAdapter audio_adapter_;
+    const Waveform test_waveform_;
     const InferenceEngineParameters inference_engine_parameters_;
     InferenceEnginePtr unit_;
 };
@@ -85,6 +93,11 @@ TYPED_TEST_P(InferenceEngineFixture_WithInferenceEngineType, InferenceEngine_Giv
     // Then
     const auto actual = this->GetInferenceResults();
     EXPECT_EQ(this->GetInferenceParameters().output_tensor_names.size(), actual.size());
+    /// @todo Why output tensors are of dimensions {1, 2}?
+    // EXPECT_THAT(actual,
+    //             Each(AllOf(Field(&Waveform::nb_channels, 2),
+    //                        Field(&Waveform::nb_frames, this->GetFrames()),
+    //                        Field(&Waveform::data, Property(&std::vector<float>::size, this->GetFrames() * 2)))));
 }
 
 REGISTER_TYPED_TEST_SUITE_P(InferenceEngineFixture_WithInferenceEngineType,

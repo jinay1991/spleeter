@@ -1,7 +1,7 @@
 import os
 import tensorflow as tf
 
-trained_checkpoint_prefix = '5stems_model/model/model'
+trained_checkpoint_prefix = '/workspace/model'
 export_dir = os.path.join('export_dir', '0')
 
 graph = tf.Graph()
@@ -29,6 +29,9 @@ with tf.compat.v1.Session(graph=graph) as sess:
     vocals_tensor_info = tf.compat.v1.saved_model.utils.build_tensor_info(vocals_tensor)
 
     current_graph = tf.compat.v1.get_default_graph()
+
+    print(waveform_tensor_info)
+    print(waveform_tensor)
 
     separate_signature = (
         tf.compat.v1.saved_model.signature_def_utils.build_signature_def(

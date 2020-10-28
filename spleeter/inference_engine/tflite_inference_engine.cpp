@@ -4,6 +4,7 @@
 ///
 #include "spleeter/inference_engine/tflite_inference_engine.h"
 
+#include "flatbuffers/flatbuffers.h"
 #include "spleeter/logging/logging.h"
 
 #include <tensorflow/lite/builtin_op_data.h>
@@ -48,7 +49,7 @@ inline std::ostream& operator<<(std::ostream& os, const TfLiteIntArray* v)
     }
     for (int k = 0; k < v->size; k++)
     {
-        os << " " << std::dec << std::setw(4) << v->data[k];
+        os << " " << std::dec << v->data[k];
     }
     return os;
 }
@@ -101,9 +102,11 @@ void TFLiteInferenceEngine::UpdateInput(const Waveform& waveform)
     ASSERT_CHECK_EQ(input_tensor->name, input_tensor_name_)
         << "Received input tensor name does not match with input tensor from graph.";
 
-    /// @todo Copy received waveform to input tensor
-    // float* tensor_ptr = interpreter_->typed_tensor<float>(input_tensor_indicies.at(0U));
-    // std::copy(waveform.data.cbegin(), waveform.data.cend(), tensor_ptr);
+    interpreter_->ResizeInputTensor(input_tensor_indicies.at(0U), {waveform.nb_frames, waveform.nb_channels});
+    ASSERT_CHECK_EQ(interpreter_->AllocateTensors(), TfLiteStatus::kTfLiteOk) << "Failed to allocate tensors!";
+
+    float* tensor_ptr = interpreter_->typed_tensor<float>(input_tensor_indicies.at(0U));
+    std::copy(waveform.data.cbegin(), waveform.data.cend(), tensor_ptr);
 
     SPLEETER_LOG(INFO) << "Successfully loaded input waveform!!";
 }
