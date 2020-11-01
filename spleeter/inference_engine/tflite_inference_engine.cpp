@@ -8,6 +8,8 @@
 #include "spleeter/logging/logging.h"
 
 #include <tensorflow/lite/builtin_op_data.h>
+#include <tensorflow/lite/c/common.h>
+#include <tensorflow/lite/kernels/kernel_util.h>
 #include <tensorflow/lite/kernels/register.h>
 #include <tensorflow/lite/optional_debug_tools.h>
 
@@ -26,13 +28,12 @@ namespace
 Waveform ConvertToWaveform(const TfLiteTensor* tensor)
 {
     const TfLiteIntArray* tensor_dims = tensor->dims;
-    const auto rows = tensor_dims->size > 1 ? static_cast<std::int32_t>(tensor_dims->data[1]) : 1;
-    const auto cols = tensor_dims->size > 2 ? static_cast<std::int32_t>(tensor_dims->data[2]) : 1;
-    const auto channels = tensor_dims->size > 3 ? static_cast<std::int32_t>(tensor_dims->data[3]) : 1;
-    const auto size = rows * cols * channels;
+    const auto samples = tensor_dims->size > 0 ? static_cast<std::int32_t>(tensor_dims->data[0]) : 1;
+    const auto channels = tensor_dims->size > 1 ? static_cast<std::int32_t>(tensor_dims->data[1]) : 1;
+    const auto size = samples * channels;
     const float* tensor_ptr = reinterpret_cast<const float*>(tensor->data.raw);
     Waveform waveform{};
-    waveform.nb_frames = rows;
+    waveform.nb_frames = samples;
     waveform.nb_channels = channels;
     std::copy(tensor_ptr, tensor_ptr + size, std::back_inserter(waveform.data));
     return waveform;
@@ -70,7 +71,6 @@ void TFLiteInferenceEngine::Init()
     model_->error_reporter();
 
     tflite::ops::builtin::BuiltinOpResolver resolver{};
-
     tflite::InterpreterBuilder(*model_, resolver)(&interpreter_);
     ASSERT_CHECK(interpreter_) << "Failed to construct interpreter";
 
@@ -95,17 +95,11 @@ Waveforms TFLiteInferenceEngine::GetResults() const
 
 void TFLiteInferenceEngine::UpdateInput(const Waveform& waveform)
 {
-    const auto input_tensor_indicies = interpreter_->inputs();
-    ASSERT_CHECK_EQ(input_tensor_indicies.size(), 1) << "Provided model has more than 1 input";
-
-    TfLiteTensor* input_tensor = interpreter_->tensor(input_tensor_indicies.at(0U));
-    ASSERT_CHECK_EQ(input_tensor->name, input_tensor_name_)
-        << "Received input tensor name does not match with input tensor from graph.";
-
-    interpreter_->ResizeInputTensor(input_tensor_indicies.at(0U), {waveform.nb_frames, waveform.nb_channels});
+    ResizeInputTensor(waveform);
+    ResizeOutputTensor(waveform);
     ASSERT_CHECK_EQ(interpreter_->AllocateTensors(), TfLiteStatus::kTfLiteOk) << "Failed to allocate tensors!";
 
-    float* tensor_ptr = interpreter_->typed_tensor<float>(input_tensor_indicies.at(0U));
+    float* tensor_ptr = interpreter_->typed_input_tensor<float>(0U);
     std::copy(waveform.data.cbegin(), waveform.data.cend(), tensor_ptr);
 
     SPLEETER_LOG(INFO) << "Successfully loaded input waveform!!";
@@ -131,4 +125,32 @@ void TFLiteInferenceEngine::UpdateOutputs()
                    });
 }
 
+void TFLiteInferenceEngine::ResizeInputTensor(const Waveform& waveform)
+{
+    const auto input_tensor_indicies = interpreter_->inputs();
+
+    TfLiteTensor* input_tensor = interpreter_->tensor(input_tensor_indicies.at(0U));
+    input_tensor->data.raw = nullptr;
+    input_tensor->allocation_type = TfLiteAllocationType::kTfLiteDynamic;
+
+    ASSERT_CHECK_EQ(
+        interpreter_->ResizeInputTensor(input_tensor_indicies.at(0U), {waveform.nb_frames, waveform.nb_channels}),
+        TfLiteStatus::kTfLiteOk);
+}
+
+void TFLiteInferenceEngine::ResizeOutputTensor(const Waveform& waveform)
+{
+    const auto output_tensor_indicies = interpreter_->outputs();
+
+    for (auto output_tensor_index : output_tensor_indicies)
+    {
+        TfLiteTensor* output_tensor = interpreter_->tensor(output_tensor_index);
+        output_tensor->data.raw = nullptr;
+        output_tensor->allocation_type = TfLiteAllocationType::kTfLiteDynamic;
+
+        ASSERT_CHECK_EQ(
+            interpreter_->ResizeInputTensor(output_tensor_index, {waveform.nb_frames, waveform.nb_channels}),
+            TfLiteStatus::kTfLiteOk);
+    }
+}
 }  // namespace spleeter

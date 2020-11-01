@@ -15,3 +15,7 @@ converter.target_spec.supported_ops = set([ tf.lite.OpsSet.TFLITE_BUILTINS, tf.l
 converter.experimental_new_converter = True
 tflite_model = converter.convert()
 open("converted_model.tflite", "wb").write(tflite_model)
+
+interpreter = tf.lite.Interpreter(model_content=tflite_model)
+interpreter.allocate_tensors()
+print("Output", interpreter.get_output_details()[0]["name"], interpreter.get_output_details()[0]["shape"])

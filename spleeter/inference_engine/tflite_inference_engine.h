@@ -48,6 +48,12 @@ class TFLiteInferenceEngine final : public IInferenceEngine
     /// @brief Converts output_tensors to Waveforms results
     void UpdateOutputs();
 
+    /// @brief Resizes Input Tensor based on the provided waveform shape
+    void ResizeInputTensor(const Waveform& waveform);
+
+    /// @brief Resizes Output Tensor based on the provided waveform shape
+    void ResizeOutputTensor(const Waveform& waveform);
+
     /// @brief TFLite Model Buffer Instance
     std::unique_ptr<tflite::FlatBufferModel> model_;
 

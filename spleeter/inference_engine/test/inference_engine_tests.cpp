@@ -93,11 +93,10 @@ TYPED_TEST_P(InferenceEngineFixture_WithInferenceEngineType, InferenceEngine_Giv
     // Then
     const auto actual = this->GetInferenceResults();
     EXPECT_EQ(this->GetInferenceParameters().output_tensor_names.size(), actual.size());
-    /// @todo Why output tensors are of dimensions {1, 2}?
-    // EXPECT_THAT(actual,
-    //             Each(AllOf(Field(&Waveform::nb_channels, 2),
-    //                        Field(&Waveform::nb_frames, this->GetFrames()),
-    //                        Field(&Waveform::data, Property(&std::vector<float>::size, this->GetFrames() * 2)))));
+    EXPECT_THAT(actual,
+                Each(AllOf(Field(&Waveform::nb_channels, 2),
+                           Field(&Waveform::nb_frames, this->GetFrames()),
+                           Field(&Waveform::data, Property(&std::vector<float>::size, this->GetFrames() * 2)))));
 }
 
 REGISTER_TYPED_TEST_SUITE_P(InferenceEngineFixture_WithInferenceEngineType,

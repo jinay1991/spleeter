@@ -87,6 +87,12 @@ class LoggingWrapper
 /// @param [in] b - attribute b
 #define ASSERT_CHECK_EQ(a, b) ASSERT_CHECK(a == b)
 
+/// @brief Checks for Assertion for Not Equals Comparision. If a and b are same, Log FATAL Error and exit program.
+///
+/// @param [in] a - attribute a
+/// @param [in] b - attribute b
+#define ASSERT_CHECK_NE(a, b) ASSERT_CHECK(a != b)
+
 /// @brief Checks for Assertion for Lesser Comparision. If a is not less than b, Log FATAL Error and exit program.
 ///
 /// @param [in] a - attribute a

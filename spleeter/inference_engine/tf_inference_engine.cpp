@@ -20,13 +20,12 @@ namespace
 Waveform ConvertToWaveform(const tensorflow::Tensor& tensor)
 {
     tensorflow::Tensor tensor_matrix = tensor;
-    const auto rows = tensor_matrix.dims() > 1 ? static_cast<std::int32_t>(tensor_matrix.dim_size(1)) : 1;
-    const auto cols = tensor_matrix.dims() > 2 ? static_cast<std::int32_t>(tensor_matrix.dim_size(2)) : 1;
-    const auto channels = tensor_matrix.dims() > 3 ? static_cast<std::int32_t>(tensor_matrix.dim_size(3)) : 1;
-    const auto size = rows * cols * channels;
+    const auto samples = tensor_matrix.dims() > 0 ? static_cast<std::int32_t>(tensor_matrix.dim_size(0)) : 1;
+    const auto channels = tensor_matrix.dims() > 1 ? static_cast<std::int32_t>(tensor_matrix.dim_size(1)) : 1;
+    const auto size = samples * channels;
     auto* tensor_ptr = tensor_matrix.flat<float>().data();
     Waveform waveform{};
-    waveform.nb_frames = rows;
+    waveform.nb_frames = samples;
     waveform.nb_channels = channels;
     std::copy(tensor_ptr, tensor_ptr + size, std::back_inserter(waveform.data));
     return waveform;

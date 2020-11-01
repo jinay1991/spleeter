@@ -1,7 +1,7 @@
 import os
 import tensorflow as tf
 
-trained_checkpoint_prefix = '/workspace/model'
+trained_checkpoint_prefix = '/workspace/5stems/model'
 export_dir = os.path.join('export_dir', '0')
 
 graph = tf.Graph()
