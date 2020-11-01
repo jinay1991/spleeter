@@ -25,6 +25,7 @@ class SeparatorTest : public ::testing::TestWithParam<std::int32_t>
   protected:
     void SetUp() override
     {
+        cli_options_.output_path = "/tmp/separated_audio2";
         const auto stem{std::to_string(GetParam()) + "stems"};
         cli_options_.configuration = "spleeter:" + stem;
         cli_options_.inference_engine_params.model_path = "external/models/" + stem + "/" + stem + ".tflite";

@@ -33,7 +33,7 @@ struct CLIOptions
 
     /// @brief Inference Engine Parameters (contains model_path, input/output tensor names)
     InferenceEngineParameters inference_engine_params{
-        "external/models/5stems.tflite",
+        "external/models/5stems/5stems.tflite",
         "waveform",
         {"strided_slice_18", "strided_slice_38", "strided_slice_48", "strided_slice_28", "strided_slice_58"},
         "spleeter:5stems"};
@@ -46,7 +46,7 @@ struct CLIOptions
     double duration{600.0};
 
     /// @brief Audio codec to be used for separate output
-    /// @todo v1.2 supports only *.wav
+    /// @todo Currently supports only *.wav, extend support to work with other audio codec
     /// choices: { wav, mp3, ogg, m4a, wma, flac }
     std::string codec{"wav"};
 
