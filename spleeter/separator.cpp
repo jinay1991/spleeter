@@ -45,7 +45,7 @@ Separator::Separator(const InferenceEngineParameters& inference_engine_param, co
       inference_engine_{},
       waveform_name_{internal::GetWaveformNames(inference_engine_param.configuration)}
 {
-    inference_engine_.SelectInferenceEngine(InferenceEngineType::kTensorFlow, inference_engine_param);
+    inference_engine_.SelectInferenceEngine(InferenceEngineType::kTensorFlowLite, inference_engine_param);
     inference_engine_.Init();
 }
 

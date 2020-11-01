@@ -27,7 +27,7 @@ class SeparatorTest : public ::testing::TestWithParam<std::int32_t>
     {
         const auto stem{std::to_string(GetParam()) + "stems"};
         cli_options_.configuration = "spleeter:" + stem;
-        cli_options_.inference_engine_params.model_path = "external/models/" + stem + "/saved_model";
+        cli_options_.inference_engine_params.model_path = "external/models/" + stem + "/" + stem + ".tflite";
         cli_options_.inference_engine_params.output_tensor_names = GetOutputTensorNames(cli_options_.configuration);
         cli_options_.inference_engine_params.configuration = cli_options_.configuration;
 
@@ -36,7 +36,7 @@ class SeparatorTest : public ::testing::TestWithParam<std::int32_t>
         unit_ = std::make_unique<Separator>(cli_options_.inference_engine_params, cli_options_.mwf);
     }
 
-    std::vector<std::string> GetOutputTensorNames(const std::string& configuration)
+    static std::vector<std::string> GetOutputTensorNames(const std::string& configuration)
     {
         auto output_tensor_names = std::vector<std::string>{};
         if (configuration == "spleeter:2stems")
