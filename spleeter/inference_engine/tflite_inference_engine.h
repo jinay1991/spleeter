@@ -54,6 +54,11 @@ class TFLiteInferenceEngine final : public IInferenceEngine
     /// @brief Resizes Output Tensor based on the provided waveform shape
     void ResizeOutputTensor(const Waveform& waveform);
 
+    /// @brief Resizes Tensor at given index to the provided dimensions
+    /// @param tensor_index[in] Tensor Index to resize
+    /// @param dims[in] Requested dimensions for the Tensor
+    void ResizeTensor(const std::int32_t tensor_index, const std::vector<std::int32_t> dims);
+
     /// @brief TFLite Model Buffer Instance
     std::unique_ptr<tflite::FlatBufferModel> model_;
 

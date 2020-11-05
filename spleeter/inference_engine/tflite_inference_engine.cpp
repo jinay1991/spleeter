@@ -128,29 +128,28 @@ void TFLiteInferenceEngine::UpdateOutputs()
 void TFLiteInferenceEngine::ResizeInputTensor(const Waveform& waveform)
 {
     const auto input_tensor_indicies = interpreter_->inputs();
+    ASSERT_CHECK_EQ(input_tensor_indicies.size(), 1) << "Model has more than one input tensor";
 
-    TfLiteTensor* input_tensor = interpreter_->tensor(input_tensor_indicies.at(0U));
-    input_tensor->data.raw = nullptr;
-    input_tensor->allocation_type = TfLiteAllocationType::kTfLiteDynamic;
-
-    ASSERT_CHECK_EQ(
-        interpreter_->ResizeInputTensor(input_tensor_indicies.at(0U), {waveform.nb_frames, waveform.nb_channels}),
-        TfLiteStatus::kTfLiteOk);
+    ResizeTensor(input_tensor_indicies.at(0U), {waveform.nb_frames, waveform.nb_channels});
 }
 
 void TFLiteInferenceEngine::ResizeOutputTensor(const Waveform& waveform)
 {
     const auto output_tensor_indicies = interpreter_->outputs();
+    ASSERT_CHECK_GT(output_tensor_indicies.size(), 0) << "Model has no output tensor(s)";
 
-    for (auto output_tensor_index : output_tensor_indicies)
+    for (auto tensor_index : output_tensor_indicies)
     {
-        TfLiteTensor* output_tensor = interpreter_->tensor(output_tensor_index);
-        output_tensor->data.raw = nullptr;
-        output_tensor->allocation_type = TfLiteAllocationType::kTfLiteDynamic;
-
-        ASSERT_CHECK_EQ(
-            interpreter_->ResizeInputTensor(output_tensor_index, {waveform.nb_frames, waveform.nb_channels}),
-            TfLiteStatus::kTfLiteOk);
+        ResizeTensor(tensor_index, {waveform.nb_frames, waveform.nb_channels});
     }
+}
+
+void TFLiteInferenceEngine::ResizeTensor(const std::int32_t tensor_index, const std::vector<std::int32_t> dims)
+{
+    TfLiteTensor* tensor = interpreter_->tensor(tensor_index);
+    tensor->data.raw = nullptr;
+    tensor->allocation_type = TfLiteAllocationType::kTfLiteDynamic;
+
+    ASSERT_CHECK_EQ(interpreter_->ResizeInputTensor(tensor_index, dims), TfLiteStatus::kTfLiteOk);
 }
 }  // namespace spleeter
