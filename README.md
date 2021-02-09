@@ -1,11 +1,16 @@
 # Spleeter
 
+[![Pipeline](https://img.shields.io/badge/pipeline-status-status.svg)](https://gitlab.com/jinay1991/spleeter/pipelines)
+[![Doxygen](https://img.shields.io/badge/doc-doxygen-blue.svg)](https://jinay1991.gitlab.io/spleeter/doc/html/index.html)
+[![Coverage](https://img.shields.io/badge/coverage-report-green.svg)](https://jinay1991.gitlab.io/spleeter/coverage/index.html)
+[![Analysis](https://img.shields.io/badge/static-analysis-orange.svg)](https://jinay1991.gitlab.io/spleeter/static_code_analysis_report/)
+
 ## Dev Environment
 
 Supported OS:
 
-* Ubuntu 18.04
-* macOS Catalina v10.15
+* Ubuntu 20.04
+* macOS Big Sur v11
 
 To setup developer environment, the project requires following packages.
 
@@ -13,29 +18,10 @@ To setup developer environment, the project requires following packages.
 apt-get update && apt-get upgrade -y && apt-get autoremove -y
 
 # Installation of general dependencies
-apt-get install -y build-essential gcc g++ lcov make gdb
-apt-get install -y openjdk-11-jdk openjdk-11-jre
-apt-get install -y libtool clang-format-6.0
-apt-get install -y git curl
-apt-get install -y wget
+apt-get install -y build-essential clang-format clang-tidy clangd git git-lfs wget curl gnupg openjdk-11-jdk openjdk-11-jre lcov
 
 # Installation of FFMPEG
 apt-get install -y libavcodec-dev libavformat-dev libavfilter-dev libavdevice-dev libswresample-dev libswscale-dev ffmpeg
-
-
-# Installation of python dependencies
-apt-get install -y python python-pip
-python -m pip install -U pip
-python -m pip install -U tensorflow
-python -m pip install -U future
-python -m pip install -U six
-
-# Installation of python3 dependencies
-apt-get install -y python3 python3-pip
-python3 -m pip install -U pip
-python3 -m pip install -U future
-python3 -m pip install -U six
-```
 
 ### Build System
 
@@ -43,10 +29,20 @@ This project uses `bazel` build system. To install, run following command or fin
 
 For Linux/macOS systems,
 
-```
+```bash
+# Installation
+curl -fsSL https://bazel.build/bazel-release.pub.gpg | gpg --dearmor > bazel.gpg
+mv bazel.gpg /etc/apt/trusted.gpg.d/
 echo "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" | tee /etc/apt/sources.list.d/bazel.list
-curl https://bazel.build/bazel-release.pub.gpg | apt-key add -
 apt-get update && apt-get install -y bazel
+
+# Command Completion
+echo "source /etc/bash_completion.d/bazel" >> ~/.bashrc
+
+# Autoformat
+wget https://github.com/bazelbuild/buildtools/releases/download/3.5.0/buildifier
+chmod +x buildifier
+mv buildifier /usr/bin
 ```
 
 ### Docker

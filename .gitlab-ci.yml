@@ -29,7 +29,7 @@ buildifier:
   stage: check
   image: ubuntu:20.04
   before_script:
-    - apt-get update && apt-get install -y wget 
+    - apt-get update && apt-get install -y wget
     - wget https://github.com/bazelbuild/buildtools/releases/download/3.5.0/buildifier
     - chmod +x buildifier
     - mv buildifier /usr/bin
@@ -61,17 +61,18 @@ bazel-build-and-test:
   image: ubuntu:20.04
   before_script:
     - export DEBIAN_FRONTEND=noninteractive
-    - apt-get update && apt-get install -y build-essential curl git 
-    - curl https://bazel.build/bazel-release.pub.gpg | apt-key add -
-    - echo "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" | tee /etc/apt/sources.list.d/bazel.list
-    - apt-get update && apt-get install -y bazel
+    - apt-get update && apt-get install -y build-essential curl git
+    - curl -fsSL https://bazel.build/bazel-release.pub.gpg | gpg --dearmor > bazel.gpg && \
+      mv bazel.gpg /etc/apt/trusted.gpg.d/ && \
+      echo "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" | tee /etc/apt/sources.list.d/bazel.list && \
+      apt-get update && apt-get install -y bazel
     - apt-get update && apt-get install -y libavcodec-dev libavformat-dev libavfilter-dev libavdevice-dev libswresample-dev libswscale-dev ffmpeg
   script:
-    - bazel build //... 
+    - bazel build //...
     - bazel test //...  --test_output=all
   after_script:
     - apt-get update && apt-get install -y python3-pip
-    - pip3 install -U pip 
+    - pip3 install -U pip
     - pip3 install -U xunitmerge
     - xunitmerge $(find bazel-out/ -name test.xml) ./merged_test_results.xml
   artifacts:
@@ -103,7 +104,7 @@ doxygen:
 code-coverage:
   stage: test
   image: ubuntu:20.04
-  dependencies: 
+  dependencies:
     - bazel-build-and-test
   before_script:
     - export DEBIAN_FRONTEND=noninteractive
