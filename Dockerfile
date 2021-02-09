@@ -24,9 +24,7 @@ RUN apt-get install -y wget && \
     chmod +x buildifier && \
     mv buildifier /usr/bin
 
-# Cleanup
-RUN apt-get remove -y wget curl gnupg && \
-    apt-get clean && \
-    rm -r /var/lib/apt/list/* && \
-    apt-get autoremove -y && \
-    apt-get autoclean
+# cleanup
+RUN apt-get clean && rm -rf /var/lib/apt/lists/* && \
+    apt-get autoremove && apt-get autoclean
+

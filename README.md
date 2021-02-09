@@ -14,7 +14,7 @@ Supported OS:
 
 To setup developer environment, the project requires following packages.
 
-```
+```bash
 apt-get update && apt-get upgrade -y && apt-get autoremove -y
 
 # Installation of general dependencies
@@ -22,6 +22,7 @@ apt-get install -y build-essential clang-format clang-tidy clangd git git-lfs wg
 
 # Installation of FFMPEG
 apt-get install -y libavcodec-dev libavformat-dev libavfilter-dev libavdevice-dev libswresample-dev libswscale-dev ffmpeg
+```
 
 ### Build System
 
@@ -51,7 +52,7 @@ One can use docker container to use as dev environment,
 
 Install `docker` tool from official site [here](https://www.docker.com/products/docker-desktop)
 
-```
+```bash
 docker pull registry.gitlab.com/jinay1991/spleeter
 ```
 
@@ -73,7 +74,7 @@ Usage on API can be found on [Doxygen](https://jinay1991.gitlab.io/spleeter/doc/
 
 Example implementation can be found in `example/spleeter_app.cpp` (Snipate below)
 
-```
+```cpp
 ///
 /// @file
 /// @copyright Copyright (c) 2020, MIT License
