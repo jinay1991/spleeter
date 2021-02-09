@@ -23,6 +23,7 @@ BraceWrapping:
 BreakBeforeBraces: Allman
 ColumnLimit: 120
 DerivePointerAlignment: false
+SortIncludes: true
 IncludeCategories:
   - Regex: '^(<|")(assert|complex|ctype|errno|fenv|float|inttypes|iso646|limits|locale|math|setjmp|signal|stdalign|stdargh|stdatomic|stdbool|stddef|stdint|stdio|stdlib|stdnoreturn|string|tgmath|threads|time|uchar|wchar|wctype)\.h'
     Priority: 4

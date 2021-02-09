@@ -34,7 +34,7 @@ void InferenceEngineStrategy::SelectInferenceEngine(const InferenceEngineType& i
         default:
         {
             inference_engine_ = std::make_unique<NullInferenceEngine>(inference_engine_parameters);
-            SPLEETER_LOG(ERROR) << "Received " << inference_engine_type;
+            LOG(ERROR) << "Received " << inference_engine_type;
             break;
         }
     }

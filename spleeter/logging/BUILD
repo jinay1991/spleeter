@@ -7,6 +7,9 @@ cc_library(
     name = "logging",
     srcs = glob(["*.cpp"]),
     hdrs = glob(["*.h"]),
+    deps = [
+        "@glog",
+    ],
 )
 
 pkg_tar(
