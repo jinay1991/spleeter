@@ -19,11 +19,11 @@ Waveform AudionamixAudioAdapter::Load(const std::string& path,
     auto file = wave::File{};
 
     auto ret = file.Open(path, wave::OpenMode::kIn);
-    ASSERT_CHECK(!ret) << "Unable to open " << path << ", only *.wav is supported! (Returned: " << ret << ")";
+    CHECK(!ret) << "Unable to open " << path << ", only *.wav is supported! (Returned: " << ret << ")";
 
     Waveform waveform{};
     ret = file.Read(&waveform.data);
-    ASSERT_CHECK(!ret) << "Unable to read " << path << ", only *.wav is supported! (Returned: " << ret << ")";
+    CHECK(!ret) << "Unable to read " << path << ", only *.wav is supported! (Returned: " << ret << ")";
 
     /// Save loaded audio properties
     audio_properties_.nb_frames = file.frame_number();
@@ -32,7 +32,7 @@ Waveform AudionamixAudioAdapter::Load(const std::string& path,
     waveform.nb_channels = audio_properties_.nb_channels;
     waveform.nb_frames = audio_properties_.nb_frames;
 
-    SPLEETER_LOG(DEBUG) << "Loaded waveform from " << path << " using Audionamix.";
+    LOG(INFO) << "Loaded waveform from " << path << " using Audionamix.";
     return waveform;
 }
 
@@ -45,7 +45,7 @@ void AudionamixAudioAdapter::Save(const std::string& path,
     auto file = wave::File{};
 
     auto ret = file.Open(path, wave::OpenMode::kOut);
-    ASSERT_CHECK(!ret) << "Unable to open " << path << "! (Returned: " << ret << ")";
+    CHECK(!ret) << "Unable to open " << path << "! (Returned: " << ret << ")";
 
     /// Set user provided configurations
     if (sample_rate != -1)
@@ -55,9 +55,9 @@ void AudionamixAudioAdapter::Save(const std::string& path,
     file.set_channel_number(2);
 
     ret = file.Write(waveform.data);
-    ASSERT_CHECK(!ret) << "Unable to write to " << path << "! (Returned: " << ret << ")";
+    CHECK(!ret) << "Unable to write to " << path << "! (Returned: " << ret << ")";
 
-    SPLEETER_LOG(DEBUG) << "Saved waveform to " << path << " using Audionamix.";
+    LOG(INFO) << "Saved waveform to " << path << " using Audionamix.";
 }
 
 AudioProperties AudionamixAudioAdapter::GetProperties() const

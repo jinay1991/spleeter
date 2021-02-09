@@ -29,7 +29,7 @@ void Spleeter::Execute()
                                cli_options_.bitrate,
                                cli_options_.filename_format,
                                false);
-    SPLEETER_LOG(INFO) << "Successfully executed spleeter!!";
+    LOG(INFO) << "Successfully executed spleeter!!";
 }
 void Spleeter::Shutdown() {}
 

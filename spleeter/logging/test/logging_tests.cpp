@@ -1,63 +1,49 @@
 ///
-/// @file logging_test.cpp
-/// @brief Contains unit tests for Logging APIs
-/// @copyright Copyright (c) 2020. All Rights Reserved.
+/// @file
+/// @copyright Copyright (c) 2020-2021. MIT License.
 ///
 #include "spleeter/logging/logging.h"
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-namespace spleeter
-{
-namespace logging
+namespace perception
 {
 namespace
 {
-TEST(LoggingWrapperTest, AssertionMacro)
+
+TEST(LoggingTest, BasicLoggingMacro_INFO)
 {
-    EXPECT_EXIT(ASSERT_CHECK(false), ::testing::KilledBySignal(SIGABRT), "");
-}
-TEST(LoggingWrapperTest, AssertionCompareMacro)
-{
-    EXPECT_EXIT(ASSERT_CHECK_EQ(1, 2), ::testing::KilledBySignal(SIGABRT), "");
+    const std::string test_log{"Sanity Test for LogSeverityLevel = INFO!!"};
+    ::testing::internal::CaptureStderr();
+
+    LOG(INFO) << test_log;
+
+    const std::string result = ::testing::internal::GetCapturedStderr();
+    EXPECT_THAT(result, ::testing::HasSubstr(test_log));
 }
 
-TEST(LoggingWrapperTest, FatalLogging)
+TEST(LoggingTest, BasicLoggingMacro_WARN)
 {
-    auto unit = new LoggingWrapper(LoggingWrapper::LogSeverity::FATAL, true);
-    unit->Stream() << "test";
-    EXPECT_EXIT(delete unit, ::testing::KilledBySignal(SIGABRT), "");
-}
-TEST(LoggingWrapperTest, NoLogging)
-{
+    const std::string test_log{"Sanity Test for LogSeverityLevel = WARNING!!"};
     ::testing::internal::CaptureStderr();
-    ::testing::internal::CaptureStdout();
-    LoggingWrapper(LoggingWrapper::LogSeverity::DEBUG, false).Stream() << "test";
-    LoggingWrapper(LoggingWrapper::LogSeverity::INFO, false).Stream() << "test";
-    LoggingWrapper(LoggingWrapper::LogSeverity::ERROR, false).Stream() << "test";
-    LoggingWrapper(LoggingWrapper::LogSeverity::WARN, false).Stream() << "test";
-    EXPECT_TRUE(::testing::internal::GetCapturedStdout().empty());
-    EXPECT_TRUE(::testing::internal::GetCapturedStderr().empty());
+
+    LOG(WARNING) << test_log;
+
+    const std::string result = ::testing::internal::GetCapturedStderr();
+    EXPECT_THAT(result, ::testing::HasSubstr(test_log));
 }
-TEST(LoggingWrapperTest, OnStandardOutput)
+
+TEST(LoggingTest, BasicLoggingMacro_ERROR)
 {
+    const std::string test_log{"Sanity Test for LogSeverityLevel = ERROR!!"};
     ::testing::internal::CaptureStderr();
-    ::testing::internal::CaptureStdout();
-    LoggingWrapper(LoggingWrapper::LogSeverity::DEBUG, true).Stream() << "test";
-    LoggingWrapper(LoggingWrapper::LogSeverity::INFO, true).Stream() << "test";
-    LoggingWrapper(LoggingWrapper::LogSeverity::WARN, true).Stream() << "test";
-    EXPECT_FALSE(::testing::internal::GetCapturedStdout().empty());
-    EXPECT_TRUE(::testing::internal::GetCapturedStderr().empty());
+
+    LOG(ERROR) << test_log;
+
+    const std::string result = ::testing::internal::GetCapturedStderr();
+    EXPECT_THAT(result, ::testing::HasSubstr(test_log));
 }
-TEST(LoggingWrapperTest, OnStandardError)
-{
-    ::testing::internal::CaptureStderr();
-    ::testing::internal::CaptureStdout();
-    LoggingWrapper(LoggingWrapper::LogSeverity::ERROR, true).Stream() << "test";
-    EXPECT_TRUE(::testing::internal::GetCapturedStdout().empty());
-    EXPECT_FALSE(::testing::internal::GetCapturedStderr().empty());
-}
+
 }  // namespace
-}  // namespace logging
-}  // namespace spleeter
+}  // namespace perception

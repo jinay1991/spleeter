@@ -62,10 +62,9 @@ void TFInferenceEngine::Init()
     std::unordered_set<std::string> tags{"serve"};
 
     const auto ret = tensorflow::LoadSavedModel(session_options, run_options, model_path_, tags, bundle_.get());
-    ASSERT_CHECK(ret.ok()) << "Failed to load saved model '" << model_path_ << "', (Message: " << ret.error_message()
-                           << ")";
+    CHECK(ret.ok()) << "Failed to load saved model '" << model_path_ << "', (Message: " << ret.error_message() << ")";
 
-    SPLEETER_LOG(INFO) << "Successfully loaded saved model from '" << model_path_ << "'.";
+    LOG(INFO) << "Successfully loaded saved model from '" << model_path_ << "'.";
 }
 
 void TFInferenceEngine::Execute(const Waveform& waveform)
@@ -93,9 +92,9 @@ void TFInferenceEngine::UpdateTensors()
     const std::vector<std::string> target_node_names{};
 
     const auto ret = bundle_->GetSession()->Run(inputs, output_tensor_names_, target_node_names, &output_tensors_);
-    ASSERT_CHECK(ret.ok()) << "Unable to run Session, (Message: " << ret.error_message() << ")";
+    CHECK(ret.ok()) << "Unable to run Session, (Message: " << ret.error_message() << ")";
 
-    SPLEETER_LOG(INFO) << "Successfully received results " << output_tensors_.size() << " outputs.";
+    LOG(INFO) << "Successfully received results " << output_tensors_.size() << " outputs.";
 }
 
 void TFInferenceEngine::UpdateOutputs()

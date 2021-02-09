@@ -67,16 +67,16 @@ TFLiteInferenceEngine::TFLiteInferenceEngine(const InferenceEngineParameters& pa
 void TFLiteInferenceEngine::Init()
 {
     model_ = tflite::FlatBufferModel::BuildFromFile(model_path_.c_str());
-    ASSERT_CHECK(model_) << "Failed to read model " << model_path_;
+    CHECK(model_) << "Failed to read model " << model_path_;
     model_->error_reporter();
 
     tflite::ops::builtin::BuiltinOpResolver resolver{};
     tflite::InterpreterBuilder(*model_, resolver)(&interpreter_);
-    ASSERT_CHECK(interpreter_) << "Failed to construct interpreter";
+    CHECK(interpreter_) << "Failed to construct interpreter";
 
-    ASSERT_CHECK_EQ(interpreter_->AllocateTensors(), TfLiteStatus::kTfLiteOk) << "Failed to allocate tensors!";
+    CHECK_EQ(interpreter_->AllocateTensors(), TfLiteStatus::kTfLiteOk) << "Failed to allocate tensors!";
 
-    SPLEETER_LOG(INFO) << "Successfully loaded tflite model from '" << model_path_ << "'.";
+    LOG(INFO) << "Successfully loaded tflite model from '" << model_path_ << "'.";
 }
 
 void TFLiteInferenceEngine::Execute(const Waveform& waveform)
@@ -97,21 +97,21 @@ void TFLiteInferenceEngine::UpdateInput(const Waveform& waveform)
 {
     ResizeInputTensor(waveform);
     ResizeOutputTensor(waveform);
-    ASSERT_CHECK_EQ(interpreter_->AllocateTensors(), TfLiteStatus::kTfLiteOk) << "Failed to allocate tensors!";
+    CHECK_EQ(interpreter_->AllocateTensors(), TfLiteStatus::kTfLiteOk) << "Failed to allocate tensors!";
 
     float* tensor_ptr = interpreter_->typed_input_tensor<float>(0U);
     std::copy(waveform.data.cbegin(), waveform.data.cend(), tensor_ptr);
 
-    SPLEETER_LOG(INFO) << "Successfully loaded input waveform!!";
+    LOG(INFO) << "Successfully loaded input waveform!!";
 }
 
 void TFLiteInferenceEngine::UpdateTensors()
 {
     const auto ret = interpreter_->Invoke();
-    ASSERT_CHECK_EQ(ret, TfLiteStatus::kTfLiteOk) << "Failed to invoke tflite!";
+    CHECK_EQ(ret, TfLiteStatus::kTfLiteOk) << "Failed to invoke tflite!";
 
     output_tensor_indicies_ = interpreter_->outputs();
-    SPLEETER_LOG(INFO) << "Successfully received results " << output_tensor_indicies_.size() << " outputs.";
+    LOG(INFO) << "Successfully received results " << output_tensor_indicies_.size() << " outputs.";
 }
 
 void TFLiteInferenceEngine::UpdateOutputs()
@@ -128,7 +128,7 @@ void TFLiteInferenceEngine::UpdateOutputs()
 void TFLiteInferenceEngine::ResizeInputTensor(const Waveform& waveform)
 {
     const auto input_tensor_indicies = interpreter_->inputs();
-    ASSERT_CHECK_EQ(input_tensor_indicies.size(), 1) << "Model has more than one input tensor";
+    CHECK_EQ(input_tensor_indicies.size(), 1) << "Model has more than one input tensor";
 
     ResizeTensor(input_tensor_indicies.at(0U), {waveform.nb_frames, waveform.nb_channels});
 }
@@ -136,7 +136,7 @@ void TFLiteInferenceEngine::ResizeInputTensor(const Waveform& waveform)
 void TFLiteInferenceEngine::ResizeOutputTensor(const Waveform& waveform)
 {
     const auto output_tensor_indicies = interpreter_->outputs();
-    ASSERT_CHECK_GT(output_tensor_indicies.size(), 0) << "Model has no output tensor(s)";
+    CHECK_GT(output_tensor_indicies.size(), 0) << "Model has no output tensor(s)";
 
     for (auto tensor_index : output_tensor_indicies)
     {
@@ -150,6 +150,6 @@ void TFLiteInferenceEngine::ResizeTensor(const std::int32_t tensor_index, const 
     tensor->data.raw = nullptr;
     tensor->allocation_type = TfLiteAllocationType::kTfLiteDynamic;
 
-    ASSERT_CHECK_EQ(interpreter_->ResizeInputTensor(tensor_index, dims), TfLiteStatus::kTfLiteOk);
+    CHECK_EQ(interpreter_->ResizeInputTensor(tensor_index, dims), TfLiteStatus::kTfLiteOk);
 }
 }  // namespace spleeter

@@ -58,28 +58,20 @@ cppcheck:
 # ------------
 bazel-build-and-test:
   stage: build
-  image: ubuntu:20.04
-  before_script:
-    - export DEBIAN_FRONTEND=noninteractive
-    - apt-get update && apt-get install -y build-essential curl git
-    - curl -fsSL https://bazel.build/bazel-release.pub.gpg | gpg --dearmor > bazel.gpg && \
-      mv bazel.gpg /etc/apt/trusted.gpg.d/ && \
-      echo "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" | tee /etc/apt/sources.list.d/bazel.list && \
-      apt-get update && apt-get install -y bazel
-    - apt-get update && apt-get install -y libavcodec-dev libavformat-dev libavfilter-dev libavdevice-dev libswresample-dev libswscale-dev ffmpeg
+  image: registry.gitlab.com/jinay1991/spleeter
   script:
     - bazel build //...
     - bazel test //...  --test_output=all
   after_script:
-    - apt-get update && apt-get install -y python3-pip
-    - pip3 install -U pip
-    - pip3 install -U xunitmerge
-    - xunitmerge $(find bazel-out/ -name test.xml) ./merged_test_results.xml
+    - apt-get update && apt-get install -y wget
+    - wget https://github.com/drazisil/junit-merge/releases/download/v2.0.0/junit-merge-linux
+    - chmod +x junit-merge-linux
+    - mv junit-merge-linux /usr/bin
+    - junit-merge-linux $(find bazel-out/* -name test.xml) --out merged_test_report.xml
   artifacts:
+    when: always
     reports:
-      junit: merged_test_results.xml
-    name: TestResults
-    when: on_success
+      junit: merged_test_report.xml
 
 doxygen:
   stage: build
