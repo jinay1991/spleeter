@@ -71,15 +71,15 @@ bazel-build-and-test:
     - bazel build //...
     - bazel test //...  --test_output=all
   after_script:
-    - apt-get update && apt-get install -y python3-pip
-    - pip3 install -U pip
-    - pip3 install -U xunitmerge
-    - xunitmerge $(find bazel-out/ -name test.xml) ./merged_test_results.xml
+    - apt-get update && apt-get install -y wget
+    - wget https://github.com/drazisil/junit-merge/releases/download/v2.0.0/junit-merge-linux
+    - chmod +x junit-merge-linux
+    - mv junit-merge-linux /usr/bin
+    - junit-merge-linux $(find bazel-out/* -name test.xml) --out merged_test_report.xml
   artifacts:
+    when: always
     reports:
-      junit: merged_test_results.xml
-    name: TestResults
-    when: on_success
+      junit: merged_test_report.xml
 
 doxygen:
   stage: build
