@@ -62,12 +62,11 @@ To quickly run the `spleeter` application, run `bazel run //application:spleeter
 
 To quickly run unit/component tests, run `bazel test //... --test_output=all --cache_test_results=false`
 
-To build package (`*.tar.gz`), run `bazel build //:spleeter-dev`
+To build package (`*.tar.gz`), run `bazel build //:spleeter-dev` (This contains all the required header and libraries from this repository for smooth integration to other projects. See #integration guide to understand it better.)
 
 ## Integration
 
-To integrate it external application, please refer `example` directory containing separate `WORKSPACE` uses `spleeter` and it's dependencies.
-
+Use the tarball for integration which contains all the required headers and libraries along with the `third_party` dependencies which can be fetched using `bazel`.
 Please note that `spleeter` has some external dependencies (i.e. `libtensorflow` etc.), which is why `third_party` directory is necessary for downloading all the dependencies and link them together with your application.
 
 Usage on API can be found on [Doxygen](https://jinay1991.gitlab.io/spleeter/doc/html/) documentation.
@@ -117,6 +116,8 @@ int main(void)
     return 0;
 }
 ```
+
+Prebuilt binaries for `ubuntu-20.04-amd64` https://github.com/jinay1991/spleeter/releases/download/v1.4/spleeter-dev.tar.gz
 
 ## Reference
 
