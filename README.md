@@ -55,6 +55,42 @@ Install `docker` tool from official site [here](https://www.docker.com/products/
 ```bash
 docker pull registry.gitlab.com/jinay1991/spleeter
 ```
+### TensorFlow
+
+To build `libtensorflow_cc.so`
+
+```bash
+~/$ git clone https://github.com/tensorflow/tensorflow.git
+~/$ git checkout v2.3.0
+~/$ cd tensorflow
+~tensorflow/$ bazel build -c opt --config=monolithic //tensorflow:libtensorflow_cc.so //tensorflow:install_headers
+~tensorflow/$ cd bazel-bin/tensorflow
+~tensorflow/bazel-bin/tensorflow$ mkdir -p libtensorflow_cc-2.3.0-linux/include libtensorflow_cc-2.3.0-linux/lib
+~tensorflow/bazel-bin/tensorflow$ cp -R include/* libtensorflow_cc-2.3.0-linux/include
+~tensorflow/bazel-bin/tensorflow$ cp -P libtensorflow_cc.so libtensorflow_cc.so.2 libtensorflow_cc.so.2.3.0 libtensorflow_cc-2.3.0-linux/lib/
+~tensorflow/bazel-bin/tensorflow$ tar cvzf libtensorflow_cc-2.3.0-linux.tar.gz libtensorflow_cc-2.3.0-linux
+```
+
+Package `libtensorflow_cc-2.3.0-linux.tar.gz` contains required tensorflow libraries.
+
+### TensorFlow Lite
+
+
+To build `libtensorflowlite.so`
+
+```bash
+~/$ git clone https://github.com/tensorflow/tensorflow.git
+~/$ git checkout v2.3.0
+~/$ cd tensorflow
+~tensorflow/$ bazel build -c opt --config=monolithic //tensorflow/lite:libtensorflowlite.so
+~tensorflow/$ cd bazel-bin/tensorflow/lite
+~tensorflow/bazel-bin/tensorflow$ mkdir -p libtensorflowlite-2.3.0-linux/include libtensorflowlite-2.3.0-linux/lib
+~tensorflow/bazel-bin/tensorflow$ cp --parents -r ~tensorflow/lite/**/**/*.h libtensorflowlite-2.3.0-linux/include
+~tensorflow/bazel-bin/tensorflow$ cp -P libtensorflowlite.so libtensorflowlite-2.3.0-linux/lib/
+~tensorflow/bazel-bin/tensorflow$ tar cvzf libtensorflowlite-2.3.0-linux.tar.gz libtensorflowlite-2.3.0-linux
+```
+
+Package `libtensorflowlite-2.3.0-linux.tar.gz` contains required tensorflowlite libraries.
 
 ## Usage
 
